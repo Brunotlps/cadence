@@ -27,3 +27,12 @@ npm-debug.log*
 
 # Testes
 coverage/
+playwright-report/
+test-results/
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
