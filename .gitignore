@@ -1,0 +1,29 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente e segredos (NUNCA commitar)
+.env
+.env.local
+.env*.local
+.env.production
+
+# Build / Next.js
+.next/
+out/
+dist/
+build/
+
+# Supabase (chaves locais, temp)
+.supabase/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operacional / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Testes
+coverage/
