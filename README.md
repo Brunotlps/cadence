@@ -1,27 +1,136 @@
 # Cadence
 
-App de controle financeiro, construído com privacidade por padrão e em conformidade com a LGPD.
+App de controle financeiro para grupo. Cada pessoa registra suas próprias
+movimentações e todas acompanham, de forma consolidada, o saldo do mês, contas fixas
+e metas compartilhadas — em um espaço financeiro comum (workspace).
 
-Este repositório começa pelo harness: as regras, specs, políticas e testes que
-definem como o produto deve ser construído — antes do código de aplicação. Qualquer
-pessoa (ou agente de IA) que trabalhe no projeto encontra aqui os limites e o contrato
-do que pode e não pode ser feito.
+Construído com privacidade por padrão e em conformidade com a LGPD: coleta mínima de
+dados, sem rastreio, sem armazenamento de IP, e com direito ao apagamento real.
+
+## O que o projeto faz
+
+- **Dashboard** — saldo do mês, resumo de gastos por categoria e últimos lançamentos.
+- **Lançamentos** — registro rápido de despesas, receitas e aportes.
+- **Contas fixas** — contas recorrentes com valor previsto vs. valor realizado.
+- **Metas** — objetivos financeiros com ritmo sugerido e aportes livres.
+
+Um workspace pode ter mais de um membro (ex: um casal), com dados isolados por
+`workspace_id` e protegidos por Row-Level Security no banco.
 
 ## Stack
 
-- Frontend + API: Next.js (App Router) no Vercel
-- Dados + Auth: Supabase (Postgres + Auth), isolamento por Row-Level Security
-- Schema + migrations: Drizzle ORM
-- Modelo de dados: multi-tenant desde o dia 1, via `workspace_id`
+- **Next.js** (App Router) — frontend + API routes
+- **Supabase** (Postgres + Auth) — dados e autenticação, isolamento via RLS
+- **Drizzle ORM** — schema e migrations
+- **Vitest** — testes unitários e de integração
+- **Playwright** — testes end-to-end
+- **Vercel** — hospedagem e deploy contínuo
 
-## Princípios inegociáveis
+## Pré-requisitos
 
-1. Minimização — não coletamos o que não é necessário. IPs não são armazenados. Sem analytics no MVP.
-2. Isolamento por workspace — nenhum dado cruza a fronteira. RLS é a última linha de defesa, não a aplicação.
-3. Direito ao apagamento real — deletar conta apaga dados em cascata, de verdade.
-4. Consentimento informado — nada de coleta silenciosa.
+- Node.js 20+ (testado com 24)
+- Conta no Supabase (projeto na região São Paulo / sa-east-1)
+- Conta no Vercel (para deploy)
 
-## Aviso
+## Instalação e execução local
 
-Os documentos em `docs/legal/` são rascunhos técnicos, não aconselhamento jurídico.
-Devem ser revisados por um advogado antes de qualquer uso em produção.
+```bash
+# 1. Clone o repositório
+git clone git@github.com:<seu-usuario>/cadence.git
+cd cadence
+
+# 2. Instale as dependências
+npm ci
+
+# 3. Configure as variáveis de ambiente
+cp .env.example .env.local
+# preencha .env.local com as chaves do seu projeto Supabase (ver seção abaixo)
+
+# 4. Rode as migrations do banco
+npm run db:migrate
+
+# 5. Suba o servidor de desenvolvimento
+npm run dev
+# app disponível em http://localhost:3000
+```
+
+> Os comandos acima assumem que o scaffold da aplicação Next.js já foi criado.
+
+## Variáveis de ambiente
+
+Copie `.env.example` para `.env.local` e preencha. **Nunca** commite `.env.local`.
+
+| Variável                        | Descrição                                                     |
+| ------------------------------- | ------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | URL do projeto Supabase                                       |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave pública (anon) do Supabase                              |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Chave service-role — **apenas server-side, nunca no cliente** |
+| `DATABASE_URL`                  | String de conexão Postgres (para o Drizzle)                   |
+
+## Comandos de teste
+
+```bash
+npm run test          # roda unit + e2e
+npm run test:unit     # só unitários (Vitest)
+npm run test:unit:watch  # unitários em watch mode
+npm run test:e2e      # end-to-end (Playwright)
+```
+
+Testes de conformidade (isolamento por workspace e apagamento em cascata) ficam em
+`tests/compliance/` e rodam junto dos unitários. São obrigatórios e não podem ser
+ignorados ao mexer em dados de usuário.
+
+## Padrões e convenções
+
+- **Commits:** Conventional Commits (`feat:`, `fix:`, `chore:`, `test:`, `docs:`,
+  `refactor:`, `ci:`), em português, no imperativo. Um commit por módulo/arquivo lógico.
+- **Testes primeiro:** escreva o teste antes da implementação sempre que viável.
+  Nenhuma feature entra sem teste correspondente.
+- **Isolamento de dados:** toda tabela com dado de usuário tem `workspace_id` + RLS.
+  Nunca confie apenas em filtro na aplicação.
+- **Privacidade:** sem coleta de IP, geolocalização, dado sensível ou analytics. Sem
+  PII em logs. Ver `.cadence/policies/data-handling.md`.
+- **Guardrails do projeto:** ver `CLAUDE.md` e os documentos em `docs/`.
+
+## Estrutura do repositório
+
+.
+├── CLAUDE.md
+├── docs
+│ ├── compliance
+│ │ └── lgpd-mapping.md
+│ ├── legal
+│ │ ├── politica-de-privacidade.md
+│ │ └── termos-de-uso.md
+│ └── specs
+│ ├── data-model-and-deletion.md
+│ └── data-portability.md
+├── package.json
+├── playwright.config.ts
+├── README.md
+├── tests
+│ └── compliance
+│ ├── cascade-deletion.test.ts
+│ ├── README.md
+│ └── rls-isolation.test.ts
+└── vitest.config.ts
+
+## CI/CD
+
+Cada pull request roda a pipeline em `.github/workflows/ci.yml` com três verificações
+paralelas: lint, testes unitários e testes E2E. O merge só deve ocorrer com as três
+verdes. Push na `main` publica automaticamente em produção via Vercel; cada PR gera um
+preview deploy isolado.
+
+## Próximos passos recomendados
+
+- Ativar branch protection na `main` (exigir PR + CI verde, impedir push direto):
+  atualmente o CI roda mas não bloqueia tecnicamente o merge.
+- Revisão jurídica dos documentos em `docs/legal/` antes de qualquer uso em produção.
+
+## Conformidade e privacidade
+
+Este projeto trata dados pessoais e financeiros sob a LGPD. Princípios: minimização,
+isolamento por workspace, apagamento real e transparência. Os documentos legais em
+`docs/legal/` são rascunhos técnicos e **não constituem aconselhamento jurídico** —
+devem ser revisados por um advogado antes de publicação.
