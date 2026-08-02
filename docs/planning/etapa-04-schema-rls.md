@@ -54,7 +54,7 @@ Nenhuma rota autenticada ou rotina de exportação abre conexão Drizzle crua vi
 ## Subtarefas
 
 - [x] `drizzle.config.ts` lendo `DIRECT_URL`
-- [ ] `db/schema.ts` — tabelas com PK composta em `workspace_members`, só como fonte de tipos/migrations
+- [x] `db/schema.ts` — tabelas com PK composta em `workspace_members`, só como fonte de tipos/migrations
 - [ ] Migration SQL manual: `is_workspace_member()`, RLS + policies (`transactions`, `fixed_bills`, `goals`, `workspace_members`), policy de `profiles`, `create_workspace_with_owner()`, trigger + `handle_new_user()`
 - [ ] Migration `handle_account_deletion()`
 - [ ] `lib/supabase/server.ts` (cliente autenticado, RLS ativo)
