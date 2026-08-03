@@ -1,0 +1,40 @@
+-- Custom SQL migration file, put your code below! --
+
+-- Apagamento de conta: remove participações do usuário e qualquer workspace
+-- que fique sem membros (cascata apaga transactions/fixed_bills/goals desse
+-- workspace), depois o espelho de perfil. Chamada só pelo módulo isolado de
+-- service-role (lib/supabase/admin.ts, subtarefa 5), nunca pela aplicação
+-- em nome do próprio usuário.
+--
+-- Nota: transactions/fixed_bills/goals de um workspace que continua com
+-- outros membros NÃO são apagados nem têm created_by limpo — são dados do
+-- workspace compartilhado, não dados pessoais exclusivos do usuário que saiu.
+-- O apagamento do registro em auth.users é feito à parte, via API admin do
+-- Supabase, depois desta função (ver lib/supabase/admin.ts).
+create function public.handle_account_deletion(target uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  delete from workspace_members where user_id = target;
+
+  delete from workspaces w
+  where not exists (
+    select 1 from workspace_members m where m.workspace_id = w.id
+  );
+
+  delete from profiles where id = target;
+end;
+$$;
+
+-- Postgres concede EXECUTE a PUBLIC por padrão em toda função nova, e o
+-- PostgREST expõe qualquer função do schema public como RPC — sem isto,
+-- qualquer usuário autenticado poderia chamar esta função SECURITY DEFINER
+-- com o uuid de outra pessoa e apagar a conta dela (IDOR). Só o service-role
+-- (lib/supabase/admin.ts) pode chamá-la.
+revoke execute on function public.handle_account_deletion(uuid) from public;
+revoke execute on function public.handle_account_deletion(uuid) from anon;
+revoke execute on function public.handle_account_deletion(uuid) from authenticated;
+grant execute on function public.handle_account_deletion(uuid) to service_role;

@@ -1,6 +1,6 @@
 # Etapa 04 — Schema Drizzle + Row-Level Security
 
-**Status:** em andamento
+**Status:** concluído
 **Aberto em:** [PREENCHER DATA]
 **Depende de:** Etapas 01–03 (bootstrap, CI, deploy)
 
@@ -22,6 +22,14 @@ os seguintes gaps foram identificados e resolvidos antes de codar:
 4. Drizzle não gera RLS/policies a partir do schema — resolvido com migration SQL manual.
 5. Connection string de migration (pooler, transaction mode) incompatível com DDL —
    resolvido com `DIRECT_URL` separada.
+6. A "Direct connection" real do Supabase (`db.<ref>.supabase.co`) é IPv6-only;
+   em ambiente sem saída IPv6 o `drizzle-kit migrate` trava indefinidamente sem
+   erro. Resolvido usando a "Session pooler" (porta 5432, IPv4) como `DIRECT_URL`.
+7. Tabelas criadas via conexão externa (drizzle-kit) não recebem os grants de
+   `SELECT`/`INSERT`/`UPDATE`/`DELETE` que o Supabase concede automaticamente
+   quando a tabela é criada pelo Studio/Dashboard — toda query falhava com
+   "permission denied" mesmo com as policies corretas. Resolvido com grants
+   explícitos (`0003_table-grants.sql`).
 
 ## Decisões de design (fechadas)
 
@@ -53,15 +61,18 @@ Nenhuma rota autenticada ou rotina de exportação abre conexão Drizzle crua vi
 
 ## Subtarefas
 
-- [ ] `drizzle.config.ts` lendo `DIRECT_URL`
-- [ ] `db/schema.ts` — tabelas com PK composta em `workspace_members`, só como fonte de tipos/migrations
-- [ ] Migration SQL manual: `is_workspace_member()`, RLS + policies (`transactions`, `fixed_bills`, `goals`, `workspace_members`), policy de `profiles`, `create_workspace_with_owner()`, trigger + `handle_new_user()`
-- [ ] Migration `handle_account_deletion()`
-- [ ] `lib/supabase/server.ts` (cliente autenticado, RLS ativo)
-- [ ] `lib/supabase/admin.ts` (service-role, isolado, só apagamento de conta)
-- [ ] Reescrever `tests/compliance/rls-isolation.test.ts` e `cascade-deletion.test.ts` usando Supabase JS autenticado (não Drizzle/Postgres direto)
-- [ ] Validação: `db:generate`/`db:migrate` contra `DIRECT_URL`, testes de compliance passando, lint/build verdes
+- [x] `drizzle.config.ts` lendo `DIRECT_URL`
+- [x] `db/schema.ts` — tabelas com PK composta em `workspace_members`, só como fonte de tipos/migrations
+- [x] Migration SQL manual: `is_workspace_member()`, RLS + policies (`transactions`, `fixed_bills`, `goals`, `workspace_members`), policy de `profiles`, `create_workspace_with_owner()`, trigger + `handle_new_user()`
+- [x] Migration `handle_account_deletion()`
+- [x] `lib/supabase/server.ts` (cliente autenticado, RLS ativo)
+- [x] `lib/supabase/admin.ts` (service-role, isolado, só apagamento de conta)
+- [x] Reescrever `tests/compliance/rls-isolation.test.ts` e `cascade-deletion.test.ts` usando Supabase JS autenticado (não Drizzle/Postgres direto)
+- [x] Validação: `db:generate`/`db:migrate` contra `DIRECT_URL`, testes de compliance passando, lint/build verdes
 
 ## Notas de revisão
 
-- Confirmar `set search_path = public` também em `handle_new_user()` (mesma exigência das demais funções `SECURITY DEFINER`).
+- [x] `set search_path = public` confirmado em `handle_new_user()`, `is_workspace_member()` e `create_workspace_with_owner()` (migration `0001_rls-and-security-definer-functions.sql`).
+- [x] `workspace_members.role` restrito a `'owner'`/`'member'` via `CHECK` na mesma migration.
+- [x] `handle_account_deletion()` restrita a `service_role` via `revoke`/`grant execute` — sem isso, qualquer usuário autenticado poderia chamá-la via RPC com uuid de outra pessoa (IDOR). Achado pelo review automático de segurança, corrigido em `0002_account-deletion.sql`.
+- [x] Nota anterior corrigida: `handle_account_deletion()` (`0002_account-deletion.sql`) segue a rotina ilustrativa de `docs/specs/data-model-and-deletion.md` à risca — apaga `workspace_members` e `profiles` do usuário, e workspaces órfãos (sem membros). `transactions.created_by`/`fixed_bills`/`goals` de um workspace que continua com outros membros NÃO são tocados: são dados do workspace compartilhado, não dados pessoais exclusivos do usuário. A falta de FK para `auth.users` nessas colunas é intencional, não uma lacuna a fechar.

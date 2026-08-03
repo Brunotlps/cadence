@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1785714577247,
+      "tag": "0000_worried_moondragon",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785714714537,
+      "tag": "0001_rls-and-security-definer-functions",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785770084411,
+      "tag": "0002_account-deletion",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1785781337798,
+      "tag": "0003_table-grants",
+      "breakpoints": true
+    }
+  ]
+}
