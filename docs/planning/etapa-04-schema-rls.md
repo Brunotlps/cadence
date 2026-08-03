@@ -66,4 +66,5 @@ Nenhuma rota autenticada ou rotina de exportação abre conexão Drizzle crua vi
 
 - [x] `set search_path = public` confirmado em `handle_new_user()`, `is_workspace_member()` e `create_workspace_with_owner()` (migration `0001_rls-and-security-definer-functions.sql`).
 - [x] `workspace_members.role` restrito a `'owner'`/`'member'` via `CHECK` na mesma migration.
+- [x] `handle_account_deletion()` restrita a `service_role` via `revoke`/`grant execute` — sem isso, qualquer usuário autenticado poderia chamá-la via RPC com uuid de outra pessoa (IDOR). Achado pelo review automático de segurança, corrigido em `0002_account-deletion.sql`.
 - [x] Nota anterior corrigida: `handle_account_deletion()` (`0002_account-deletion.sql`) segue a rotina ilustrativa de `docs/specs/data-model-and-deletion.md` à risca — apaga `workspace_members` e `profiles` do usuário, e workspaces órfãos (sem membros). `transactions.created_by`/`fixed_bills`/`goals` de um workspace que continua com outros membros NÃO são tocados: são dados do workspace compartilhado, não dados pessoais exclusivos do usuário. A falta de FK para `auth.users` nessas colunas é intencional, não uma lacuna a fechar.
