@@ -55,7 +55,7 @@ Nenhuma rota autenticada ou rotina de exportação abre conexão Drizzle crua vi
 
 - [x] `drizzle.config.ts` lendo `DIRECT_URL`
 - [x] `db/schema.ts` — tabelas com PK composta em `workspace_members`, só como fonte de tipos/migrations
-- [ ] Migration SQL manual: `is_workspace_member()`, RLS + policies (`transactions`, `fixed_bills`, `goals`, `workspace_members`), policy de `profiles`, `create_workspace_with_owner()`, trigger + `handle_new_user()`
+- [x] Migration SQL manual: `is_workspace_member()`, RLS + policies (`transactions`, `fixed_bills`, `goals`, `workspace_members`), policy de `profiles`, `create_workspace_with_owner()`, trigger + `handle_new_user()`
 - [ ] Migration `handle_account_deletion()`
 - [ ] `lib/supabase/server.ts` (cliente autenticado, RLS ativo)
 - [ ] `lib/supabase/admin.ts` (service-role, isolado, só apagamento de conta)
@@ -64,4 +64,6 @@ Nenhuma rota autenticada ou rotina de exportação abre conexão Drizzle crua vi
 
 ## Notas de revisão
 
-- Confirmar `set search_path = public` também em `handle_new_user()` (mesma exigência das demais funções `SECURITY DEFINER`).
+- [x] `set search_path = public` confirmado em `handle_new_user()`, `is_workspace_member()` e `create_workspace_with_owner()` (migration `0001_rls-and-security-definer-functions.sql`).
+- [x] `workspace_members.role` restrito a `'owner'`/`'member'` via `CHECK` na mesma migration.
+- Na migration de `handle_account_deletion()` (subtarefa 4), enumerar explicitamente toda coluna de user-id (`workspace_members.user_id`, `transactions.created_by`, `profiles.id`) — essas colunas não têm FK para `auth.users`, então o cascade de apagamento não pode depender só do cascade via `workspace_id`.
