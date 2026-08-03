@@ -15,6 +15,13 @@
       "when": 1785714714537,
       "tag": "0001_rls-and-security-definer-functions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785770084411,
+      "tag": "0002_account-deletion",
+      "breakpoints": true
     }
   ]
 }
