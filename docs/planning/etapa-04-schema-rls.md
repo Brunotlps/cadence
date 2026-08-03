@@ -1,6 +1,6 @@
 # Etapa 04 — Schema Drizzle + Row-Level Security
 
-**Status:** em andamento
+**Status:** concluído
 **Aberto em:** [PREENCHER DATA]
 **Depende de:** Etapas 01–03 (bootstrap, CI, deploy)
 
@@ -22,6 +22,14 @@ os seguintes gaps foram identificados e resolvidos antes de codar:
 4. Drizzle não gera RLS/policies a partir do schema — resolvido com migration SQL manual.
 5. Connection string de migration (pooler, transaction mode) incompatível com DDL —
    resolvido com `DIRECT_URL` separada.
+6. A "Direct connection" real do Supabase (`db.<ref>.supabase.co`) é IPv6-only;
+   em ambiente sem saída IPv6 o `drizzle-kit migrate` trava indefinidamente sem
+   erro. Resolvido usando a "Session pooler" (porta 5432, IPv4) como `DIRECT_URL`.
+7. Tabelas criadas via conexão externa (drizzle-kit) não recebem os grants de
+   `SELECT`/`INSERT`/`UPDATE`/`DELETE` que o Supabase concede automaticamente
+   quando a tabela é criada pelo Studio/Dashboard — toda query falhava com
+   "permission denied" mesmo com as policies corretas. Resolvido com grants
+   explícitos (`0003_table-grants.sql`).
 
 ## Decisões de design (fechadas)
 
@@ -60,7 +68,7 @@ Nenhuma rota autenticada ou rotina de exportação abre conexão Drizzle crua vi
 - [x] `lib/supabase/server.ts` (cliente autenticado, RLS ativo)
 - [x] `lib/supabase/admin.ts` (service-role, isolado, só apagamento de conta)
 - [x] Reescrever `tests/compliance/rls-isolation.test.ts` e `cascade-deletion.test.ts` usando Supabase JS autenticado (não Drizzle/Postgres direto)
-- [ ] Validação: `db:generate`/`db:migrate` contra `DIRECT_URL`, testes de compliance passando, lint/build verdes
+- [x] Validação: `db:generate`/`db:migrate` contra `DIRECT_URL`, testes de compliance passando, lint/build verdes
 
 ## Notas de revisão
 
