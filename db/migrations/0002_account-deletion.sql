@@ -28,3 +28,13 @@ begin
   delete from profiles where id = target;
 end;
 $$;
+
+-- Postgres concede EXECUTE a PUBLIC por padrão em toda função nova, e o
+-- PostgREST expõe qualquer função do schema public como RPC — sem isto,
+-- qualquer usuário autenticado poderia chamar esta função SECURITY DEFINER
+-- com o uuid de outra pessoa e apagar a conta dela (IDOR). Só o service-role
+-- (lib/supabase/admin.ts) pode chamá-la.
+revoke execute on function public.handle_account_deletion(uuid) from public;
+revoke execute on function public.handle_account_deletion(uuid) from anon;
+revoke execute on function public.handle_account_deletion(uuid) from authenticated;
+grant execute on function public.handle_account_deletion(uuid) to service_role;
