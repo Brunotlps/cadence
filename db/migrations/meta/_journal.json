@@ -8,6 +8,13 @@
       "when": 1785714577247,
       "tag": "0000_worried_moondragon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785714714537,
+      "tag": "0001_rls-and-security-definer-functions",
+      "breakpoints": true
     }
   ]
 }
