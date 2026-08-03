@@ -57,8 +57,8 @@ Nenhuma rota autenticada ou rotina de exportação abre conexão Drizzle crua vi
 - [x] `db/schema.ts` — tabelas com PK composta em `workspace_members`, só como fonte de tipos/migrations
 - [x] Migration SQL manual: `is_workspace_member()`, RLS + policies (`transactions`, `fixed_bills`, `goals`, `workspace_members`), policy de `profiles`, `create_workspace_with_owner()`, trigger + `handle_new_user()`
 - [x] Migration `handle_account_deletion()`
-- [ ] `lib/supabase/server.ts` (cliente autenticado, RLS ativo)
-- [ ] `lib/supabase/admin.ts` (service-role, isolado, só apagamento de conta)
+- [x] `lib/supabase/server.ts` (cliente autenticado, RLS ativo)
+- [x] `lib/supabase/admin.ts` (service-role, isolado, só apagamento de conta)
 - [ ] Reescrever `tests/compliance/rls-isolation.test.ts` e `cascade-deletion.test.ts` usando Supabase JS autenticado (não Drizzle/Postgres direto)
 - [ ] Validação: `db:generate`/`db:migrate` contra `DIRECT_URL`, testes de compliance passando, lint/build verdes
 
