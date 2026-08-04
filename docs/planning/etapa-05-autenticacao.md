@@ -184,8 +184,13 @@ atualizado para refletir Server Actions como o padrão adotado para mutações d
       recuperação de senha para e-mail existente/inexistente, reset de
       senha via link de recuperação. Confirmado em vermelho (timeout em `/signup`,
       que ainda não existe) — guia as subtarefas 6–8
-- [ ] 6. `lib/auth/` — funções puras: `sign-up.ts`, `sign-in.ts`, `sign-out.ts`,
-      `request-password-reset.ts`, `update-password.ts`, `resend-confirmation.ts`
+- [x] 6. `lib/auth/` — funções puras: `sign-up.ts`, `sign-in.ts`, `sign-out.ts`,
+      `request-password-reset.ts`, `update-password.ts`, `resend-confirmation.ts`.
+      Cobertas por testes unitários com Supabase client mockado
+      (`tests/unit/auth/`), sem dependência do runtime do Next.js. Alias `@/*`
+      adicionado ao `vitest.config.mts`; paralelismo de arquivo desativado no
+      mesmo commit (flakiness pré-existente contra o Supabase free tier,
+      identificada na subtarefa 4)
 - [ ] 7. Server Actions finas em cima de `lib/auth/` (form actions das telas)
 - [ ] 8. Telas: cadastro, espera de confirmação (+ reenvio), login, recuperação
       (solicitar + redefinir), criação de workspace, logout
