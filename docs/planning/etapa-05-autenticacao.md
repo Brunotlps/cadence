@@ -175,9 +175,13 @@ atualizado para refletir Server Actions como o padrão adotado para mutações d
       redundante de `auth.getUser()`, stub `/dashboard` e stub `/login` como alvo do
       redirect — conteúdo real das telas fica para a subtarefa 8. Coberto por
       `tests/e2e/protected-route.spec.ts`
-- [ ] 5. Testes primeiro (TDD) — `tests/compliance/` e/ou E2E: fluxo completo
-      (cadastro → confirmação → workspace → login → logout), mensagens de erro
-      genéricas (sem enumeração de conta), redirect de rota protegida sem sessão
+- [x] 5. Testes primeiro (TDD) — `tests/e2e/auth-flow.spec.ts`: fluxo completo
+      (cadastro → confirmação → workspace → login → logout, usando
+      `admin.generateLink` pra simular o clique no e-mail sem depender de leitura
+      de inbox), erro genérico no cadastro com e-mail já confirmado, mesma
+      mensagem de recuperação de senha para e-mail existente/inexistente, reset de
+      senha via link de recuperação. Confirmado em vermelho (timeout em `/signup`,
+      que ainda não existe) — guia as subtarefas 6–8
 - [ ] 6. `lib/auth/` — funções puras: `sign-up.ts`, `sign-in.ts`, `sign-out.ts`,
       `request-password-reset.ts`, `update-password.ts`, `resend-confirmation.ts`
 - [ ] 7. Server Actions finas em cima de `lib/auth/` (form actions das telas)
