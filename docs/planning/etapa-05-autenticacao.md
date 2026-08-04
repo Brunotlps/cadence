@@ -160,8 +160,9 @@ atualizado para refletir Server Actions como o padrão adotado para mutações d
 - [x] 2. Migration: `revoke`/`grant` de `EXECUTE` em `create_workspace_with_owner`
       (restringe a `authenticated`) — `db/migrations/0004_restrict-create-workspace-grant.sql`,
       coberta por `tests/compliance/function-grants.test.ts`
-- [ ] 3. Nota em `docs/compliance/security-exceptions.md` sobre retenção de conta não
-      confirmada + issue no GitHub com o follow-up do job de limpeza
+- [x] 3. Nota em `docs/compliance/security-exceptions.md` sobre retenção de conta não
+      confirmada + issue no GitHub com o follow-up do job de limpeza (feito junto da
+      aprovação do plano — commit `9b2c76a`, issue #2)
 - [ ] 4. `middleware.ts` + helper de refresh de sessão (`lib/supabase/middleware.ts`),
       matcher excluindo páginas públicas de auth e assets estáticos
 - [ ] 5. Testes primeiro (TDD) — `tests/compliance/` e/ou E2E: fluxo completo
