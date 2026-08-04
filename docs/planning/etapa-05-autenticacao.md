@@ -102,6 +102,12 @@ o refresh proativo do token de sessão (necessário para a "sessão persistente"
 decisão 5) não teria onde acontecer de forma centralizada; cada página precisaria
 reimplementar a checagem, com risco de esquecimento.
 
+**Nota de execução:** o Next.js 16 (versão já usada no projeto) renomeou a convenção
+de `middleware.ts`/`export function middleware` para `proxy.ts`/`export function
+proxy` — mesma funcionalidade, nome novo. Não estava previsto no plano original;
+usar `middleware.ts` gerava aviso de depreciação no build. Implementado direto como
+`proxy.ts`, sem passar pelo nome antigo.
+
 ### 11. Usuário que nunca confirma o e-mail
 
 Sem purge automático nesta etapa. `handle_new_user` dispara em
@@ -163,8 +169,12 @@ atualizado para refletir Server Actions como o padrão adotado para mutações d
 - [x] 3. Nota em `docs/compliance/security-exceptions.md` sobre retenção de conta não
       confirmada + issue no GitHub com o follow-up do job de limpeza (feito junto da
       aprovação do plano — commit `9b2c76a`, issue #2)
-- [ ] 4. `middleware.ts` + helper de refresh de sessão (`lib/supabase/middleware.ts`),
-      matcher excluindo páginas públicas de auth e assets estáticos
+- [x] 4. `proxy.ts` (convenção Next.js 16, substitui `middleware.ts`) + helper de
+      refresh de sessão (`lib/supabase/middleware.ts`), matcher excluindo assets
+      estáticos. Layout protegido mínimo (`app/(protected)/layout.tsx`) com check
+      redundante de `auth.getUser()`, stub `/dashboard` e stub `/login` como alvo do
+      redirect — conteúdo real das telas fica para a subtarefa 8. Coberto por
+      `tests/e2e/protected-route.spec.ts`
 - [ ] 5. Testes primeiro (TDD) — `tests/compliance/` e/ou E2E: fluxo completo
       (cadastro → confirmação → workspace → login → logout), mensagens de erro
       genéricas (sem enumeração de conta), redirect de rota protegida sem sessão
@@ -173,7 +183,9 @@ atualizado para refletir Server Actions como o padrão adotado para mutações d
 - [ ] 7. Server Actions finas em cima de `lib/auth/` (form actions das telas)
 - [ ] 8. Telas: cadastro, espera de confirmação (+ reenvio), login, recuperação
       (solicitar + redefinir), criação de workspace, logout
-- [ ] 9. Layouts protegidos com check redundante de `auth.getUser()`
+- [x] 9. Layouts protegidos com check redundante de `auth.getUser()` — mecanismo já
+      criado na subtarefa 4 (`app/(protected)/layout.tsx`); novas rotas protegidas só
+      precisam viver sob esse grupo de rotas
 - [ ] 10. Validação: lint, testes, build verdes; confirmar que RLS/isolamento da
        etapa 04 continuam intactos (rodar `tests/compliance/rls-isolation.test.ts` e
        `cascade-deletion.test.ts` sem alteração de resultado)
