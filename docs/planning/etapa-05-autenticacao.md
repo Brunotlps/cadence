@@ -155,6 +155,25 @@ sem depender do runtime do Next.js. A Server Action em si é só uma casca fina 
 chama essa função e trata o retorno (redirect, erro genérico, etc). `CLAUDE.md`
 atualizado para refletir Server Actions como o padrão adotado para mutações de auth.
 
+**Nota de execução:** o review de segurança em background rodado após o commit
+inicial de `lib/auth/sign-in.ts` (subtarefa 6) sinalizou um achado real: a função
+diferenciava "e-mail não confirmado" de "credenciais inválidas" na mensagem de
+retorno. Isso é um oráculo de enumeração de conta pelo próprio formulário de
+login — um atacante descobre se um e-mail está cadastrado (e não confirmado) sem
+precisar acertar a senha, só pela mensagem que volta. A decisão 6 original só
+escopava mensagem genérica pra cadastro/recuperação; esse achado mostrou que login
+precisa do mesmo tratamento quando a distinção é "conta existe, não confirmada" vs
+"credenciais erradas". Corrigido: `signIn` agora retorna a mesma mensagem genérica
+("E-mail ou senha inválidos.") pra qualquer falha, sem sinalizar o motivo.
+
+**Nota de execução 2:** as Server Actions de confirmação/recuperação precisam de
+uma peça de infraestrutura que não estava listada como subtarefa própria: uma rota
+de callback (`app/auth/callback/route.ts`, Route Handler — o caso de uso que o
+`CLAUDE.md` já previa como "API routes onde fizer sentido") que recebe o `code`
+PKCE do link de e-mail (template padrão do Supabase, decisão 8) e troca por sessão
+via `exchangeCodeForSession`, antes de redirecionar pra próxima tela (`next` na
+query string). Implementada junto da subtarefa 7 por dependência direta.
+
 ## Subtarefas
 
 - [x] 1. Config Supabase Auth: redirect URLs (produção + `localhost`), SMTP
@@ -191,7 +210,9 @@ atualizado para refletir Server Actions como o padrão adotado para mutações d
       adicionado ao `vitest.config.mts`; paralelismo de arquivo desativado no
       mesmo commit (flakiness pré-existente contra o Supabase free tier,
       identificada na subtarefa 4)
-- [ ] 7. Server Actions finas em cima de `lib/auth/` (form actions das telas)
+- [x] 7. Server Actions finas em cima de `lib/auth/` (`lib/actions/auth.ts`) + rota
+      de callback PKCE (`app/auth/callback/route.ts`) — necessária pro link de
+      e-mail (confirmação/recuperação) completar o fluxo antes das telas existirem
 - [ ] 8. Telas: cadastro, espera de confirmação (+ reenvio), login, recuperação
       (solicitar + redefinir), criação de workspace, logout
 - [x] 9. Layouts protegidos com check redundante de `auth.getUser()` — mecanismo já
