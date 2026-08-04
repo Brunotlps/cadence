@@ -94,26 +94,43 @@ ignorados ao mexer em dados de usuário.
 
 ## Estrutura do repositório
 
+```text
 .
+├── .cadence/
+│   └── policies/
+│       └── data-handling.md
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── CLAUDE.md
-├── docs
-│ ├── compliance
-│ │ └── lgpd-mapping.md
-│ ├── legal
-│ │ ├── politica-de-privacidade.md
-│ │ └── termos-de-uso.md
-│ └── specs
-│ ├── data-model-and-deletion.md
-│ └── data-portability.md
+├── app/
+│   ├── (protected)/
+│   │   ├── dashboard/
+│   │   └── layout.tsx
+│   ├── login/
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── db/
+│   ├── migrations/
+│   └── schema.ts
+├── docs/
+│   ├── compliance/
+│   ├── legal/
+│   ├── planning/
+│   └── specs/
+├── lib/
+│   └── supabase/
 ├── package.json
 ├── playwright.config.ts
 ├── README.md
-├── tests
-│ └── compliance
-│ ├── cascade-deletion.test.ts
-│ ├── README.md
-│ └── rls-isolation.test.ts
-└── vitest.config.ts
+├── tests/
+│   ├── compliance/
+│   ├── e2e/
+│   └── integration/
+├── tsconfig.json
+└── vitest.config.mts
+```
 
 ## CI/CD
 
