@@ -35,12 +35,15 @@ test.describe.serial("fluxo de autenticação", () => {
         page.getByText(/confirme seu e-mail/i),
       ).toBeVisible();
 
-      // Login antes de confirmar não deve funcionar.
+      // Login antes de confirmar não deve funcionar — erro genérico, igual
+      // ao de credenciais erradas (diferenciar aqui seria um oráculo de
+      // enumeração pelo próprio formulário de login).
       await page.goto("/login");
       await page.getByLabel("E-mail").fill(email);
       await page.getByLabel("Senha").fill(password);
       await page.getByRole("button", { name: "Entrar" }).click();
-      await expect(page.getByText(/confirme seu e-mail/i)).toBeVisible();
+      await expect(page.getByRole("alert")).toBeVisible();
+      await expect(page.getByRole("alert")).not.toContainText(/confirme/i);
 
       // Simula o clique no link de confirmação do e-mail.
       const confirmationLink = await generateSignupConfirmationLink(

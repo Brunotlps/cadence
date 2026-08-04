@@ -1,14 +1,15 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export type SignInResult = {
-  error: string | null;
-  needsConfirmation?: boolean;
-};
+export type SignInResult = { error: string | null };
 
-// Diferenciar "e-mail não confirmado" de "credenciais inválidas" aqui não é
-// enumeração — só faz sentido tentar logar com um e-mail se você já sabe que
-// a conta existe. É a decisão 6 da etapa 05 (erro genérico) que só se aplica
-// a cadastro e recuperação de senha.
+// Mensagem genérica pra qualquer falha, incluindo e-mail não confirmado.
+// Diferenciar esse caso (como uma versão anterior deste arquivo fazia)
+// vira um oráculo de enumeração pelo próprio formulário de login: um
+// atacante descobre se um e-mail está cadastrado sem precisar acertar a
+// senha, só olhando qual mensagem volta. A decisão 6 da etapa 05 escopava
+// isso só pra cadastro/recuperação — esse caso mostrou que login também
+// precisa do mesmo tratamento quando a distinção é "conta existe, não
+// confirmada" vs "credenciais erradas".
 export async function signIn(
   supabase: SupabaseClient,
   { email, password }: { email: string; password: string },
@@ -17,13 +18,6 @@ export async function signIn(
 
   if (!error) {
     return { error: null };
-  }
-
-  if (error.code === "email_not_confirmed") {
-    return {
-      error: "Confirme seu e-mail antes de entrar.",
-      needsConfirmation: true,
-    };
   }
 
   return { error: "E-mail ou senha inválidos." };
