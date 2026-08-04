@@ -157,8 +157,9 @@ atualizado para refletir Server Actions como o padrão adotado para mutações d
       ("Confirm sign up" e "Reset password" na seção Authentication de
       Emails → Templates — core do fluxo, sem toggle, sempre ativos; validado
       na prática recebendo o e-mail de confirmação durante o teste de SMTP)
-- [ ] 2. Migration: `revoke`/`grant` de `EXECUTE` em `create_workspace_with_owner`
-      (restringe a `authenticated`)
+- [x] 2. Migration: `revoke`/`grant` de `EXECUTE` em `create_workspace_with_owner`
+      (restringe a `authenticated`) — `db/migrations/0004_restrict-create-workspace-grant.sql`,
+      coberta por `tests/compliance/function-grants.test.ts`
 - [ ] 3. Nota em `docs/compliance/security-exceptions.md` sobre retenção de conta não
       confirmada + issue no GitHub com o follow-up do job de limpeza
 - [ ] 4. `middleware.ts` + helper de refresh de sessão (`lib/supabase/middleware.ts`),
