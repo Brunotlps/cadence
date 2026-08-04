@@ -49,6 +49,11 @@ export async function createConfirmedTestUser(prefix: string) {
   return { id: data.user.id, email, password };
 }
 
+// process.env.PLAYWRIGHT_BASE_URL, mesmo default de playwright.config.ts —
+// sem isso, o link gerado usaria a Site URL de produção configurada no
+// Supabase, não o servidor local que o Playwright sobe pra rodar os testes.
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
+
 // Gera o link de confirmação de cadastro sem enviar e-mail de verdade —
 // permite testar o fluxo real de confirmação (clicar no link) sem depender
 // de infraestrutura de leitura de e-mail no teste.
@@ -61,6 +66,9 @@ export async function generateSignupConfirmationLink(
     type: "signup",
     email,
     password,
+    options: {
+      redirectTo: `${BASE_URL}/auth/callback?next=/onboarding/workspace`,
+    },
   });
   if (error) throw error;
   return data.properties.action_link;
@@ -71,6 +79,9 @@ export async function generateRecoveryLink(email: string) {
   const { data, error } = await admin.auth.admin.generateLink({
     type: "recovery",
     email,
+    options: {
+      redirectTo: `${BASE_URL}/auth/callback?next=/reset-password`,
+    },
   });
   if (error) throw error;
   return data.properties.action_link;
