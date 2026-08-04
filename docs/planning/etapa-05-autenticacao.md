@@ -178,8 +178,10 @@ atualizado para refletir Server Actions como o padrão adotado para mutações d
 - [x] 5. Testes primeiro (TDD) — `tests/e2e/auth-flow.spec.ts`: fluxo completo
       (cadastro → confirmação → workspace → login → logout, usando
       `admin.generateLink` pra simular o clique no e-mail sem depender de leitura
-      de inbox), erro genérico no cadastro com e-mail já confirmado, mesma
-      mensagem de recuperação de senha para e-mail existente/inexistente, reset de
+      de inbox), cadastro com e-mail já confirmado indistinguível de um cadastro
+      novo (sem erro visível — o Supabase já responde sem erro nesse caso; um erro
+      só nesse caminho seria o próprio sinal de enumeração), mesma mensagem de
+      recuperação de senha para e-mail existente/inexistente, reset de
       senha via link de recuperação. Confirmado em vermelho (timeout em `/signup`,
       que ainda não existe) — guia as subtarefas 6–8
 - [ ] 6. `lib/auth/` — funções puras: `sign-up.ts`, `sign-in.ts`, `sign-out.ts`,

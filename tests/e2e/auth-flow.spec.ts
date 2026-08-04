@@ -72,9 +72,14 @@ test.describe.serial("fluxo de autenticação", () => {
     }
   });
 
-  test("cadastro com e-mail já confirmado mostra erro genérico", async ({
+  test("cadastro com e-mail já confirmado é indistinguível de um cadastro novo", async ({
     page,
   }) => {
+    // O Supabase já trata isso sem erro por padrão (retorna sucesso com
+    // identities: [], sem reenviar confirmação) — a tela precisa refletir
+    // esse comportamento e não introduzir um sinal diferenciável próprio
+    // (ex: um erro visível só nesse caso). Um alerta de erro aqui já seria
+    // enumeração, mesmo que o texto do erro não mencione o motivo.
     const existing = await createConfirmedTestUser("signup-dup");
 
     try {
@@ -83,9 +88,11 @@ test.describe.serial("fluxo de autenticação", () => {
       await page.getByLabel("Senha").fill(crypto.randomUUID());
       await page.getByRole("button", { name: "Criar conta" }).click();
 
-      const errorText = page.getByRole("alert");
-      await expect(errorText).toBeVisible();
-      await expect(errorText).not.toContainText(/já (existe|cadastrado)/i);
+      await expect(page).toHaveURL(/\/confirm-email/);
+      await expect(page.getByRole("alert")).toHaveCount(0);
+      await expect(
+        page.getByText(/confirme seu e-mail/i),
+      ).toBeVisible();
     } finally {
       await deleteTestAccount(existing.id);
     }
