@@ -157,7 +157,12 @@ test.describe.serial("fluxo de autenticação", () => {
       await page.getByLabel("E-mail").fill(user.email);
       await page.getByLabel("Senha").fill(newPassword);
       await page.getByRole("button", { name: "Entrar" }).click();
-      await expect(page).toHaveURL(/\/dashboard/);
+
+      // Este usuário nunca passou pelo onboarding (criado direto via admin
+      // API, sem workspace) — o login com a senha nova funcionou é o que o
+      // teste prova; o destino correto pra alguém sem workspace é a tela de
+      // criação, não o dashboard (decisão 4).
+      await expect(page).toHaveURL(/\/onboarding\/workspace/);
     } finally {
       await deleteTestAccount(user.id);
     }
