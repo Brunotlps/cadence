@@ -213,6 +213,15 @@ não está setada — caso de dev/test local, onde a porta varia e não há expo
 é puramente sobre não confiar em entrada do cliente pra montar links de e-mail).
 `APP_URL` configurada em produção (Vercel, só ambiente Production) e redeploy feito.
 
+**Correção de acompanhamento:** a checagem original era só `if (process.env.APP_URL)`
+— um `APP_URL` esquecido em algum ambiente (drift de config, um novo alvo de deploy)
+reabriria a mesma falha pelo próprio fallback, em silêncio. Trocado por checagem de
+`NODE_ENV === "production"`: em produção, a ausência de `APP_URL` agora derruba a
+Server Action (`throw`) em vez de usar o header. Fallback pro header só existe fora
+de produção. Validado rodando `next start` localmente sem `APP_URL` setada — a
+Server Action falha com 500 em vez de aceitar o header, confirmando que não há mais
+porta lateral.
+
 **Nota de execução 5:** o review de segurança em background sinalizou um achado
 adicional, já na subtarefa 8: `signUpAction` redirecionava pra
 `/confirm-email?email=...`, só pra pré-preencher o formulário de reenvio. E-mail é

@@ -14,14 +14,19 @@ import { resendConfirmation } from "@/lib/auth/resend-confirmation";
 // resolvem a origin da requisição e traduzem o resultado em redirect ou erro
 // pra tela chamar. Nenhuma regra de negócio mora aqui.
 //
-// Em produção, o header Host é entrada não confiável (pode ser forjado pelo
-// cliente) e vai direto pro link de confirmação/recuperação enviado por
-// e-mail — usá-lo sem validação permite um ataque de host header injection
-// (e-mail legítimo do Cadence com link apontando pra domínio do atacante).
-// Por isso confiamos em APP_URL, fixado no ambiente de deploy, e só caímos
-// pro header em dev/test, onde a porta local varia e não há risco real.
+// O header Host é entrada não confiável (pode ser forjado pelo cliente) e vai
+// direto pro link de confirmação/recuperação enviado por e-mail — usá-lo sem
+// validação permite host header injection (e-mail legítimo do Cadence com
+// link apontando pro domínio do atacante). Em produção, exigimos APP_URL
+// (fixada no ambiente de deploy) e nunca caímos pro header — um `APP_URL`
+// esquecido derruba a Server Action em vez de reabrir a falha em silêncio.
+// O fallback pro header só existe fora de produção (dev/test local, onde a
+// porta varia e não há exposição real).
 async function requestOrigin() {
-  if (process.env.APP_URL) {
+  if (process.env.NODE_ENV === "production") {
+    if (!process.env.APP_URL) {
+      throw new Error("APP_URL precisa estar configurada em produção.");
+    }
     return process.env.APP_URL;
   }
 
