@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Rotas que exigem sessão. Comparado por prefixo contra o pathname.
-const PROTECTED_PATHS = ["/dashboard"];
+const PROTECTED_PATHS = ["/dashboard", "/onboarding"];
 
 function isProtectedPath(pathname: string) {
   return PROTECTED_PATHS.some(

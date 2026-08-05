@@ -2,16 +2,16 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { signInAction, type SignInState } from "@/lib/actions/auth";
+import { signUpAction, type SignUpState } from "@/lib/actions/auth";
 
-const initialState: SignInState = { error: null };
+const initialState: SignUpState = { error: null };
 
-export default function LoginPage() {
-  const [state, formAction, pending] = useActionState(signInAction, initialState);
+export default function SignUpPage() {
+  const [state, formAction, pending] = useActionState(signUpAction, initialState);
 
   return (
     <main>
-      <h1>Entrar</h1>
+      <h1>Criar conta</h1>
       <form action={formAction}>
         <div>
           <label htmlFor="email">E-mail</label>
@@ -24,19 +24,16 @@ export default function LoginPage() {
             name="password"
             type="password"
             required
-            autoComplete="current-password"
+            autoComplete="new-password"
           />
         </div>
         {state.error && <p role="alert">{state.error}</p>}
         <button type="submit" disabled={pending}>
-          Entrar
+          Criar conta
         </button>
       </form>
       <p>
-        <Link href="/forgot-password">Esqueci minha senha</Link>
-      </p>
-      <p>
-        Não tem conta? <Link href="/signup">Criar conta</Link>
+        Já tem conta? <Link href="/login">Entrar</Link>
       </p>
     </main>
   );
