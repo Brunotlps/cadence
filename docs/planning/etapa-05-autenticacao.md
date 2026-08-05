@@ -210,9 +210,16 @@ deploy, documentada em `.env.example`), só caindo pro header `Host` quando `APP
 não está setada — caso de dev/test local, onde a porta varia e não há exposição real
 (ver `.cadence/policies/data-handling.md`; sem coleta de dado sensível envolvida,
 é puramente sobre não confiar em entrada do cliente pra montar links de e-mail).
-**Pendência:** configurar `APP_URL` nas variáveis de ambiente de produção (Vercel)
-antes do próximo deploy — sem ela, o fallback pro header ainda funciona (evita quebra),
-mas reabre a superfície que essa correção fecha.
+`APP_URL` configurada em produção (Vercel, só ambiente Production) e redeploy feito.
+
+**Nota de execução 5:** o review de segurança em background sinalizou um achado
+adicional, já na subtarefa 8: `signUpAction` redirecionava pra
+`/confirm-email?email=...`, só pra pré-preencher o formulário de reenvio. E-mail é
+dado pessoal (LGPD) e URL é um lugar mais exposto do que o necessário pra ele —
+aparece em log de acesso do host/CDN, histórico do navegador e cabeçalho `Referer`
+de qualquer recurso externo que a página carregasse. Corrigido: o redirect volta a
+ser só `/confirm-email`, sem query string; o formulário de reenvio agora pede o
+e-mail de novo em vez de tentar pré-preencher.
 
 ## Subtarefas
 
