@@ -33,6 +33,24 @@ guiada do primeiro workspace. É a dependência de toda tela subsequente.
 8. **Templates de e-mail:** os padrões do Supabase por enquanto, sem customização
    visual. Fica registrado como possível item de polimento futuro (fora do MVP).
 
+   **Emenda (subtarefa 8):** "sem customização visual" não previa que o link
+   embutido no template padrão (`{{ .ConfirmationURL }}`) aponta pro endpoint
+   hospedado do próprio Supabase (`/auth/v1/verify`), que devolve a sessão no
+   fragmento da URL (fluxo implícito) — nosso `/auth/callback` espera um parâmetro
+   de query (`code` ou `token_hash`), nunca recebido nesse caso, porque fragmento
+   de URL não é enviado ao servidor. Sem alteração, todo link de confirmação real
+   cairia em `/login` sem estabelecer sessão — não é um problema de teste, quebra
+   pra usuário de verdade. Corrigido trocando só o `href` dos templates "Confirm
+   signup" e "Reset password" (visual inalterado) de `{{ .ConfirmationURL }}` para
+   `{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=signup` (e `type=recovery`
+   no de reset) — padrão recomendado pela própria Supabase pra apps SSR. O código
+   trocou `exchangeCodeForSession` por `verifyOtp({ type, token_hash })` como
+   caminho principal em `app/auth/callback/route.ts`, mantendo `code` +
+   `exchangeCodeForSession` como alternativa (fluxos OAuth/SSO, fora de escopo
+   nesta etapa). Validado com e-mail real (subtarefa 8) e com
+   `tests/e2e/auth-flow.spec.ts` (helper monta o link com `token_hash` direto,
+   sem depender do `action_link` do Supabase).
+
 ## Gaps identificados na spec e decisões técnicas propostas
 
 A spec fechada deixou 4 pontos deliberadamente em aberto para este plano. Resolvidos
@@ -235,8 +253,20 @@ mas reabre a superfície que essa correção fecha.
 - [x] 7. Server Actions finas em cima de `lib/auth/` (`lib/actions/auth.ts`) + rota
       de callback PKCE (`app/auth/callback/route.ts`) — necessária pro link de
       e-mail (confirmação/recuperação) completar o fluxo antes das telas existirem
-- [ ] 8. Telas: cadastro, espera de confirmação (+ reenvio), login, recuperação
-      (solicitar + redefinir), criação de workspace, logout
+- [x] 8. Telas: cadastro (`/signup`), espera de confirmação + reenvio
+      (`/confirm-email`), login (`/login`), recuperação (`/forgot-password`,
+      `/reset-password`), criação de workspace (`/(protected)/onboarding/workspace`),
+      logout (form em `/(protected)/dashboard`). Server Actions adaptadas pra
+      `useActionState` (assinatura `(prevState, formData)`); `lib/workspace/`
+      espelha o padrão de `lib/auth/` (função pura + Server Action fina).
+      `tests/e2e/auth-flow.spec.ts` e `protected-route.spec.ts` verdes — achados
+      durante a subtarefa, registrados aqui e na emenda da decisão 8: link de
+      confirmação do template padrão quebrava sessão (ver decisão 8); conta Resend
+      em modo de teste rejeita destinatários fora da whitelist própria (`@example.com`
+      não é aceito) — testes ajustados pra usar `delivered@resend.dev` no caminho que
+      dispara envio real; `getByRole("alert")` nos testes precisou ser escopado a
+      `<main>` porque o App Router injeta seu próprio elemento `role="alert"`
+      (route announcer de acessibilidade) fora dele em toda navegação
 - [x] 9. Layouts protegidos com check redundante de `auth.getUser()` — mecanismo já
       criado na subtarefa 4 (`app/(protected)/layout.tsx`); novas rotas protegidas só
       precisam viver sob esse grupo de rotas
