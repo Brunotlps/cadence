@@ -31,7 +31,15 @@ async function requestOrigin() {
   return `${proto}://${host}`;
 }
 
-export async function signUpAction(formData: FormData) {
+// Assinatura (prevState, formData) em vez de só (formData): as telas usam
+// useActionState (React 19) pra exibir erro/mensagem sem JS extra de estado
+// local.
+export type SignUpState = { error: string | null };
+
+export async function signUpAction(
+  _prevState: SignUpState,
+  formData: FormData,
+): Promise<SignUpState> {
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
   const supabase = await createClient();
@@ -47,10 +55,15 @@ export async function signUpAction(formData: FormData) {
     return { error };
   }
 
-  redirect("/confirm-email");
+  redirect(`/confirm-email?email=${encodeURIComponent(email)}`);
 }
 
-export async function signInAction(formData: FormData) {
+export type SignInState = { error: string | null };
+
+export async function signInAction(
+  _prevState: SignInState,
+  formData: FormData,
+): Promise<SignInState> {
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
   const supabase = await createClient();
@@ -69,7 +82,12 @@ export async function signOutAction() {
   redirect("/login");
 }
 
-export async function requestPasswordResetAction(formData: FormData) {
+export type RequestPasswordResetState = { message: string | null };
+
+export async function requestPasswordResetAction(
+  _prevState: RequestPasswordResetState,
+  formData: FormData,
+): Promise<RequestPasswordResetState> {
   const email = String(formData.get("email"));
   const supabase = await createClient();
   const origin = await requestOrigin();
@@ -79,7 +97,12 @@ export async function requestPasswordResetAction(formData: FormData) {
   });
 }
 
-export async function updatePasswordAction(formData: FormData) {
+export type UpdatePasswordState = { error: string | null };
+
+export async function updatePasswordAction(
+  _prevState: UpdatePasswordState,
+  formData: FormData,
+): Promise<UpdatePasswordState> {
   const newPassword = String(formData.get("password"));
   const supabase = await createClient();
 
@@ -91,7 +114,12 @@ export async function updatePasswordAction(formData: FormData) {
   redirect("/login");
 }
 
-export async function resendConfirmationAction(formData: FormData) {
+export type ResendConfirmationState = { message: string | null };
+
+export async function resendConfirmationAction(
+  _prevState: ResendConfirmationState,
+  formData: FormData,
+): Promise<ResendConfirmationState> {
   const email = String(formData.get("email"));
   const supabase = await createClient();
   const origin = await requestOrigin();
