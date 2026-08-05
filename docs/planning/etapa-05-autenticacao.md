@@ -174,6 +174,28 @@ PKCE do link de e-mail (template padrão do Supabase, decisão 8) e troca por se
 via `exchangeCodeForSession`, antes de redirecionar pra próxima tela (`next` na
 query string). Implementada junto da subtarefa 7 por dependência direta.
 
+**Nota de execução 3:** o mesmo review de segurança sinalizou um segundo achado em
+`app/auth/callback/route.ts`: o parâmetro `next` da query string ia direto pro
+`NextResponse.redirect` sem validação, permitindo open redirect (ex:
+`/auth/callback?code=...&next=https://evil.com` — o domínio do Cadence dá
+credibilidade a um destino malicioso). Corrigido com `safeNextPath()`: só aceita
+valores que começam com `/` e não `//`, caindo pra `/dashboard` caso contrário.
+
+**Nota de execução 4:** um terceiro achado, em `lib/actions/auth.ts`: `requestOrigin()`
+montava a origin dos links de confirmação/recuperação a partir do header `Host` da
+requisição, sem validação — um header forjável pelo cliente. Um atacante poderia
+disparar `resendConfirmationAction`/`requestPasswordResetAction` com um `Host`
+arbitrário e receber um e-mail legítimo do Cadence (SMTP e template reais) contendo
+um link de confirmação/recuperação apontando pro domínio dele. Corrigido: em
+produção, `requestOrigin()` agora usa `APP_URL` (variável de ambiente fixada no
+deploy, documentada em `.env.example`), só caindo pro header `Host` quando `APP_URL`
+não está setada — caso de dev/test local, onde a porta varia e não há exposição real
+(ver `.cadence/policies/data-handling.md`; sem coleta de dado sensível envolvida,
+é puramente sobre não confiar em entrada do cliente pra montar links de e-mail).
+**Pendência:** configurar `APP_URL` nas variáveis de ambiente de produção (Vercel)
+antes do próximo deploy — sem ela, o fallback pro header ainda funciona (evita quebra),
+mas reabre a superfície que essa correção fecha.
+
 ## Subtarefas
 
 - [x] 1. Config Supabase Auth: redirect URLs (produção + `localhost`), SMTP
