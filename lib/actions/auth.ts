@@ -13,7 +13,18 @@ import { resendConfirmation } from "@/lib/auth/resend-confirmation";
 // Cascas finas sobre lib/auth/* (decisão 13, etapa 05): só leem FormData,
 // resolvem a origin da requisição e traduzem o resultado em redirect ou erro
 // pra tela chamar. Nenhuma regra de negócio mora aqui.
+//
+// Em produção, o header Host é entrada não confiável (pode ser forjado pelo
+// cliente) e vai direto pro link de confirmação/recuperação enviado por
+// e-mail — usá-lo sem validação permite um ataque de host header injection
+// (e-mail legítimo do Cadence com link apontando pra domínio do atacante).
+// Por isso confiamos em APP_URL, fixado no ambiente de deploy, e só caímos
+// pro header em dev/test, onde a porta local varia e não há risco real.
 async function requestOrigin() {
+  if (process.env.APP_URL) {
+    return process.env.APP_URL;
+  }
+
   const h = await headers();
   const proto = h.get("x-forwarded-proto") ?? "http";
   const host = h.get("host");
