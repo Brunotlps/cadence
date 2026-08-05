@@ -1,7 +1,6 @@
 "use client";
 
-import { Suspense, useActionState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useActionState } from "react";
 import {
   resendConfirmationAction,
   type ResendConfirmationState,
@@ -9,38 +8,29 @@ import {
 
 const initialState: ResendConfirmationState = { message: null };
 
-function ResendForm() {
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email") ?? "";
+export default function ConfirmEmailPage() {
   const [state, formAction, pending] = useActionState(
     resendConfirmationAction,
     initialState,
   );
 
   return (
-    <>
+    <main>
+      <h1>Confirme seu e-mail</h1>
       <p>
-        Enviamos um link de confirmação para {email || "o e-mail informado"}.
+        Enviamos um link de confirmação para o e-mail informado no cadastro.
         Clique no link para ativar sua conta.
       </p>
       <form action={formAction}>
-        <input type="hidden" name="email" value={email} />
-        <button type="submit" disabled={pending || !email}>
+        <div>
+          <label htmlFor="email">Não recebeu? Informe o e-mail pra reenviar</label>
+          <input id="email" name="email" type="email" required autoComplete="email" />
+        </div>
+        <button type="submit" disabled={pending}>
           Reenviar e-mail
         </button>
         {state.message && <p role="status">{state.message}</p>}
       </form>
-    </>
-  );
-}
-
-export default function ConfirmEmailPage() {
-  return (
-    <main>
-      <h1>Confirme seu e-mail</h1>
-      <Suspense fallback={null}>
-        <ResendForm />
-      </Suspense>
     </main>
   );
 }

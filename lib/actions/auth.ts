@@ -55,7 +55,7 @@ export async function signUpAction(
     return { error };
   }
 
-  redirect(`/confirm-email?email=${encodeURIComponent(email)}`);
+  redirect("/confirm-email");
 }
 
 export type SignInState = { error: string | null };
