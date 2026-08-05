@@ -1,7 +1,8 @@
 # Etapa 05 — Autenticação (email/senha)
 
-**Status:** em andamento
+**Status:** concluído
 **Aberto em:** 2026-08-04
+**Concluído em:** 2026-08-05
 **Depende de:** Etapa 04 (schema, RLS, trigger `handle_new_user`, `create_workspace_with_owner`)
 
 ## Objetivo
@@ -277,9 +278,12 @@ e-mail de novo em vez de tentar pré-preencher.
 - [x] 9. Layouts protegidos com check redundante de `auth.getUser()` — mecanismo já
       criado na subtarefa 4 (`app/(protected)/layout.tsx`); novas rotas protegidas só
       precisam viver sob esse grupo de rotas
-- [ ] 10. Validação: lint, testes, build verdes; confirmar que RLS/isolamento da
-       etapa 04 continuam intactos (rodar `tests/compliance/rls-isolation.test.ts` e
-       `cascade-deletion.test.ts` sem alteração de resultado)
+- [x] 10. Validação: `vitest run` (24 testes, unitários + compliance), lint e build
+       verdes; `tests/compliance/rls-isolation.test.ts`, `cascade-deletion.test.ts` e
+       `function-grants.test.ts` sem alteração de resultado (RLS/isolamento da etapa
+       04 intactos). Suíte E2E completa (`tests/e2e/`, 6 testes incluindo o smoke da
+       etapa 04) verde contra o projeto Supabase de teste, com e-mail de confirmação
+       real validado manualmente ponta a ponta
 
 ## Notas
 

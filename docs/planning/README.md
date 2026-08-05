@@ -16,4 +16,4 @@ como histórico depois.
 | -------------------------------- | ----------------------------------------------------------- | --------- |
 | [01–03](../../CLAUDE.md)         | Bootstrap: scaffold Next.js, testes, CI, deploy Hello World | concluído |
 | [04](./etapa-04-schema-rls.md)   | Schema Drizzle + Row-Level Security                         | concluído |
-| [05](./etapa-05-autenticacao.md) | Autenticação (email/senha)                                  | em andamento |
+| [05](./etapa-05-autenticacao.md) | Autenticação (email/senha)                                  | concluído |
