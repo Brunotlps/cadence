@@ -20,7 +20,13 @@ test.describe.serial("fluxo de autenticação", () => {
   test("cadastro, confirmação, criação de workspace, login e logout", async ({
     page,
   }) => {
-    const email = `auth-flow-${crypto.randomUUID()}@example.com`;
+    // O cadastro passa pelo formulário real (/signup), então dispara um
+    // envio de e-mail de verdade via signUp() — diferente do link de
+    // confirmação abaixo, que usa admin.generateLink e não envia nada. Conta
+    // Resend ainda em modo de teste (decisão 14): só aceita esse endereço
+    // dedicado como destinatário; um e-mail @example.com qualquer é
+    // rejeitado com 550 antes de chegar no GoTrue.
+    const email = "delivered@resend.dev";
     const password = crypto.randomUUID();
 
     try {
@@ -42,8 +48,12 @@ test.describe.serial("fluxo de autenticação", () => {
       await page.getByLabel("E-mail").fill(email);
       await page.getByLabel("Senha").fill(password);
       await page.getByRole("button", { name: "Entrar" }).click();
-      await expect(page.getByRole("alert")).toBeVisible();
-      await expect(page.getByRole("alert")).not.toContainText(/confirme/i);
+      // Escopado a <main>: o App Router injeta seu próprio elemento
+      // role="alert" (route announcer de acessibilidade) fora do <main> em
+      // toda navegação, que não tem relação com erro nenhum da aplicação.
+      const loginAlert = page.locator("main").getByRole("alert");
+      await expect(loginAlert).toBeVisible();
+      await expect(loginAlert).not.toContainText(/confirme/i);
 
       // Simula o clique no link de confirmação do e-mail.
       const confirmationLink = await generateSignupConfirmationLink(
@@ -92,7 +102,7 @@ test.describe.serial("fluxo de autenticação", () => {
       await page.getByRole("button", { name: "Criar conta" }).click();
 
       await expect(page).toHaveURL(/\/confirm-email/);
-      await expect(page.getByRole("alert")).toHaveCount(0);
+      await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
       await expect(
         page.getByText(/confirme seu e-mail/i),
       ).toBeVisible();

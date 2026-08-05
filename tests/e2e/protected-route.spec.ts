@@ -9,5 +9,5 @@ test("acessar rota protegida sem sessão redireciona para /login", async ({
   await page.goto("/dashboard");
 
   await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByText("Login")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Entrar" })).toBeVisible();
 });

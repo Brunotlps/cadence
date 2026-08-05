@@ -57,6 +57,13 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 // Gera o link de confirmação de cadastro sem enviar e-mail de verdade —
 // permite testar o fluxo real de confirmação (clicar no link) sem depender
 // de infraestrutura de leitura de e-mail no teste.
+//
+// Monta o link direto pra nossa própria rota de callback com token_hash+type
+// em vez de usar `action_link` (que aponta pro endpoint hospedado do
+// Supabase, `/auth/v1/verify` — devolve a sessão no fragmento da URL, fluxo
+// implícito, que nosso callback não processa). Mesma URL que os templates de
+// e-mail customizados (decisão 8) geram de verdade — action_link e
+// hashed_token vêm da mesma chamada, só apontam pra lugares diferentes.
 export async function generateSignupConfirmationLink(
   email: string,
   password: string,
@@ -71,7 +78,7 @@ export async function generateSignupConfirmationLink(
     },
   });
   if (error) throw error;
-  return data.properties.action_link;
+  return `${BASE_URL}/auth/callback?token_hash=${data.properties.hashed_token}&type=signup&next=/onboarding/workspace`;
 }
 
 export async function generateRecoveryLink(email: string) {
@@ -84,5 +91,5 @@ export async function generateRecoveryLink(email: string) {
     },
   });
   if (error) throw error;
-  return data.properties.action_link;
+  return `${BASE_URL}/auth/callback?token_hash=${data.properties.hashed_token}&type=recovery&next=/reset-password`;
 }
