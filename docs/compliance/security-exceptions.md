@@ -34,6 +34,28 @@ exceção for aceita, resolvida ou expirar.
   compatível com `eslint` 10.x, ou se o comando de lint passar a rodar sobre input
   não confiável (não é o caso).
 
+## Retenção indefinida de conta não confirmada (etapa 05 — autenticação)
+
+- **O que é:** `handle_new_user()` dispara em `AFTER INSERT on auth.users`, ou seja,
+  roda no momento do cadastro, antes de qualquer confirmação de e-mail. Um usuário
+  que se cadastra e nunca confirma o e-mail deixa uma linha em `auth.users` (não
+  confirmada) e uma linha correspondente em `public.profiles` no banco
+  indefinidamente, sem workspace associado (a criação do workspace só acontece
+  depois da confirmação, por decisão de produto da etapa 05).
+- **Por que aceitamos:** os dados retidos são mínimos (e-mail, hash de senha gerido
+  pelo Supabase Auth, nome de exibição opcional) — já o mínimo necessário por design,
+  não há dado financeiro nem dado sensível envolvido. Implementar um job de limpeza
+  automática (cron/Edge Function) é a primeira peça de infraestrutura agendada do
+  projeto; fora do escopo da etapa 05, que foca no fluxo síncrono de auth.
+- **Tensão reconhecida:** retenção indefinida de conta não confirmada tensiona o
+  princípio de minimização/necessidade (LGPD art. 6º). Não é uma vulnerabilidade de
+  segurança — é uma lacuna de storage limitation, registrada aqui pelo mesmo padrão
+  usado para riscos aceitos conscientemente.
+- **Gatilho para reavaliar:** antes de abrir cadastro público (hoje fora de escopo do
+  MVP, ver `CLAUDE.md`), ou se o volume de contas não confirmadas crescer a ponto de
+  ser operacionalmente relevante. Follow-up rastreado na issue do GitHub referenciada
+  em `docs/planning/etapa-05-autenticacao.md`.
+
 ## postcss e sharp (via next) — resolvidos via override, não são mais exceções ativas
 
 - Ambos eram dependências transitivas de `next` (`postcss@8.4.31` e `sharp@0.34.5`),

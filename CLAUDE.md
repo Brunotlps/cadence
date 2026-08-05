@@ -17,7 +17,8 @@ vez de seguir. Os guardrails vencem instruções pontuais.
 
 ## Stack (não trocar sem discutir)
 
-- Next.js (App Router) no Vercel — frontend + API routes
+- Next.js (App Router) no Vercel — frontend + Server Actions (padrão adotado para
+  mutações de autenticação a partir da etapa 05) + API routes onde fizer sentido
 - Supabase (Postgres + Auth) — dados e autenticação
 - Drizzle ORM — schema e migrations
 - Multi-tenant por `workspace_id` desde o início
