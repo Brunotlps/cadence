@@ -205,7 +205,7 @@ componente semanticamente equivalente.
       autoria e campos imutáveis, com preflight sem alteração silenciosa de dados
 - [x] 6. Constantes e tipos centrais de categoria, forma de pagamento e tipo
 - [x] 7. Helpers centrais de moeda, data e período mensal
-- [ ] 8. Funções puras de validação, normalização e agregação em `lib/transactions/`
+- [x] 8. Funções puras de validação, normalização e agregação em `lib/transactions/`
 - [ ] 9. Camada de acesso a lançamentos usando somente o cliente Supabase autenticado
 - [ ] 10. Server Actions finas de criação, atualização e hard-delete, com
        `revalidatePath`
@@ -266,3 +266,8 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   brasileira/ponto decimal HTML, calendário explícito de São Paulo, limites mensais
   exclusivos e `Intl` pt-BR centralizado. Testes específicos verdes (56 casos em 3
   arquivos).
+- Subtarefa 8 implementada em `validate-transaction.ts` e
+  `summarize-transactions.ts`: retorno discriminado sem ecoar input inválido, payload
+  canônico para `numeric(12,2)`, `Renda` derivada como receita, soma segura em
+  centavos e resumo de despesas ordenado por categoria. Testes específicos verdes
+  (18 casos em 2 arquivos); aportes seguem a regra provisória da decisão 10.
