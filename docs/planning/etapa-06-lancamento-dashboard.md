@@ -1,8 +1,9 @@
 # Etapa 06 — Lançamento de despesas + Dashboard
 
-**Status:** em andamento
+**Status:** concluído
 **Aberto em:** 2026-08-05
 **Plano aprovado em:** 2026-08-06
+**Concluído em:** 2026-08-06
 **Depende de:** Etapa 04 (schema), Etapa 05 (autenticação, sessão, workspace)
 
 ## Objetivo
@@ -217,7 +218,7 @@ componente semanticamente equivalente.
 - [x] 14. Layout responsivo, estados vazios e falhas genéricas
 - [x] 15. Documentação do modelo e portabilidade incluindo `payment_method` e códigos
        persistidos
-- [ ] 16. Validação final: migration no ambiente de teste, compliance, unitários, E2E,
+- [x] 16. Validação final: migration no ambiente de teste, compliance, unitários, E2E,
        lint e build verdes
 
 ## Estratégia de commits
@@ -329,3 +330,10 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   tombstone, lixeira, cópia residual ou service-role. `lgpd-mapping.md` e os logs de
   segurança foram revisados e já cobriam finalidade financeira, RLS e achados da
   Etapa 06, sem necessidade de alteração.
+- Subtarefa 16 concluída com migrations confirmadas no Supabase de teste, compliance
+  27/27, Vitest completo 167/167 em 24 arquivos e Playwright 11/11 sem skips. A
+  primeira execução E2E revelou que o runner não carregava `.env.local`: quatro testes
+  de autenticação eram pulados enquanto o spec do Dashboard carregava credenciais
+  isoladamente. O setup foi centralizado em `playwright.config.ts` e a repetição
+  executou todos os fluxos. Lint terminou sem warnings, TypeScript e build de produção
+  passaram e `npm audit --omit=dev` retornou zero vulnerabilidades.
