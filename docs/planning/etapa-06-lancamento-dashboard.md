@@ -203,7 +203,7 @@ componente semanticamente equivalente.
       troca de mês, edição, confirmação/exclusão e revalidação dos totais
 - [x] 5. `db/schema.ts` + migration de `payment_method`, constraints, índice, policy de
       autoria e campos imutáveis, com preflight sem alteração silenciosa de dados
-- [ ] 6. Constantes e tipos centrais de categoria, forma de pagamento e tipo
+- [x] 6. Constantes e tipos centrais de categoria, forma de pagamento e tipo
 - [ ] 7. Helpers centrais de moeda, data e período mensal
 - [ ] 8. Funções puras de validação, normalização e agregação em `lib/transactions/`
 - [ ] 9. Camada de acesso a lançamentos usando somente o cliente Supabase autenticado
@@ -257,3 +257,7 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   reescrever migration já aplicada) por `0006_tan_scalphunter.sql`, exigindo que a
   relação `kind/category` seja explicitamente verdadeira. Migrations aplicadas no
   Supabase de teste e toda a pasta `tests/compliance` verde (27 testes em 4 arquivos).
+- Subtarefa 6 implementada em `lib/transactions/categories.ts`, `kinds.ts` e
+  `payment-methods.ts`, mantendo uma única fonte tipada para os mesmos códigos das
+  constraints. Testes específicos verdes (16 casos em 3 arquivos), incluindo a
+  derivação exclusiva de `income` para `renda`.
