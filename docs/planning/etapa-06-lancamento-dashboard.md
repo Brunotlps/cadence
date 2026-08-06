@@ -197,9 +197,9 @@ componente semanticamente equivalente.
 - [x] 1. Registrar o plano aprovado neste documento, antes de escrever código
 - [x] 2. Testes unitários primeiro (TDD): categorias, parser monetário, data civil,
       validação, derivação de `kind`, saldo e agregação por categoria
-- [ ] 3. Testes de compliance primeiro: autoria forjada no insert, mutação de autoria/
+- [x] 3. Testes de compliance primeiro: autoria forjada no insert, mutação de autoria/
       workspace, CRUD cruzado, constraints e hard-delete real
-- [ ] 4. E2E primeiro: estado vazio, criação de despesa/receita, detalhes opcionais,
+- [x] 4. E2E primeiro: estado vazio, criação de despesa/receita, detalhes opcionais,
       troca de mês, edição, confirmação/exclusão e revalidação dos totais
 - [ ] 5. `db/schema.ts` + migration de `payment_method`, constraints, índice, policy de
       autoria e campos imutáveis, com preflight sem alteração silenciosa de dados
@@ -239,3 +239,13 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
 - Subtarefa 2 confirmada em vermelho com
   `npx vitest run tests/unit/transactions`: cinco suítes falham somente porque os
   módulos `lib/transactions/*` ainda não existem, antes de qualquer implementação.
+- Subtarefa 3 confirmada em vermelho contra o Supabase de teste com
+  `npx vitest run tests/compliance/transaction-integrity.test.ts`: 18 casos, 4 já
+  verdes pelas policies existentes e 14 falhando nas garantias deliberadamente ainda
+  ausentes (autoria no insert, campos imutáveis, `payment_method` e constraints).
+- Subtarefa 4 confirmada em vermelho contra aplicação e Supabase de teste com
+  `npx playwright test tests/e2e/transactions-dashboard.spec.ts --workers=1`: quatro
+  cenários falham na UI ainda ausente (formulário/estado vazio, criação e revalidação,
+  resumo/donut/navegação mensal, edição e confirmação de hard-delete). O helper E2E
+  repete uma vez somente `PGRST303` para neutralizar diferença transitória de relógio
+  entre Auth e PostgREST em sessões recém-emitidas.
