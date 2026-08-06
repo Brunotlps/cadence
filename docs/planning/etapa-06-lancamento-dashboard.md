@@ -206,7 +206,7 @@ componente semanticamente equivalente.
 - [x] 6. Constantes e tipos centrais de categoria, forma de pagamento e tipo
 - [x] 7. Helpers centrais de moeda, data e período mensal
 - [x] 8. Funções puras de validação, normalização e agregação em `lib/transactions/`
-- [ ] 9. Camada de acesso a lançamentos usando somente o cliente Supabase autenticado
+- [x] 9. Camada de acesso a lançamentos usando somente o cliente Supabase autenticado
 - [ ] 10. Server Actions finas de criação, atualização e hard-delete, com
        `revalidatePath`
 - [ ] 11. Dashboard Server Component: workspace, mês, saldo, resumo e lista
@@ -230,10 +230,9 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
 
 - O repositório não contém o artefato do “Claude Design”. A implementação preserva o
   fluxo documentado nesta spec, mas não presume detalhes visuais ausentes.
-- `README.md` e `.env.example` ainda descrevem `DATABASE_URL` como conexão de runtime.
-  Isso é documentação desatualizada: rotas e Server Components não podem usá-la; seu
-  uso atual limita-se ao teste de conectividade. Corrigir essa documentação antes da
-  camada de acesso a dados da subtarefa 9.
+- `README.md` e `.env.example` foram corrigidos antes da subtarefa 9: `DATABASE_URL`
+  está documentada somente para o teste de conectividade, `DIRECT_URL` somente para
+  schema/migrations e dados de usuário em runtime somente pelo Supabase JS autenticado.
 - O idioma real dos commits é inglês. `CLAUDE.md` e `README.md` foram alinhados com
   essa convenção na aprovação deste plano.
 - Subtarefa 2 confirmada em vermelho com
@@ -271,3 +270,10 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   canônico para `numeric(12,2)`, `Renda` derivada como receita, soma segura em
   centavos e resumo de despesas ordenado por categoria. Testes específicos verdes
   (18 casos em 2 arquivos); aportes seguem a regra provisória da decisão 10.
+- Subtarefa 9 implementada em `repository.ts` com cliente Supabase autenticado
+  injetado: workspace resolvido pela membership visível, leitura mensal limitada por
+  `workspace_id` e datas, mutações filtradas por `id` + workspace, payloads sem
+  campos imutáveis e erros do Supabase reduzidos a código genérico. O hard-delete
+  diferencia sucesso apenas internamente por booleano, sem revelar registro
+  invisível. Testes escritos em vermelho antes do módulo e depois verdes (9 casos;
+  toda a unidade de transações com 99 casos), TypeScript e lint verdes.
