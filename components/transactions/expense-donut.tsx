@@ -7,6 +7,7 @@ import {
   TRANSACTION_CATEGORIES,
   type TransactionCategoryCode,
 } from "@/lib/transactions/categories";
+import styles from "./expense-donut.module.css";
 
 const CATEGORY_COLORS: Record<TransactionCategoryCode, string> = {
   alimentacao: "#d95f59",
@@ -47,13 +48,13 @@ export function ExpenseDonut({ data }: ExpenseDonutProps) {
   );
 
   return (
-    <figure>
+    <figure className={styles.figure}>
       <figcaption>Distribuição de gastos por categoria</figcaption>
       {data.length === 0 ? (
-        <p>Sem despesas neste mês.</p>
+        <p className={styles.empty}>Sem despesas neste mês.</p>
       ) : (
-        <>
-          <div>
+        <div className={styles.content}>
+          <div className={styles.visual}>
             <svg
               viewBox="0 0 240 240"
               width="100%"
@@ -107,18 +108,19 @@ export function ExpenseDonut({ data }: ExpenseDonutProps) {
               </g>
             </svg>
             {activeDatum && (
-              <p role="status">
+              <p className={styles.tooltip} role="status">
                 {categoryLabel(activeDatum.category)}:{" "}
                 {formatCurrencyBRL(activeDatum.totalCents)}
               </p>
             )}
           </div>
 
-          <ul aria-label="Legenda do gráfico mensal">
+          <ul className={styles.legend} aria-label="Legenda do gráfico mensal">
             {data.map((item) => (
               <li key={item.category}>
                 <span
                   aria-hidden="true"
+                  className={styles.swatch}
                   style={{ backgroundColor: CATEGORY_COLORS[item.category] }}
                 />
                 <span>{categoryLabel(item.category)}</span>{" "}
@@ -126,7 +128,7 @@ export function ExpenseDonut({ data }: ExpenseDonutProps) {
               </li>
             ))}
           </ul>
-        </>
+        </div>
       )}
     </figure>
   );

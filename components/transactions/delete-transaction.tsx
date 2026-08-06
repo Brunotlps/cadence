@@ -5,6 +5,7 @@ import {
   deleteTransactionAction,
   type TransactionActionState,
 } from "@/lib/actions/transactions";
+import styles from "./delete-transaction.module.css";
 
 const initialState: TransactionActionState = {
   error: null,
@@ -31,15 +32,28 @@ export function DeleteTransaction({
 
   return (
     <>
-      <button type="button" onClick={() => dialogRef.current?.showModal()}>
+      <button
+        className={styles.trigger}
+        type="button"
+        onClick={() => dialogRef.current?.showModal()}
+      >
         Excluir
       </button>
-      <dialog ref={dialogRef} aria-labelledby={`delete-title-${transactionId}`}>
+      <dialog
+        className={styles.dialog}
+        ref={dialogRef}
+        aria-labelledby={`delete-title-${transactionId}`}
+      >
         <h2 id={`delete-title-${transactionId}`}>Excluir lançamento?</h2>
         <p>Esta ação não pode ser desfeita.</p>
-        {state.error && <p role="alert">{state.error}</p>}
-        <div>
+        {state.error && (
+          <p className={styles.error} role="alert">
+            {state.error}
+          </p>
+        )}
+        <div className={styles.actions}>
           <button
+            className={styles.cancel}
             type="button"
             disabled={pending}
             onClick={() => dialogRef.current?.close()}
@@ -47,7 +61,11 @@ export function DeleteTransaction({
             Cancelar
           </button>
           <form action={formAction}>
-            <button type="submit" disabled={pending}>
+            <button
+              className={styles.confirm}
+              type="submit"
+              disabled={pending}
+            >
               {pending ? "Excluindo…" : "Excluir definitivamente"}
             </button>
           </form>
