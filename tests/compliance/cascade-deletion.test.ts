@@ -37,6 +37,7 @@ describe.skipIf(!hasSupabaseTestEnv())("Apagamento em cascata", () => {
         created_by: user.id,
         kind: "expense",
         amount: "5.00",
+        category: "alimentacao",
         occurred_on: "2026-01-01",
       });
       if (txError) throw txError;
@@ -132,6 +133,7 @@ describe.skipIf(!hasSupabaseTestEnv())("Apagamento em cascata", () => {
         created_by: member.id,
         kind: "expense",
         amount: "20.00",
+        category: "alimentacao",
         occurred_on: "2026-01-01",
       });
       if (txError) throw txError;

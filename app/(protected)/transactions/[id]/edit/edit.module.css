@@ -1,0 +1,71 @@
+.page,
+.errorPage {
+  width: min(100% - 2rem, 42rem);
+  margin-inline: auto;
+  padding-block: 2rem 3rem;
+}
+
+.header {
+  margin-bottom: 1rem;
+}
+
+.workspace {
+  color: var(--brand);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  letter-spacing: -0.035em;
+}
+
+.card,
+.errorCard {
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 1.35rem;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  gap: 1rem;
+  margin-top: 1.3rem;
+  padding-top: 1rem;
+}
+
+.footer a,
+.errorCard a {
+  font-weight: 700;
+}
+
+.errorPage {
+  display: grid;
+  min-height: 70vh;
+  align-content: center;
+}
+
+.errorCard p {
+  color: var(--danger);
+  margin-block: 0.55rem 1rem;
+}
+
+@media (max-width: 520px) {
+  .page,
+  .errorPage {
+    width: min(100% - 1rem, 42rem);
+    padding-top: 1rem;
+  }
+
+  .card,
+  .errorCard {
+    padding: 1rem;
+  }
+}

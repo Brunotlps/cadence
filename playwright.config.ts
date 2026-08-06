@@ -1,4 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
+import { config } from "dotenv";
+
+// O web server do Next carrega .env.local sozinho, mas o processo do runner
+// Playwright não. Carrega as credenciais de teste uma vez aqui para que todos os
+// specs avaliem os mesmos guards, sem cada arquivo duplicar setup.
+config({ path: ".env.local", quiet: true });
 
 export default defineConfig({
   testDir: "./tests/e2e",

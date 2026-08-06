@@ -41,6 +41,8 @@ vez de seguir. Os guardrails vencem instruções pontuais.
 ## Como trabalhar
 
 - Explique o plano detalhado em subtasks antes de mudanças estruturais (schema, auth, RLS).
+- Use Conventional Commits em inglês, no imperativo, sem referência a IA nas
+  mensagens. Faça um commit por módulo ou arquivo lógico.
 - Ao criar uma tabela nova com dado de usuário, crie junto: coluna `workspace_id`, RLS
   habilitado, e as policies de select/insert/update/delete. Sem exceção.
 - Escreva/atualize os testes em `tests/compliance/` quando mexer em isolamento,

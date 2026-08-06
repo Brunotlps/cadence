@@ -60,12 +60,18 @@ npm run dev
 
 Copie `.env.example` para `.env.local` e preencha. **Nunca** commite `.env.local`.
 
-| Variável                        | Descrição                                                     |
-| ------------------------------- | ------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | URL do projeto Supabase                                       |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave pública (anon) do Supabase                              |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Chave service-role — **apenas server-side, nunca no cliente** |
-| `DATABASE_URL`                  | String de conexão Postgres (para o Drizzle)                   |
+| Variável                        | Descrição                                                               |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | URL do projeto Supabase                                                 |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave pública (anon) do Supabase                                        |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Service role isolada, somente para apagamento de conta                  |
+| `APP_URL`                       | Origem confiável usada nos links de autenticação em produção       |
+| `DATABASE_URL`                  | Opcional; somente para o teste de conectividade, nunca para runtime     |
+| `DIRECT_URL`                    | Conexão de schema/migrations usada pelo Drizzle, nunca para runtime  |
+
+Leituras e mutações de dados de usuário em runtime usam exclusivamente o cliente
+Supabase JS autenticado, mantendo as policies de RLS ativas. Drizzle e conexões
+Postgres diretas ficam restritos a schema, migrations e ao teste de conectividade.
 
 ## Comandos de teste
 
@@ -83,7 +89,7 @@ ignorados ao mexer em dados de usuário.
 ## Padrões e convenções
 
 - **Commits:** Conventional Commits (`feat:`, `fix:`, `chore:`, `test:`, `docs:`,
-  `refactor:`, `ci:`), em português, no imperativo. Um commit por módulo/arquivo lógico.
+  `refactor:`, `ci:`), em inglês, no imperativo. Um commit por módulo/arquivo lógico.
 - **Testes primeiro:** escreva o teste antes da implementação sempre que viável.
   Nenhuma feature entra sem teste correspondente.
 - **Isolamento de dados:** toda tabela com dado de usuário tem `workspace_id` + RLS.
