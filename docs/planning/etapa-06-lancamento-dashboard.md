@@ -215,7 +215,7 @@ componente semanticamente equivalente.
 - [x] 13. `@visx/shape` + donut como Client Component folha, com legenda e alternativa
        acessível
 - [x] 14. Layout responsivo, estados vazios e falhas genéricas
-- [ ] 15. Documentação do modelo e portabilidade incluindo `payment_method` e códigos
+- [x] 15. Documentação do modelo e portabilidade incluindo `payment_method` e códigos
        persistidos
 - [ ] 16. Validação final: migration no ambiente de teste, compliance, unitários, E2E,
        lint e build verdes
@@ -322,3 +322,10 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   O primeiro ciclo detectou CSS sobrescrevendo o atributo `hidden` dos detalhes;
   corrigido explicitamente antes de concluir. Os cinco E2E do Dashboard passam em
   conjunto; testes unitários, TypeScript, lint e build permanecem verdes.
+- Subtarefa 15 atualiza `data-model-and-deletion.md` e `data-portability.md` com
+  `payment_method`, domínios persistidos de tipo/categoria/forma de pagamento,
+  constraints, ownership imutável, policy de autoria e contrato de exportação
+  JSON/CSV. O hard-delete individual fica explícito também nesses documentos: sem
+  tombstone, lixeira, cópia residual ou service-role. `lgpd-mapping.md` e os logs de
+  segurança foram revisados e já cobriam finalidade financeira, RLS e achados da
+  Etapa 06, sem necessidade de alteração.
