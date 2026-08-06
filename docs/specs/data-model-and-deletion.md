@@ -68,6 +68,7 @@ export const transactions = pgTable("transactions", {
   amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
   category: text("category"),
   description: text("description"),
+  paymentMethod: text("payment_method"),
   goalId: uuid("goal_id").references(() => goals.id, { onDelete: "set null" }),
   occurredOn: date("occurred_on").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -97,6 +98,65 @@ export const goals = pgTable("goals", {
 });
 ```
 
+## Domínio e integridade de `transactions`
+
+Os valores abaixo são códigos persistidos e formam contrato de dado. A interface
+traduz os códigos para português, mas rótulos visíveis não substituem esses valores no
+banco nem em exportações.
+
+### Tipos
+
+- `expense` — despesa;
+- `income` — receita;
+- `contribution` — aporte criado por fluxos futuros de Metas, fora do formulário da
+  Etapa 06.
+
+### Categorias
+
+| Código persistido | Rótulo               |
+| ----------------- | -------------------- |
+| `alimentacao`     | Alimentação          |
+| `aluguel`         | Aluguel              |
+| `assinaturas`     | Assinaturas          |
+| `automoveis`      | Automóveis           |
+| `combustivel`     | Combustível          |
+| `condominio`      | Condomínio           |
+| `internet`        | Internet             |
+| `lazer`           | Lazer                |
+| `luz`             | Luz                  |
+| `renda`           | Renda                |
+| `saude`           | Saúde                |
+
+`income` exige categoria `renda`; `expense` exige uma das demais categorias;
+`contribution` exige categoria `NULL`. O formulário da Etapa 06 deriva `income`
+somente de `renda` e deriva `expense` das demais categorias, sem aceitar `kind` do
+navegador.
+
+### Formas de pagamento
+
+`payment_method` é opcional (`NULL`) e, quando informado, aceita somente:
+
+| Código persistido | Rótulo              |
+| ----------------- | ------------------- |
+| `pix`             | Pix                 |
+| `credit_card`     | Cartão de crédito   |
+| `debit_card`      | Cartão de débito    |
+| `cash`            | Dinheiro            |
+| `boleto`          | Boleto              |
+| `bank_transfer`   | Transferência       |
+| `other`           | Outro               |
+
+### Outras garantias
+
+- `amount` deve ser positivo, diferente de `NaN` e caber em `numeric(12,2)`;
+- `description` é opcional e limitada a 200 caracteres;
+- `workspace_id`, `created_by` e `created_at` são imutáveis depois do insert;
+- a policy de insert exige `created_by = auth.uid()` além da membership;
+- o índice `(workspace_id, occurred_on desc, created_at desc)` sustenta a leitura
+  mensal;
+- migrations fazem preflight e falham diante de dado antigo incompatível, sem
+  reclassificar ou apagar lançamentos silenciosamente.
+
 ## Row-Level Security (SQL)
 
 Habilitar RLS em toda tabela com dado de usuário e criar policies baseadas na
@@ -125,7 +185,10 @@ create policy "membros leem transações do seu workspace"
 
 create policy "membros inserem no seu workspace"
   on public.transactions for insert
-  with check ( public.is_workspace_member(workspace_id) );
+  with check (
+    public.is_workspace_member(workspace_id)
+    and created_by = auth.uid()
+  );
 
 create policy "membros atualizam no seu workspace"
   on public.transactions for update
@@ -137,6 +200,17 @@ create policy "membros apagam no seu workspace"
 
 -- Repetir o mesmo padrão para fixed_bills, goals e workspace_members.
 ```
+
+## Exclusão de um lançamento
+
+A exclusão individual de `transactions` é hard-delete imediato, executado com o
+cliente Supabase autenticado e sujeito à policy `DELETE` do workspace. A interface
+confirma que a ação é irreversível antes de chamar o banco.
+
+Não existe coluna de soft-delete, lixeira, cópia de auditoria com conteúdo financeiro
+ou service-role nesse fluxo. Depois do delete, o registro deixa de existir e não
+aparece em leitura ou exportação. Isso evita retenção indefinida de dado pessoal
+oculto e não altera a cascata de workspace/conta descrita abaixo.
 
 ## Rotina de apagamento de conta
 
