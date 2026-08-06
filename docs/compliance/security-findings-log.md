@@ -5,6 +5,21 @@ desenvolvimento — diferente de `security-exceptions.md`, que documenta riscos
 conhecidos e conscientemente **aceitos, não corrigidos**. Tudo aqui foi fechado
 antes do merge da etapa correspondente.
 
+## Nota retroativa — integridade dos E2E da Etapa 05 (não vulnerabilidade)
+
+- **O que ocorria:** desde a introdução dos quatro cenários E2E de autenticação
+  na Etapa 05, o runner local do Playwright não carregava `.env.local`. O guard
+  de ambiente desses testes, portanto, podia marcá-los como `skipped` em
+  `npm run test:e2e` quando as variáveis não estivessem previamente exportadas.
+  A CI já injetava as credenciais explicitamente, então o problema era do
+  caminho de validação local e não de um controle de segurança do produto.
+- **Como foi identificado e corrigido:** a validação final da Etapa 06 expôs a
+  assimetria ao executar 7 testes e pular os 4 de autenticação. O carregamento
+  de `.env.local` foi centralizado em `playwright.config.ts` no commit
+  `213798f`, e a suíte completa foi repetida com os 11 testes executados e
+  aprovados, sem skips.
+- **Classificação:** achado de integridade de teste, não vulnerabilidade.
+
 ## Etapa 04 — Schema Drizzle + Row-Level Security
 
 ### 1. IDOR em `handle_account_deletion(target uuid)`
