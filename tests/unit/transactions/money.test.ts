@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   centsToNumeric,
+  numericToAmountInput,
   parseAmountToCents,
 } from "@/lib/transactions/money";
 
@@ -42,5 +43,19 @@ describe("centsToNumeric", () => {
     [999999999999, "9999999999.99"],
   ])("normaliza %i centavos para %s", (cents, expected) => {
     expect(centsToNumeric(cents)).toBe(expected);
+  });
+});
+
+describe("numericToAmountInput", () => {
+  it.each([
+    ["0.01", "0,01"],
+    ["1234.50", "1234,50"],
+    ["9999999999.99", "9999999999,99"],
+  ])("formata %s para edição como %s", (numeric, expected) => {
+    expect(numericToAmountInput(numeric)).toBe(expected);
+  });
+
+  it("rejeita valor que não seja numeric canônico positivo", () => {
+    expect(() => numericToAmountInput("R$ 10,00")).toThrow(TypeError);
   });
 });

@@ -68,3 +68,12 @@ export function centsToNumeric(cents: number): string {
 
   return `${negative ? "-" : ""}${whole}.${fraction}`;
 }
+
+export function numericToAmountInput(numeric: string): string {
+  const cents = parseAmountToCents(numeric);
+  if (cents === null || cents <= 0) {
+    throw new TypeError("numeric must be a positive monetary value");
+  }
+
+  return centsToNumeric(cents).replace(".", ",");
+}
