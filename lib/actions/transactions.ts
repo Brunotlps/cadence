@@ -126,6 +126,9 @@ export async function deleteTransactionAction(
   _prevState: TransactionActionState,
   _formData: FormData,
 ): Promise<TransactionActionState> {
+  void _prevState;
+  void _formData;
+
   const context = await getActionContext();
   if (!context) return failure(DELETE_ERROR);
 

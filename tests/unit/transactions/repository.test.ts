@@ -14,14 +14,14 @@ import type { NormalizedTransactionInput } from "@/lib/transactions/validate-tra
 type QueryResult = { data: unknown; error: unknown };
 
 class QueryDouble implements PromiseLike<QueryResult> {
-  select = vi.fn((_columns: string) => this);
-  eq = vi.fn((_column: string, _value: unknown) => this);
-  gte = vi.fn((_column: string, _value: unknown) => this);
-  lt = vi.fn((_column: string, _value: unknown) => this);
-  order = vi.fn((_column: string, _options?: unknown) => this);
-  limit = vi.fn((_count: number) => this);
-  insert = vi.fn((_payload: unknown) => this);
-  update = vi.fn((_payload: unknown) => this);
+  select = vi.fn(() => this);
+  eq = vi.fn(() => this);
+  gte = vi.fn(() => this);
+  lt = vi.fn(() => this);
+  order = vi.fn(() => this);
+  limit = vi.fn(() => this);
+  insert = vi.fn(() => this);
+  update = vi.fn(() => this);
   delete = vi.fn(() => this);
   single = vi.fn(async () => this.result);
   maybeSingle = vi.fn(async () => this.result);
@@ -42,7 +42,7 @@ class QueryDouble implements PromiseLike<QueryResult> {
 
 function fakeClient(result: QueryResult) {
   const query = new QueryDouble(result);
-  const from = vi.fn((_table: string) => query);
+  const from = vi.fn(() => query);
 
   return {
     client: { from } as unknown as SupabaseClient,
