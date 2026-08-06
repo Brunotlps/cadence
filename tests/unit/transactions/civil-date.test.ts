@@ -4,6 +4,8 @@ import {
   getTodayInSaoPaulo,
   isValidCivilDate,
   isValidMonth,
+  resolveMonth,
+  shiftMonth,
 } from "@/lib/transactions/civil-date";
 
 describe("data civil", () => {
@@ -62,5 +64,26 @@ describe("período mensal", () => {
       start: "2026-12-01",
       endExclusive: "2027-01-01",
     });
+  });
+
+  it("rejeita período inválido antes de construir limites de consulta", () => {
+    expect(() => getMonthRange("2026-13")).toThrow(RangeError);
+  });
+
+  it.each([
+    ["2026-01", -1, "2025-12"],
+    ["2026-12", 1, "2027-01"],
+    ["2026-08", -6, "2026-02"],
+  ])("desloca %s por %i mês(es) para %s", (month, offset, expected) => {
+    expect(shiftMonth(month, offset)).toBe(expected);
+  });
+
+  it("mantém query válida e cai no mês atual de São Paulo para entrada inválida", () => {
+    const now = new Date("2026-08-06T02:30:00.000Z");
+
+    expect(resolveMonth("2026-02", now)).toBe("2026-02");
+    expect(resolveMonth("https://example.com", now)).toBe("2026-08");
+    expect(resolveMonth(["2026-02"], now)).toBe("2026-08");
+    expect(resolveMonth(undefined, now)).toBe("2026-08");
   });
 });
