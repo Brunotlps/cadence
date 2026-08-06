@@ -212,7 +212,7 @@ componente semanticamente equivalente.
 - [x] 11. Dashboard Server Component: workspace, mês, saldo, resumo e lista
 - [x] 12. Formulário reutilizável, edição, detalhes recolhidos e confirmação de
        exclusão
-- [ ] 13. `@visx/shape` + donut como Client Component folha, com legenda e alternativa
+- [x] 13. `@visx/shape` + donut como Client Component folha, com legenda e alternativa
        acessível
 - [ ] 14. Layout responsivo, estados vazios e falhas genéricas
 - [ ] 15. Documentação do modelo e portabilidade incluindo `payment_method` e códigos
@@ -305,3 +305,12 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   TypeScript, lint e build verdes. Nos E2E, estado vazio e edição/hard-delete passam;
   criação completa as duas mutações e falha apenas na asserção do donut ainda
   ausente, pertencente à subtarefa 13.
+- Subtarefa 13 implementada com `@visx/shape@4.0.0` e `ExpenseDonut` como único
+  Client Component do gráfico. O Dashboard continua lendo e agregando no servidor e
+  passa somente `{ category, totalCents }`; o cliente renderiza SVG responsivo por
+  `viewBox`, arcos focáveis, tooltip por ponteiro/foco/toque, legenda textual e estado
+  sem despesas. A figura usa `figcaption` nativo e nomes internos neutros para não
+  colidir com labels do formulário. Os quatro E2E de lançamentos/Dashboard passam em
+  conjunto; 124 testes unitários, TypeScript, lint e build permanecem verdes. O
+  `npm audit --omit=dev` retornou zero vulnerabilidades de produção; os quatro avisos
+  moderados do install ficam no grafo de desenvolvimento já documentado.
