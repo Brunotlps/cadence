@@ -207,7 +207,7 @@ componente semanticamente equivalente.
 - [x] 7. Helpers centrais de moeda, data e período mensal
 - [x] 8. Funções puras de validação, normalização e agregação em `lib/transactions/`
 - [x] 9. Camada de acesso a lançamentos usando somente o cliente Supabase autenticado
-- [ ] 10. Server Actions finas de criação, atualização e hard-delete, com
+- [x] 10. Server Actions finas de criação, atualização e hard-delete, com
        `revalidatePath`
 - [ ] 11. Dashboard Server Component: workspace, mês, saldo, resumo e lista
 - [ ] 12. Formulário reutilizável, edição, detalhes recolhidos e confirmação de
@@ -277,3 +277,12 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   diferencia sucesso apenas internamente por booleano, sem revelar registro
   invisível. Testes escritos em vermelho antes do módulo e depois verdes (9 casos;
   toda a unidade de transações com 99 casos), TypeScript e lint verdes.
+- Subtarefa 10 implementada em `lib/actions/transactions.ts`: cada action renova a
+  identidade com `auth.getUser()`, resolve workspace no servidor, ignora autoria,
+  workspace e `kind` vindos do formulário, usa a validação pura da subtarefa 8 e
+  delega persistência ao repositório autenticado. Create/delete retornam estado após
+  `revalidatePath`; update revalida e redireciona apenas para um `month` estritamente
+  validado. Registro ausente, invisível por RLS ou falha de query produzem a mesma
+  mensagem genérica, sem erro bruto ou log de dado financeiro. Testes escritos em
+  vermelho antes da action e depois verdes (9 casos; toda a unidade de transações
+  com 108 casos), TypeScript e lint verdes.
