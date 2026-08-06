@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { resolveMonth } from "@/lib/transactions/civil-date";
 import { loadTransactionForEdit } from "@/lib/transactions/load-edit";
 import { numericToAmountInput } from "@/lib/transactions/money";
+import styles from "./edit.module.css";
 
 type EditTransactionPageProps = {
   params: Promise<{ id: string }>;
@@ -35,10 +36,12 @@ export default async function EditTransactionPage({
 
   if (result.status === "error") {
     return (
-      <main>
-        <h1>Editar lançamento</h1>
-        <p role="alert">Não foi possível carregar este lançamento.</p>
-        <Link href={`/dashboard?month=${month}`}>Voltar ao Dashboard</Link>
+      <main className={styles.errorPage}>
+        <div className={styles.errorCard}>
+          <h1>Editar lançamento</h1>
+          <p role="alert">Não foi possível carregar este lançamento.</p>
+          <Link href={`/dashboard?month=${month}`}>Voltar ao Dashboard</Link>
+        </div>
       </main>
     );
   }
@@ -47,26 +50,32 @@ export default async function EditTransactionPage({
   const updateAction = updateTransactionAction.bind(null, transaction.id);
 
   return (
-    <main>
-      <p>{workspace.name}</p>
-      <h1>Editar lançamento</h1>
-      <TransactionForm
-        action={updateAction}
-        month={month}
-        submitLabel="Salvar alterações"
-        initialValues={{
-          amount: numericToAmountInput(transaction.amount),
-          category: transaction.category ?? "",
-          occurredOn: transaction.occurredOn,
-          description: transaction.description ?? "",
-          paymentMethod: transaction.paymentMethod ?? "",
-        }}
-      />
-      <DeleteTransaction
-        transactionId={transaction.id}
-        returnMonth={month}
-      />
-      <Link href={`/dashboard?month=${month}`}>Cancelar</Link>
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <p className={styles.workspace}>{workspace.name}</p>
+        <h1>Editar lançamento</h1>
+      </header>
+      <section className={styles.card} aria-label="Dados do lançamento">
+        <TransactionForm
+          action={updateAction}
+          month={month}
+          submitLabel="Salvar alterações"
+          initialValues={{
+            amount: numericToAmountInput(transaction.amount),
+            category: transaction.category ?? "",
+            occurredOn: transaction.occurredOn,
+            description: transaction.description ?? "",
+            paymentMethod: transaction.paymentMethod ?? "",
+          }}
+        />
+        <footer className={styles.footer}>
+          <DeleteTransaction
+            transactionId={transaction.id}
+            returnMonth={month}
+          />
+          <Link href={`/dashboard?month=${month}`}>Cancelar</Link>
+        </footer>
+      </section>
     </main>
   );
 }
