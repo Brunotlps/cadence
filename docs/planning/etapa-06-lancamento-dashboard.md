@@ -210,7 +210,7 @@ componente semanticamente equivalente.
 - [x] 10. Server Actions finas de criação, atualização e hard-delete, com
        `revalidatePath`
 - [x] 11. Dashboard Server Component: workspace, mês, saldo, resumo e lista
-- [ ] 12. Formulário reutilizável, edição, detalhes recolhidos e confirmação de
+- [x] 12. Formulário reutilizável, edição, detalhes recolhidos e confirmação de
        exclusão
 - [ ] 13. `@visx/shape` + donut como Client Component folha, com legenda e alternativa
        acessível
@@ -295,3 +295,13 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   um estado genérico e nenhuma fronteira cliente recebe registros brutos. Testes do
   loader/repositório escritos em vermelho e depois verdes (16 casos; toda a unidade
   de transações com 115 casos), TypeScript, lint e build de produção verdes.
+- Subtarefa 12 implementada com `TransactionForm` reutilizado em criação/edição,
+  campos principais visíveis e detalhes opcionais controlados por botão acessível,
+  rota protegida `/transactions/[id]/edit` e confirmação nativa de hard-delete. O
+  loader de edição retorna o mesmo estado para registro ausente/invisível e impede
+  reclassificar `contribution` por um formulário sem tipo. Exclusão no Dashboard
+  revalida no lugar; na edição volta somente a `month` validado. Testes auxiliares
+  escritos em vermelho e depois verdes (124 casos unitários de transações),
+  TypeScript, lint e build verdes. Nos E2E, estado vazio e edição/hard-delete passam;
+  criação completa as duas mutações e falha apenas na asserção do donut ainda
+  ausente, pertencente à subtarefa 13.
