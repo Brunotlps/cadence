@@ -131,6 +131,21 @@ export async function listMonthlyTransactions(
   };
 }
 
+export async function hasAnyTransactions(
+  supabase: SupabaseClient,
+  workspaceId: string,
+): Promise<RepositoryResult<boolean>> {
+  const { data, error } = await supabase
+    .from("transactions")
+    .select("id")
+    .eq("workspace_id", workspaceId)
+    .limit(1);
+
+  if (error) return queryFailed();
+
+  return { data: (data ?? []).length > 0, error: null };
+}
+
 export async function getTransactionById(
   supabase: SupabaseClient,
   input: TransactionLocator,

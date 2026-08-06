@@ -4,6 +4,7 @@ import {
   deleteTransaction,
   getCurrentWorkspace,
   getTransactionById,
+  hasAnyTransactions,
   insertTransaction,
   listMonthlyTransactions,
   updateTransaction,
@@ -153,6 +154,21 @@ describe("repositório de lançamentos", () => {
       ],
       error: null,
     });
+  });
+
+  it("consulta somente um id para distinguir workspace vazio", async () => {
+    const { client, from, query } = fakeClient({
+      data: [{ id: databaseTransaction.id }],
+      error: null,
+    });
+
+    const result = await hasAnyTransactions(client, "workspace-id");
+
+    expect(from).toHaveBeenCalledWith("transactions");
+    expect(query.select).toHaveBeenCalledWith("id");
+    expect(query.eq).toHaveBeenCalledWith("workspace_id", "workspace-id");
+    expect(query.limit).toHaveBeenCalledWith(1);
+    expect(result).toEqual({ data: true, error: null });
   });
 
   it("busca uma edição por id e workspace além da RLS", async () => {
