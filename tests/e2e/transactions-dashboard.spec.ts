@@ -1,14 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { config } from "dotenv";
 import {
   createDashboardTestUser,
   deleteTestAccount,
   hasSupabaseTestEnv,
   retryAfterJwtClockSkew,
 } from "./support";
-
-config({ path: ".env.local", quiet: true });
 
 const SAO_PAULO_TIME_ZONE = "America/Sao_Paulo";
 
