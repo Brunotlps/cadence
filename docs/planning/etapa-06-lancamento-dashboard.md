@@ -209,7 +209,7 @@ componente semanticamente equivalente.
 - [x] 9. Camada de acesso a lançamentos usando somente o cliente Supabase autenticado
 - [x] 10. Server Actions finas de criação, atualização e hard-delete, com
        `revalidatePath`
-- [ ] 11. Dashboard Server Component: workspace, mês, saldo, resumo e lista
+- [x] 11. Dashboard Server Component: workspace, mês, saldo, resumo e lista
 - [ ] 12. Formulário reutilizável, edição, detalhes recolhidos e confirmação de
        exclusão
 - [ ] 13. `@visx/shape` + donut como Client Component folha, com legenda e alternativa
@@ -286,3 +286,12 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   mensagem genérica, sem erro bruto ou log de dado financeiro. Testes escritos em
   vermelho antes da action e depois verdes (9 casos; toda a unidade de transações
   com 108 casos), TypeScript e lint verdes.
+- Subtarefa 11 implementada mantendo `app/(protected)/dashboard/page.tsx` como Server
+  Component, sem fetch cliente: a página confirma a sessão, delega a leitura ao
+  Supabase autenticado, valida `month`, renderiza navegação mensal, saldo, totais,
+  resumo por categoria e lista ordenada. `load-dashboard.ts` concentra a orquestração
+  testável e consulta somente um `id` adicional quando o mês está vazio, distinguindo
+  workspace sem histórico de mês vazio sem buscar lançamentos antigos. Falhas viram
+  um estado genérico e nenhuma fronteira cliente recebe registros brutos. Testes do
+  loader/repositório escritos em vermelho e depois verdes (16 casos; toda a unidade
+  de transações com 115 casos), TypeScript, lint e build de produção verdes.
