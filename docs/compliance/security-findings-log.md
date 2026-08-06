@@ -64,3 +64,45 @@ antes do merge da etapa correspondente.
 
 Ver `docs/planning/etapa-04-schema-rls.md` para o design completo e o
 histórico de decisões da etapa.
+
+## Etapa 06 — Lançamentos + Dashboard
+
+### 1. Autoria forjável e campos de ownership mutáveis em `transactions`
+
+- **O que era:** a policy `transactions_insert_member` verificava somente se o
+  usuário participava do `workspace_id` informado. Um cliente autenticado podia
+  chamar PostgREST diretamente e inserir `created_by` com o UUID de outra pessoa,
+  contrariando a decisão de que “quem lançou” vem da sessão. A policy de update
+  também permitia reescrever `created_by` e `created_at`; se o usuário participasse
+  de dois workspaces, conseguia mover a linha de um para o outro porque tanto o
+  `USING` antigo quanto o `WITH CHECK` novo avaliavam membership verdadeira.
+- **Como foi encontrado:** testes de compliance TDD da Etapa 06 reproduziram os três
+  caminhos contra o Supabase real antes da migration. Não era apenas uma hipótese de
+  review: insert com autoria alheia e updates dos três campos foram aceitos pelo
+  banco. O isolamento contra um workspace do qual o atacante não era membro já
+  funcionava; o impacto era integridade e atribuição dentro dos workspaces acessíveis.
+- **Como foi corrigido:** `0005_amusing_franklin_richards.sql` recria a policy de
+  insert exigindo `created_by = auth.uid()` além de membership e instala trigger
+  `SECURITY INVOKER` que rejeita alterações de `workspace_id`, `created_by` e
+  `created_at`. Campos de negócio continuam editáveis por membros, preservando a
+  decisão de autorização da Etapa 04. A função de trigger tem `search_path` fixo e
+  `EXECUTE` revogado de `PUBLIC`/`anon`/`authenticated`.
+- **Validação:** `tests/compliance/transaction-integrity.test.ts` cobre autoria
+  forjada, movimento entre dois workspaces do mesmo membro, mutação de autoria/data,
+  edição legítima, isolamento cruzado e hard-delete. Toda a suíte de compliance ficou
+  verde (27 testes em 4 arquivos).
+
+### 2. Constraint de categoria aceitava `NULL` por semântica de `CHECK`
+
+- **O que era:** a primeira versão de `transactions_kind_category_check` descrevia
+  corretamente as combinações permitidas, mas uma despesa com `category = NULL`
+  fazia a expressão resultar em `NULL`. PostgreSQL considera uma constraint `CHECK`
+  satisfeita quando o resultado não é explicitamente `false`, então a linha inválida
+  era aceita.
+- **Como foi encontrado:** na primeira execução após aplicar a migration `0005`, 18
+  dos 19 testes de integridade passaram e somente o caso de despesa sem categoria
+  permaneceu vermelho. A fixture temporária foi removida pelo cleanup do teste.
+- **Como foi corrigido:** sem reescrever a migration já aplicada, a migration
+  `0006_tan_scalphunter.sql` substitui a constraint e encerra a expressão com
+  `is true`, rejeitando tanto `false` quanto `NULL`. O teste correspondente passou na
+  repetição e a suíte completa permaneceu verde.

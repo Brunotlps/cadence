@@ -201,7 +201,7 @@ componente semanticamente equivalente.
       workspace, CRUD cruzado, constraints e hard-delete real
 - [x] 4. E2E primeiro: estado vazio, criação de despesa/receita, detalhes opcionais,
       troca de mês, edição, confirmação/exclusão e revalidação dos totais
-- [ ] 5. `db/schema.ts` + migration de `payment_method`, constraints, índice, policy de
+- [x] 5. `db/schema.ts` + migration de `payment_method`, constraints, índice, policy de
       autoria e campos imutáveis, com preflight sem alteração silenciosa de dados
 - [ ] 6. Constantes e tipos centrais de categoria, forma de pagamento e tipo
 - [ ] 7. Helpers centrais de moeda, data e período mensal
@@ -249,3 +249,11 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   resumo/donut/navegação mensal, edição e confirmação de hard-delete). O helper E2E
   repete uma vez somente `PGRST303` para neutralizar diferença transitória de relógio
   entre Auth e PostgREST em sessões recém-emitidas.
+- Subtarefa 5 implementada em `0005_amusing_franklin_richards.sql`: preflight sem
+  reclassificação automática, `payment_method`, constraints, índice mensal, autoria
+  vinculada a `auth.uid()` no insert e trigger `SECURITY INVOKER` que torna
+  `workspace_id`, `created_by` e `created_at` imutáveis. O primeiro ciclo do compliance
+  encontrou a semântica de `CHECK` que aceita `NULL`; corrigida historicamente (sem
+  reescrever migration já aplicada) por `0006_tan_scalphunter.sql`, exigindo que a
+  relação `kind/category` seja explicitamente verdadeira. Migrations aplicadas no
+  Supabase de teste e toda a pasta `tests/compliance` verde (27 testes em 4 arquivos).
