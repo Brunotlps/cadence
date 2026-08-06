@@ -107,6 +107,40 @@ test.describe("lançamentos e Dashboard", () => {
     }
   });
 
+  test("mantém o Dashboard utilizável sem overflow em viewport móvel", async ({
+    page,
+  }) => {
+    const fixture = await createDashboardTestUser(
+      "dashboard-mobile",
+      "Casa responsiva",
+    );
+
+    try {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await login(page, fixture.email, fixture.password);
+
+      await expect(page.getByRole("heading", { name: "Casa responsiva" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Novo lançamento" })).toBeVisible();
+      await expect(
+        page.getByRole("region", { name: "Resumo do mês" }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("figure", {
+          name: "Distribuição de gastos por categoria",
+        }),
+      ).toBeVisible();
+      await expect
+        .poll(() =>
+          page.evaluate(
+            () => document.documentElement.scrollWidth <= window.innerWidth,
+          ),
+        )
+        .toBe(true);
+    } finally {
+      await deleteTestAccount(fixture.id);
+    }
+  });
+
   test("cria despesa e receita, deriva Renda e revalida o saldo", async ({
     page,
   }) => {
