@@ -122,6 +122,7 @@ export async function updateTransactionAction(
 
 export async function deleteTransactionAction(
   transactionId: string,
+  returnMonth: string | null,
   _prevState: TransactionActionState,
   _formData: FormData,
 ): Promise<TransactionActionState> {
@@ -135,5 +136,8 @@ export async function deleteTransactionAction(
   if (result.error || !result.data) return failure(DELETE_ERROR);
 
   revalidatePath("/dashboard");
+  if (returnMonth !== null) {
+    redirect(`/dashboard?month=${resolveMonth(returnMonth)}`);
+  }
   return success();
 }

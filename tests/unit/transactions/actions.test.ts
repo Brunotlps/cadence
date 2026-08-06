@@ -231,6 +231,7 @@ describe("Server Actions de lançamentos", () => {
 
     const result = await deleteTransactionAction(
       "bound-transaction-id",
+      null,
       initialState,
       formData,
     );
@@ -250,11 +251,13 @@ describe("Server Actions de lançamentos", () => {
 
     const missing = await deleteTransactionAction(
       "missing-id",
+      null,
       initialState,
       new FormData(),
     );
     const invisible = await deleteTransactionAction(
       "invisible-id",
+      null,
       initialState,
       new FormData(),
     );
@@ -262,5 +265,18 @@ describe("Server Actions de lançamentos", () => {
     expect(missing).toEqual(invisible);
     expect(missing.error).toBe("Não foi possível excluir o lançamento.");
     expect(mocks.revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("redireciona a exclusão da edição somente para um mês validado", async () => {
+    await expect(
+      deleteTransactionAction(
+        "bound-transaction-id",
+        "2026-07",
+        initialState,
+        new FormData(),
+      ),
+    ).rejects.toThrow("redirect:/dashboard?month=2026-07");
+
+    expect(mocks.revalidatePath).toHaveBeenCalledWith("/dashboard");
   });
 });
