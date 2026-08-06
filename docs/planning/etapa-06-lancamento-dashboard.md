@@ -204,7 +204,7 @@ componente semanticamente equivalente.
 - [x] 5. `db/schema.ts` + migration de `payment_method`, constraints, índice, policy de
       autoria e campos imutáveis, com preflight sem alteração silenciosa de dados
 - [x] 6. Constantes e tipos centrais de categoria, forma de pagamento e tipo
-- [ ] 7. Helpers centrais de moeda, data e período mensal
+- [x] 7. Helpers centrais de moeda, data e período mensal
 - [ ] 8. Funções puras de validação, normalização e agregação em `lib/transactions/`
 - [ ] 9. Camada de acesso a lançamentos usando somente o cliente Supabase autenticado
 - [ ] 10. Server Actions finas de criação, atualização e hard-delete, com
@@ -261,3 +261,8 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   `payment-methods.ts`, mantendo uma única fonte tipada para os mesmos códigos das
   constraints. Testes específicos verdes (16 casos em 3 arquivos), incluindo a
   derivação exclusiva de `income` para `renda`.
+- Subtarefa 7 implementada em `lib/transactions/money.ts`, `civil-date.ts` e
+  `lib/formatters.ts`: centavos inteiros sem arredondamento intermediário, entrada
+  brasileira/ponto decimal HTML, calendário explícito de São Paulo, limites mensais
+  exclusivos e `Intl` pt-BR centralizado. Testes específicos verdes (56 casos em 3
+  arquivos).
