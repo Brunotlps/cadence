@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { validateTransactionInput } from "@/lib/transactions/validate-transaction";
 
-const TODAY = "2026-08-06";
-
 const validInput = {
   amount: "1.234,56",
   category: "alimentacao",
@@ -23,7 +21,7 @@ function expectFieldError(
 
 describe("validateTransactionInput", () => {
   it("normaliza uma despesa válida para o formato persistido", () => {
-    expect(validateTransactionInput(validInput, { today: TODAY })).toEqual({
+    expect(validateTransactionInput(validInput)).toEqual({
       success: true,
       data: {
         amount: "1234.56",
@@ -45,7 +43,6 @@ describe("validateTransactionInput", () => {
         description: "Reembolso de viagem",
         paymentMethod: "bank_transfer",
       },
-      { today: TODAY },
     );
 
     expect(result).toMatchObject({
@@ -61,7 +58,6 @@ describe("validateTransactionInput", () => {
   it("converte detalhes opcionais vazios em null", () => {
     const result = validateTransactionInput(
       { ...validInput, description: "  ", paymentMethod: "" },
-      { today: TODAY },
     );
 
     expect(result).toMatchObject({
@@ -74,7 +70,7 @@ describe("validateTransactionInput", () => {
     "rejeita o valor inválido %s",
     (amount) => {
       expectFieldError(
-        validateTransactionInput({ ...validInput, amount }, { today: TODAY }),
+        validateTransactionInput({ ...validInput, amount }),
         "amount",
       );
     },
@@ -84,7 +80,7 @@ describe("validateTransactionInput", () => {
     "rejeita o código de categoria inválido %j",
     (category) => {
       expectFieldError(
-        validateTransactionInput({ ...validInput, category }, { today: TODAY }),
+        validateTransactionInput({ ...validInput, category }),
         "category",
       );
     },
@@ -94,7 +90,6 @@ describe("validateTransactionInput", () => {
     expectFieldError(
       validateTransactionInput(
         { ...validInput, occurredOn: "2026-02-29" },
-        { today: TODAY },
       ),
       "occurredOn",
     );
@@ -104,7 +99,6 @@ describe("validateTransactionInput", () => {
     expectFieldError(
       validateTransactionInput(
         { ...validInput, description: "a".repeat(201) },
-        { today: TODAY },
       ),
       "description",
     );
@@ -114,7 +108,6 @@ describe("validateTransactionInput", () => {
     expectFieldError(
       validateTransactionInput(
         { ...validInput, paymentMethod: "crypto" },
-        { today: TODAY },
       ),
       "paymentMethod",
     );

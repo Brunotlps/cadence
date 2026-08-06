@@ -9,3 +9,7 @@ export const PAYMENT_METHODS = [
 ] as const satisfies ReadonlyArray<{ code: string; label: string }>;
 
 export type PaymentMethodCode = (typeof PAYMENT_METHODS)[number]["code"];
+
+export function isPaymentMethodCode(value: string): value is PaymentMethodCode {
+  return PAYMENT_METHODS.some((paymentMethod) => paymentMethod.code === value);
+}

@@ -17,6 +17,12 @@ export const TRANSACTION_CATEGORIES = [
 export type TransactionCategoryCode =
   (typeof TRANSACTION_CATEGORIES)[number]["code"];
 
+export function isTransactionCategoryCode(
+  value: string,
+): value is TransactionCategoryCode {
+  return TRANSACTION_CATEGORIES.some((category) => category.code === value);
+}
+
 // A Etapa 06 não expõe campo de tipo: Renda é a única categoria de receita;
 // todas as outras são despesas. Aportes continuam no schema, mas fora deste fluxo.
 export function deriveTransactionKind(
