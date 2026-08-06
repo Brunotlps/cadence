@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import { signOutAction } from "@/lib/actions/auth";
 import { createTransactionAction } from "@/lib/actions/transactions";
 import { DeleteTransaction } from "@/components/transactions/delete-transaction";
+import { ExpenseDonut } from "@/components/transactions/expense-donut";
 import { TransactionForm } from "@/components/transactions/transaction-form";
 import { TRANSACTION_CATEGORIES } from "@/lib/transactions/categories";
 import {
@@ -138,27 +139,7 @@ export default async function DashboardPage({
         </dl>
       </section>
 
-      <section>
-        <h2 id="category-summary-title">Despesas por categoria</h2>
-        {data.summary.expensesByCategory.length === 0 ? (
-          <p>Sem despesas neste mês.</p>
-        ) : (
-          <ul>
-            {data.summary.expensesByCategory.map((item) => (
-              <li key={item.category}>
-                <span>
-                  {
-                    TRANSACTION_CATEGORIES.find(
-                      (category) => category.code === item.category,
-                    )?.label
-                  }
-                </span>{" "}
-                <span>{formatCurrencyBRL(item.totalCents)}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <ExpenseDonut data={data.summary.expensesByCategory} />
 
       <section aria-labelledby="transactions-title">
         <h2 id="transactions-title">Lançamentos do mês</h2>
