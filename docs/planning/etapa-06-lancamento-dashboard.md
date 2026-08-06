@@ -214,7 +214,7 @@ componente semanticamente equivalente.
        exclusão
 - [x] 13. `@visx/shape` + donut como Client Component folha, com legenda e alternativa
        acessível
-- [ ] 14. Layout responsivo, estados vazios e falhas genéricas
+- [x] 14. Layout responsivo, estados vazios e falhas genéricas
 - [ ] 15. Documentação do modelo e portabilidade incluindo `payment_method` e códigos
        persistidos
 - [ ] 16. Validação final: migration no ambiente de teste, compliance, unitários, E2E,
@@ -314,3 +314,11 @@ correspondente; nenhuma implementação precede sua cobertura TDD.
   conjunto; 124 testes unitários, TypeScript, lint e build permanecem verdes. O
   `npm audit --omit=dev` retornou zero vulnerabilidades de produção; os quatro avisos
   moderados do install ficam no grafo de desenvolvimento já documentado.
+- Subtarefa 14 implementada com tokens globais mínimos e CSS Modules separados por
+  página/componente: grade ampla para lançamento, resumo e donut; lista compacta;
+  edição, diálogo, feedbacks e estados vazio/erro consistentes; foco visível e alvos
+  de toque. Em telas estreitas a composição passa para uma coluna, sem medição em JS.
+  Um E2E novo fixa viewport de 390 px e verifica ausência de overflow horizontal.
+  O primeiro ciclo detectou CSS sobrescrevendo o atributo `hidden` dos detalhes;
+  corrigido explicitamente antes de concluir. Os cinco E2E do Dashboard passam em
+  conjunto; testes unitários, TypeScript, lint e build permanecem verdes.
