@@ -7,8 +7,14 @@ import {
 } from "@/lib/formatters";
 import { createClient } from "@/lib/supabase/server";
 import { signOutAction } from "@/lib/actions/auth";
+import { createTransactionAction } from "@/lib/actions/transactions";
+import { DeleteTransaction } from "@/components/transactions/delete-transaction";
+import { TransactionForm } from "@/components/transactions/transaction-form";
 import { TRANSACTION_CATEGORIES } from "@/lib/transactions/categories";
-import { shiftMonth } from "@/lib/transactions/civil-date";
+import {
+  getTodayInSaoPaulo,
+  shiftMonth,
+} from "@/lib/transactions/civil-date";
 import { loadTransactionDashboard } from "@/lib/transactions/load-dashboard";
 import { parseAmountToCents } from "@/lib/transactions/money";
 import { PAYMENT_METHODS } from "@/lib/transactions/payment-methods";
@@ -95,6 +101,22 @@ export default async function DashboardPage({
         </Link>
       </nav>
 
+      <section aria-labelledby="new-transaction-title">
+        <h2 id="new-transaction-title">Novo lançamento</h2>
+        <TransactionForm
+          action={createTransactionAction}
+          month={data.month}
+          submitLabel="Salvar lançamento"
+          initialValues={{
+            amount: "",
+            category: "",
+            occurredOn: getTodayInSaoPaulo(),
+            description: "",
+            paymentMethod: "",
+          }}
+        />
+      </section>
+
       <section aria-label="Resumo do mês">
         <h2>Saldo do mês</h2>
         <p>{formatCurrencyBRL(data.summary.balanceCents)}</p>
@@ -116,7 +138,7 @@ export default async function DashboardPage({
         </dl>
       </section>
 
-      <section aria-labelledby="category-summary-title">
+      <section>
         <h2 id="category-summary-title">Despesas por categoria</h2>
         {data.summary.expensesByCategory.length === 0 ? (
           <p>Sem despesas neste mês.</p>
@@ -141,11 +163,17 @@ export default async function DashboardPage({
       <section aria-labelledby="transactions-title">
         <h2 id="transactions-title">Lançamentos do mês</h2>
         {data.transactions.length === 0 ? (
-          <p>
-            {data.isWorkspaceEmpty
-              ? "Nenhum lançamento ainda. Registre sua primeira receita ou despesa para começar a acompanhar o mês."
-              : "Nenhum lançamento neste mês."}
-          </p>
+          data.isWorkspaceEmpty ? (
+            <div>
+              <p>Nenhum lançamento neste mês.</p>
+              <p>
+                Nenhum lançamento ainda. Registre sua primeira receita ou despesa
+                para começar a acompanhar o mês.
+              </p>
+            </div>
+          ) : (
+            <p>Nenhum lançamento neste mês.</p>
+          )
         ) : (
           <ul>
             {data.transactions.map((transaction) => {
@@ -161,11 +189,14 @@ export default async function DashboardPage({
                     {paymentMethod && <p>{paymentMethod}</p>}
                     <p>{signedAmount(transaction)}</p>
                     {transaction.kind !== "contribution" && (
-                      <Link
-                        href={`/transactions/${transaction.id}/edit?month=${data.month}`}
-                      >
-                        Editar
-                      </Link>
+                      <>
+                        <Link
+                          href={`/transactions/${transaction.id}/edit?month=${data.month}`}
+                        >
+                          Editar
+                        </Link>
+                        <DeleteTransaction transactionId={transaction.id} />
+                      </>
                     )}
                   </article>
                 </li>
