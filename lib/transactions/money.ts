@@ -42,7 +42,8 @@ export function parseAmountToCents(input: string): number | null {
   if (!parts) return null;
 
   const fraction = parts.fraction.padEnd(2, "0");
-  const absoluteCents = BigInt(parts.whole) * 100n + BigInt(fraction || "0");
+  const absoluteCents =
+    BigInt(parts.whole) * BigInt(100) + BigInt(fraction || "0");
   const signedCents = negative ? -absoluteCents : absoluteCents;
 
   if (
