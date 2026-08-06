@@ -20,6 +20,7 @@ import { loadTransactionDashboard } from "@/lib/transactions/load-dashboard";
 import { parseAmountToCents } from "@/lib/transactions/money";
 import { PAYMENT_METHODS } from "@/lib/transactions/payment-methods";
 import type { TransactionRecord } from "@/lib/transactions/repository";
+import styles from "./dashboard.module.css";
 
 type DashboardPageProps = {
   searchParams: Promise<{ month?: string | string[] }>;
@@ -69,14 +70,18 @@ export default async function DashboardPage({
 
   if (result.status === "error") {
     return (
-      <main>
-        <h1>Dashboard</h1>
-        <p role="alert">
-          Não foi possível carregar seus lançamentos. Tente novamente.
-        </p>
-        <form action={signOutAction}>
-          <button type="submit">Sair</button>
-        </form>
+      <main className={styles.errorPage}>
+        <div className={styles.errorCard}>
+          <h1>Dashboard</h1>
+          <p role="alert">
+            Não foi possível carregar seus lançamentos. Tente novamente.
+          </p>
+          <form action={signOutAction}>
+            <button className={styles.logout} type="submit">
+              Sair
+            </button>
+          </form>
+        </div>
       </main>
     );
   }
@@ -84,15 +89,20 @@ export default async function DashboardPage({
   const { data } = result;
 
   return (
-    <main>
-      <header>
-        <h1>{data.workspace.name}</h1>
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.brand}>
+          <p className={styles.eyebrow}>Cadence</p>
+          <h1>{data.workspace.name}</h1>
+        </div>
         <form action={signOutAction}>
-          <button type="submit">Sair</button>
+          <button className={styles.logout} type="submit">
+            Sair
+          </button>
         </form>
       </header>
 
-      <nav aria-label="Navegação por mês">
+      <nav className={styles.monthNav} aria-label="Navegação por mês">
         <Link href={`/dashboard?month=${shiftMonth(data.month, -1)}`}>
           Mês anterior
         </Link>
@@ -102,50 +112,70 @@ export default async function DashboardPage({
         </Link>
       </nav>
 
-      <section aria-labelledby="new-transaction-title">
-        <h2 id="new-transaction-title">Novo lançamento</h2>
-        <TransactionForm
-          action={createTransactionAction}
-          month={data.month}
-          submitLabel="Salvar lançamento"
-          initialValues={{
-            amount: "",
-            category: "",
-            occurredOn: getTodayInSaoPaulo(),
-            description: "",
-            paymentMethod: "",
-          }}
-        />
-      </section>
+      <div className={styles.topGrid}>
+        <section
+          className={styles.card}
+          aria-labelledby="new-transaction-title"
+        >
+          <h2 className={styles.cardTitle} id="new-transaction-title">
+            Novo lançamento
+          </h2>
+          <TransactionForm
+            action={createTransactionAction}
+            month={data.month}
+            submitLabel="Salvar lançamento"
+            initialValues={{
+              amount: "",
+              category: "",
+              occurredOn: getTodayInSaoPaulo(),
+              description: "",
+              paymentMethod: "",
+            }}
+          />
+        </section>
 
-      <section aria-label="Resumo do mês">
-        <h2>Saldo do mês</h2>
-        <p>{formatCurrencyBRL(data.summary.balanceCents)}</p>
-        <dl>
-          <div>
-            <dt>Receitas</dt>
-            <dd>{formatCurrencyBRL(data.summary.incomeCents)}</dd>
-          </div>
-          <div>
-            <dt>Despesas</dt>
-            <dd>{formatCurrencyBRL(data.summary.expenseCents)}</dd>
-          </div>
-          {data.summary.contributionCents > 0 && (
-            <div>
-              <dt>Aportes</dt>
-              <dd>{formatCurrencyBRL(data.summary.contributionCents)}</dd>
-            </div>
-          )}
-        </dl>
-      </section>
+        <div className={styles.insights}>
+          <section
+            className={`${styles.card} ${styles.summary}`}
+            aria-label="Resumo do mês"
+          >
+            <p className={styles.balanceLabel}>Saldo do mês</p>
+            <p className={styles.balance}>
+              {formatCurrencyBRL(data.summary.balanceCents)}
+            </p>
+            <dl>
+              <div>
+                <dt>Receitas</dt>
+                <dd>{formatCurrencyBRL(data.summary.incomeCents)}</dd>
+              </div>
+              <div>
+                <dt>Despesas</dt>
+                <dd>{formatCurrencyBRL(data.summary.expenseCents)}</dd>
+              </div>
+              {data.summary.contributionCents > 0 && (
+                <div>
+                  <dt>Aportes</dt>
+                  <dd>{formatCurrencyBRL(data.summary.contributionCents)}</dd>
+                </div>
+              )}
+            </dl>
+          </section>
 
-      <ExpenseDonut data={data.summary.expensesByCategory} />
+          <ExpenseDonut data={data.summary.expensesByCategory} />
+        </div>
+      </div>
 
-      <section aria-labelledby="transactions-title">
-        <h2 id="transactions-title">Lançamentos do mês</h2>
+      <section
+        className={`${styles.card} ${styles.transactions}`}
+        aria-labelledby="transactions-title"
+      >
+        <div className={styles.sectionHeader}>
+          <h2 id="transactions-title">Lançamentos do mês</h2>
+          <span>{data.transactions.length} no período</span>
+        </div>
         {data.transactions.length === 0 ? (
           data.isWorkspaceEmpty ? (
-            <div>
+            <div className={styles.emptyState}>
               <p>Nenhum lançamento neste mês.</p>
               <p>
                 Nenhum lançamento ainda. Registre sua primeira receita ou despesa
@@ -153,31 +183,45 @@ export default async function DashboardPage({
               </p>
             </div>
           ) : (
-            <p>Nenhum lançamento neste mês.</p>
+            <div className={styles.emptyState}>
+              <p>Nenhum lançamento neste mês.</p>
+            </div>
           )
         ) : (
-          <ul>
+          <ul className={styles.transactionList}>
             {data.transactions.map((transaction) => {
               const category = categoryLabel(transaction);
               const paymentMethod = paymentMethodLabel(transaction);
 
               return (
                 <li key={transaction.id}>
-                  <article>
-                    <h3>{transaction.description ?? category}</h3>
-                    <p>{category}</p>
-                    <p>{formatCivilDatePtBR(transaction.occurredOn)}</p>
-                    {paymentMethod && <p>{paymentMethod}</p>}
-                    <p>{signedAmount(transaction)}</p>
+                  <article className={styles.transactionRow}>
+                    <div>
+                      <h3>{transaction.description ?? category}</h3>
+                      <div className={styles.metadata}>
+                        <span>{category}</span>
+                        <span>{formatCivilDatePtBR(transaction.occurredOn)}</span>
+                        {paymentMethod && <span>{paymentMethod}</span>}
+                      </div>
+                    </div>
+                    <p
+                      className={`${styles.amount} ${
+                        transaction.kind === "income"
+                          ? styles.income
+                          : styles.outflow
+                      }`}
+                    >
+                      {signedAmount(transaction)}
+                    </p>
                     {transaction.kind !== "contribution" && (
-                      <>
+                      <div className={styles.rowActions}>
                         <Link
                           href={`/transactions/${transaction.id}/edit?month=${data.month}`}
                         >
                           Editar
                         </Link>
                         <DeleteTransaction transactionId={transaction.id} />
-                      </>
+                      </div>
                     )}
                   </article>
                 </li>
