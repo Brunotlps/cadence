@@ -52,6 +52,7 @@ describe.skipIf(!hasSupabaseTestEnv())("Isolamento por workspace (RLS)", () => {
       created_by: userAId,
       kind: "expense",
       amount: "10.00",
+      category: "alimentacao",
       occurred_on: "2026-01-01",
     });
     if (insertError) throw insertError;
@@ -88,6 +89,7 @@ describe.skipIf(!hasSupabaseTestEnv())("Isolamento por workspace (RLS)", () => {
       created_by: userBId,
       kind: "expense",
       amount: "10.00",
+      category: "alimentacao",
       occurred_on: "2026-01-01",
     });
 

@@ -265,6 +265,7 @@ describe.skipIf(!hasSupabaseTestEnv())(
       ["kind desconhecido", { kind: "refund" }],
       ["valor zero", { amount: "0.00" }],
       ["valor negativo", { amount: "-1.00" }],
+      ["valor não numérico do Postgres", { amount: "NaN" }],
       ["categoria ausente em despesa", { category: null }],
       ["categoria desconhecida", { category: "viagem" }],
       ["Renda marcada como despesa", { category: "renda" }],
