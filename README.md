@@ -83,7 +83,7 @@ ignorados ao mexer em dados de usuário.
 ## Padrões e convenções
 
 - **Commits:** Conventional Commits (`feat:`, `fix:`, `chore:`, `test:`, `docs:`,
-  `refactor:`, `ci:`), em português, no imperativo. Um commit por módulo/arquivo lógico.
+  `refactor:`, `ci:`), em inglês, no imperativo. Um commit por módulo/arquivo lógico.
 - **Testes primeiro:** escreva o teste antes da implementação sempre que viável.
   Nenhuma feature entra sem teste correspondente.
 - **Isolamento de dados:** toda tabela com dado de usuário tem `workspace_id` + RLS.
