@@ -220,7 +220,7 @@ continuam aparecendo sem duplicar o nome apagado.
 - [x] 7. Helpers puros de validação, moeda/data, progresso e ritmo em `lib/goals/`
 - [x] 8. Repositório Supabase autenticado de metas e aportes
 - [x] 9. Loaders de listagem e edição
-- [ ] 10. Server Actions finas de metas e aportes, com `revalidatePath`
+- [x] 10. Server Actions finas de metas e aportes, com `revalidatePath`
 - [ ] 11. Página `/goals`, navegação, formulários, cards e destaque de conclusão
 - [ ] 12. Edição/hard-delete/reatribuição de aportes e tratamento de órfãos no
        Dashboard
@@ -297,3 +297,11 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   monetário inválido viram o mesmo estado genérico. Testes confirmados em vermelho
   antes dos módulos e depois verdes (30/30 em 4 arquivos selecionados), com lint
   verde.
+- Subtarefa 10 implementou `lib/actions/goals.ts`: cada action confirma sessão e
+  workspace, valida input por helper puro e delega ao repositório autenticado.
+  Criação ignora meta/autoria/workspace/tipo vindos do navegador; edição de aporte
+  valida a meta de destino por `id + workspace_id` antes de reatribuir; erros não
+  distinguem registro ausente de invisível. Aportes revalidam `/goals` e
+  `/dashboard`; metas revalidam `/goals`. O contrato inicialmente vermelho ficou
+  verde (64/64 testes de metas) e toda a unidade passou (204/204 em 27 arquivos),
+  com lint verde.
