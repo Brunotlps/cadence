@@ -221,8 +221,8 @@ continuam aparecendo sem duplicar o nome apagado.
 - [x] 8. Repositório Supabase autenticado de metas e aportes
 - [x] 9. Loaders de listagem e edição
 - [x] 10. Server Actions finas de metas e aportes, com `revalidatePath`
-- [ ] 11. Página `/goals`, navegação, formulários, cards e destaque de conclusão
-- [ ] 12. Edição/hard-delete/reatribuição de aportes e tratamento de órfãos no
+- [x] 11. Página `/goals`, navegação, formulários, cards e destaque de conclusão
+- [x] 12. Edição/hard-delete/reatribuição de aportes e tratamento de órfãos no
        Dashboard
 - [ ] 13. Atualizar modelo de dados, portabilidade e compliance aplicável
 - [ ] 14. Validação final: migration no ambiente de teste, compliance, unitários,
@@ -305,3 +305,12 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   `/dashboard`; metas revalidam `/goals`. O contrato inicialmente vermelho ficou
   verde (64/64 testes de metas) e toda a unidade passou (204/204 em 27 arquivos),
   com lint verde.
+- Subtarefas 11–12 implementaram `/goals`, edição de meta, edição/reatribuição de
+  aporte, formulários e diálogos acessíveis, cards responsivos, barra/selo de
+  conclusão e navegação com o Dashboard. A listagem mensal passou a carregar
+  `goal_id`, identificar “Aporte de meta excluída” e oferecer edição/hard-delete
+  específico também para órfãos. O primeiro E2E revelou que `<summary>` não era
+  exposto como botão no snapshot de acessibilidade; substituído por controle com
+  `aria-expanded`. Locators de texto repetido foram escopados sem afrouxar as
+  asserções. Metas + Dashboard ficaram verdes em conjunto (10/10), incluindo
+  viewport móvel; TypeScript, lint, 204 unitários e build de produção passaram.

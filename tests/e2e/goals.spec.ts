@@ -172,13 +172,15 @@ test.describe("metas financeiras", () => {
 
       await expect(goal).toContainText("R$ 250,00 de R$ 2.000,00");
       await expect(goal).toContainText("13%");
-      await expect(goal.getByText("R$ 250,00")).toBeVisible();
+      await expect(goal.getByText("R$ 250,00", { exact: true })).toBeVisible();
 
       await page.getByRole("link", { name: "Dashboard" }).click();
       await expect(
         page.getByRole("region", { name: "Resumo do mês" }),
       ).toContainText("R$ 750,00");
-      await expect(page.getByText("Aporte")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Aporte", exact: true }),
+      ).toBeVisible();
 
       const { data } = await fixture.client
         .from("transactions")
@@ -222,6 +224,7 @@ test.describe("metas financeiras", () => {
 
       const notebook = page.getByRole("article", { name: "Notebook" });
       await notebook.getByRole("link", { name: "Editar aporte" }).click();
+      await expect(page).toHaveURL(/\/contributions\/[0-9a-f-]+\/edit/);
       await page.getByLabel("Valor do aporte").fill("600,00");
       await page.getByLabel("Meta").selectOption({ label: "Curso" });
       await page.getByRole("button", { name: "Salvar alterações" }).click();

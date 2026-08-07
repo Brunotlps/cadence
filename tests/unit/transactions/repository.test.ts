@@ -67,6 +67,7 @@ const databaseTransaction = {
   category: "alimentacao",
   description: "Mercado",
   payment_method: "pix",
+  goal_id: null,
   occurred_on: "2026-08-06",
   created_at: "2026-08-06T12:00:00.000Z",
 };
@@ -86,7 +87,7 @@ describe("repositório de lançamentos", () => {
 
     expect(from).toHaveBeenCalledWith("transactions");
     expect(query.select).toHaveBeenCalledWith(
-      "id, kind, amount, category, description, payment_method, occurred_on, created_at",
+      "id, kind, amount, category, description, payment_method, goal_id, occurred_on, created_at",
     );
     expect(query.eq).toHaveBeenCalledWith("workspace_id", "workspace-id");
     expect(query.gte).toHaveBeenCalledWith("occurred_on", "2026-08-01");
@@ -106,6 +107,7 @@ describe("repositório de lançamentos", () => {
           category: "alimentacao",
           description: "Mercado",
           paymentMethod: "pix",
+          goalId: null,
           occurredOn: "2026-08-06",
           createdAt: "2026-08-06T12:00:00.000Z",
         },
