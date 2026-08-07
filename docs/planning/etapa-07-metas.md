@@ -219,7 +219,7 @@ continuam aparecendo sem duplicar o nome apagado.
 - [x] 6. Extrair o resolvedor compartilhado de workspace
 - [x] 7. Helpers puros de validação, moeda/data, progresso e ritmo em `lib/goals/`
 - [x] 8. Repositório Supabase autenticado de metas e aportes
-- [ ] 9. Loaders de listagem e edição
+- [x] 9. Loaders de listagem e edição
 - [ ] 10. Server Actions finas de metas e aportes, com `revalidatePath`
 - [ ] 11. Página `/goals`, navegação, formulários, cards e destaque de conclusão
 - [ ] 12. Edição/hard-delete/reatribuição de aportes e tratamento de órfãos no
@@ -290,3 +290,10 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   sistêmicos e erros do Supabase viram somente `query_failed`. Os testes foram
   confirmados em vermelho antes do módulo e depois verdes (47 casos em 4 arquivos de
   metas), com lint verde.
+- Subtarefa 9 implementou `load-dashboard.ts` e `load-edit.ts`: após resolver o
+  workspace, a listagem consulta metas/aportes autenticados, agrupa por `goal_id` e
+  calcula progresso/ritmo no servidor; loaders de edição aplicam o mesmo escopo a
+  metas e aportes, inclusive órfãos. Ausência/invisibilidade, falha de query ou dado
+  monetário inválido viram o mesmo estado genérico. Testes confirmados em vermelho
+  antes dos módulos e depois verdes (30/30 em 4 arquivos selecionados), com lint
+  verde.
