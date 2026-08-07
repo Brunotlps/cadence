@@ -1,10 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { getTransactionById, type TransactionRecord } from "./repository";
 import {
   getCurrentWorkspace,
-  getTransactionById,
   type CurrentWorkspace,
-  type TransactionRecord,
-} from "./repository";
+} from "@/lib/workspace/repository";
 
 export type TransactionEditResult =
   | {

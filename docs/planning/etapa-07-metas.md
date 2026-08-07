@@ -216,7 +216,7 @@ continuam aparecendo sem duplicar o nome apagado.
       reatribuição/edição/exclusão de aporte, saldo, ritmo, conclusão e aporte órfão
 - [x] 5. `db/schema.ts` + migration com preflight, `started_on`, constraints,
       triggers de integridade/imutabilidade e índice de aportes
-- [ ] 6. Extrair o resolvedor compartilhado de workspace
+- [x] 6. Extrair o resolvedor compartilhado de workspace
 - [ ] 7. Helpers puros de validação, moeda/data, progresso e ritmo em `lib/goals/`
 - [ ] 8. Repositório Supabase autenticado de metas e aportes
 - [ ] 9. Loaders de listagem e edição
@@ -270,3 +270,9 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   aporte com `goal_id=null`. As suítes centrais ficaram verdes (42/42) e toda a pasta
   de compliance permaneceu verde (50/50 em 5 arquivos). Uma segunda geração Drizzle
   confirmou que schema e snapshot estão sincronizados.
+- Subtarefa 6 extraiu `getCurrentWorkspace` e `CurrentWorkspace` para
+  `lib/workspace/repository.ts`, removendo a dependência conceitual de metas sobre o
+  repositório de lançamentos. Actions/loaders existentes passaram a consumir o
+  módulo compartilhado e a cobertura foi movida para `tests/unit/workspace`. Testes
+  unitários de workspace + transações permaneceram verdes (128/128 em 14 arquivos),
+  com lint dos arquivos afetados também verde.

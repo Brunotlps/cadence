@@ -7,11 +7,11 @@ import { createClient } from "@/lib/supabase/server";
 import { resolveMonth } from "@/lib/transactions/civil-date";
 import {
   deleteTransaction,
-  getCurrentWorkspace,
   insertTransaction,
   updateTransaction,
 } from "@/lib/transactions/repository";
 import { validateTransactionInput } from "@/lib/transactions/validate-transaction";
+import { getCurrentWorkspace } from "@/lib/workspace/repository";
 
 const SAVE_ERROR = "Não foi possível salvar o lançamento.";
 const DELETE_ERROR = "Não foi possível excluir o lançamento.";

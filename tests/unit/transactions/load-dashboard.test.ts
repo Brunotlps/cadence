@@ -8,9 +8,12 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/transactions/repository", () => ({
-  getCurrentWorkspace: mocks.getCurrentWorkspace,
   hasAnyTransactions: mocks.hasAnyTransactions,
   listMonthlyTransactions: mocks.listMonthlyTransactions,
+}));
+
+vi.mock("@/lib/workspace/repository", () => ({
+  getCurrentWorkspace: mocks.getCurrentWorkspace,
 }));
 
 import { loadTransactionDashboard } from "@/lib/transactions/load-dashboard";

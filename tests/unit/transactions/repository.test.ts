@@ -2,7 +2,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { describe, expect, it, vi } from "vitest";
 import {
   deleteTransaction,
-  getCurrentWorkspace,
   getTransactionById,
   hasAnyTransactions,
   insertTransaction,
@@ -73,47 +72,6 @@ const databaseTransaction = {
 };
 
 describe("repositório de lançamentos", () => {
-  it("resolve deterministicamente o workspace visível do usuário", async () => {
-    const { client, from, query } = fakeClient({
-      data: {
-        workspace_id: "11111111-1111-4111-8111-111111111111",
-        workspaces: { name: "Casa" },
-      },
-      error: null,
-    });
-
-    const result = await getCurrentWorkspace(
-      client,
-      "22222222-2222-4222-8222-222222222222",
-    );
-
-    expect(from).toHaveBeenCalledWith("workspace_members");
-    expect(query.select).toHaveBeenCalledWith("workspace_id, workspaces(name)");
-    expect(query.eq).toHaveBeenCalledWith(
-      "user_id",
-      "22222222-2222-4222-8222-222222222222",
-    );
-    expect(query.order).toHaveBeenCalledWith("created_at", { ascending: true });
-    expect(query.limit).toHaveBeenCalledWith(1);
-    expect(query.maybeSingle).toHaveBeenCalledOnce();
-    expect(result).toEqual({
-      data: {
-        id: "11111111-1111-4111-8111-111111111111",
-        name: "Casa",
-      },
-      error: null,
-    });
-  });
-
-  it("representa ausência de membership sem tratá-la como falha", async () => {
-    const { client } = fakeClient({ data: null, error: null });
-
-    await expect(getCurrentWorkspace(client, "user-id")).resolves.toEqual({
-      data: null,
-      error: null,
-    });
-  });
-
   it("lista somente o período e workspace pedidos na ordem do dashboard", async () => {
     const { client, from, query } = fakeClient({
       data: [databaseTransaction],

@@ -1,12 +1,14 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getMonthRange, resolveMonth } from "./civil-date";
 import {
-  getCurrentWorkspace,
   hasAnyTransactions,
   listMonthlyTransactions,
-  type CurrentWorkspace,
   type TransactionRecord,
 } from "./repository";
+import {
+  getCurrentWorkspace,
+  type CurrentWorkspace,
+} from "@/lib/workspace/repository";
 import {
   summarizeTransactions,
   type TransactionSummary,

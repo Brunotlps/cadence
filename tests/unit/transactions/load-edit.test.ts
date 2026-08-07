@@ -7,8 +7,11 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/transactions/repository", () => ({
-  getCurrentWorkspace: mocks.getCurrentWorkspace,
   getTransactionById: mocks.getTransactionById,
+}));
+
+vi.mock("@/lib/workspace/repository", () => ({
+  getCurrentWorkspace: mocks.getCurrentWorkspace,
 }));
 
 import { loadTransactionForEdit } from "@/lib/transactions/load-edit";
