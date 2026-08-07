@@ -243,7 +243,7 @@ describe("Server Actions de metas", () => {
     expect(result.success).toBe(true);
   });
 
-  it("não reatribui aporte quando a meta de destino está ausente ou invisível", async () => {
+  it("bloqueia na Server Action a reatribuição para meta de outro workspace", async () => {
     mocks.getGoalById.mockResolvedValue({ data: null, error: null });
 
     const result = await updateContributionAction(
@@ -256,6 +256,10 @@ describe("Server Actions de metas", () => {
       error: "Não foi possível salvar o aporte.",
       fieldErrors: {},
       success: false,
+    });
+    expect(mocks.getGoalById).toHaveBeenCalledWith(expect.anything(), {
+      workspaceId: "server-workspace-id",
+      goalId: OTHER_GOAL_ID,
     });
     expect(mocks.updateContribution).not.toHaveBeenCalled();
     expect(mocks.revalidatePath).not.toHaveBeenCalled();

@@ -315,6 +315,28 @@ describe.skipIf(!hasSupabaseTestEnv())(
       });
     });
 
+    it("bloqueia reatribuição por UPDATE para meta de outro workspace", async () => {
+      const contributionId = await insertContribution(goalAId);
+
+      const { data, error } = await clientA
+        .from("transactions")
+        .update({ goal_id: goalSecondWorkspaceAId })
+        .eq("id", contributionId)
+        .eq("workspace_id", workspaceAId)
+        .select("id");
+
+      expect(error?.code).toBe("23514");
+      expect(data).toBeNull();
+
+      const { data: preserved, error: preservedError } = await clientA
+        .from("transactions")
+        .select("goal_id")
+        .eq("id", contributionId)
+        .single();
+      expect(preservedError).toBeNull();
+      expect(preserved?.goal_id).toBe(goalAId);
+    });
+
     it("excluir meta preserva o aporte e aplica ON DELETE SET NULL", async () => {
       const goalId = await insertGoal(workspaceAId, { name: "Meta removível" });
       const contributionId = await insertContribution(goalId, {
