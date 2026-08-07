@@ -214,7 +214,7 @@ continuam aparecendo sem duplicar o nome apagado.
       exclusão de meta preservando aportes via `ON DELETE SET NULL`
 - [x] 4. E2E primeiro: estado vazio, criação/edição/exclusão de meta, aporte,
       reatribuição/edição/exclusão de aporte, saldo, ritmo, conclusão e aporte órfão
-- [ ] 5. `db/schema.ts` + migration com preflight, `started_on`, constraints,
+- [x] 5. `db/schema.ts` + migration com preflight, `started_on`, constraints,
       triggers de integridade/imutabilidade e índice de aportes
 - [ ] 6. Extrair o resolvedor compartilhado de workspace
 - [ ] 7. Helpers puros de validação, moeda/data, progresso e ritmo em `lib/goals/`
@@ -261,3 +261,12 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   exclusão de meta com aporte órfão e viewport móvel. O E2E existente de lançamentos
   e Dashboard permaneceu verde (5/5) após sua fixture de aporte passar a usar uma
   meta real.
+- Subtarefa 5 implementada em `0007_zippy_moira_mactaggert.sql`: preflight sem
+  correção silenciosa, backfill de `started_on` derivado do `created_at` histórico,
+  constraints monetárias/nome, índices e campos sistêmicos de meta protegidos por
+  trigger. A trigger de aporte é declarada exclusivamente `BEFORE INSERT`, exige
+  `goal_id` e igualdade de workspace na criação e não participa do `UPDATE` do FK.
+  Migration aplicada no Supabase de teste; excluir uma meta continua preservando o
+  aporte com `goal_id=null`. As suítes centrais ficaram verdes (42/42) e toda a pasta
+  de compliance permaneceu verde (50/50 em 5 arquivos). Uma segunda geração Drizzle
+  confirmou que schema e snapshot estão sincronizados.

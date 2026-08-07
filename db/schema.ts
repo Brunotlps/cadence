@@ -43,16 +43,49 @@ export const workspaceMembers = pgTable(
 );
 
 // Definida antes de transactions porque transactions.goalId a referencia.
-export const goals = pgTable("goals", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  workspaceId: uuid("workspace_id")
-    .notNull()
-    .references(() => workspaces.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  targetAmount: numeric("target_amount", { precision: 12, scale: 2 }).notNull(),
-  suggestedMonthly: numeric("suggested_monthly", { precision: 12, scale: 2 }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const goals = pgTable(
+  "goals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    workspaceId: uuid("workspace_id")
+      .notNull()
+      .references(() => workspaces.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    targetAmount: numeric("target_amount", {
+      precision: 12,
+      scale: 2,
+    }).notNull(),
+    suggestedMonthly: numeric("suggested_monthly", {
+      precision: 12,
+      scale: 2,
+    }),
+    startedOn: date("started_on")
+      .default(sql`(timezone('America/Sao_Paulo', now()))::date`)
+      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    check(
+      "goals_name_check",
+      sql`btrim(${table.name}) <> '' and char_length(${table.name}) <= 100`,
+    ),
+    check(
+      "goals_target_amount_positive_check",
+      sql`${table.targetAmount} > 0 and ${table.targetAmount} <> 'NaN'::numeric`,
+    ),
+    check(
+      "goals_suggested_monthly_positive_check",
+      sql`${table.suggestedMonthly} is null or (
+        ${table.suggestedMonthly} > 0
+        and ${table.suggestedMonthly} <> 'NaN'::numeric
+      )`,
+    ),
+    index("goals_workspace_created_idx").on(
+      table.workspaceId,
+      table.createdAt.desc(),
+    ),
+  ],
+);
 
 export const transactions = pgTable(
   "transactions",
@@ -102,11 +135,23 @@ export const transactions = pgTable(
       "transactions_description_length_check",
       sql`${table.description} is null or char_length(${table.description}) <= 200`,
     ),
+    check(
+      "transactions_goal_kind_check",
+      sql`${table.goalId} is null or ${table.kind} = 'contribution'`,
+    ),
     index("transactions_workspace_occurred_created_idx").on(
       table.workspaceId,
       table.occurredOn.desc(),
       table.createdAt.desc(),
     ),
+    index("transactions_contribution_goal_idx")
+      .on(
+        table.workspaceId,
+        table.goalId,
+        table.occurredOn.desc(),
+        table.createdAt.desc(),
+      )
+      .where(sql`${table.kind} = 'contribution' and ${table.goalId} is not null`),
   ],
 );
 

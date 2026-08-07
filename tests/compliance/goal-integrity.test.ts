@@ -221,6 +221,21 @@ describe.skipIf(!hasSupabaseTestEnv())(
       expect(data?.started_on).toBe(getTodayInSaoPaulo());
     });
 
+    it("ignora started_on forjado no insert e deriva a data no banco", async () => {
+      const { data, error } = await clientA
+        .from("goals")
+        .insert({
+          ...BASE_GOAL,
+          workspace_id: workspaceAId,
+          started_on: "2000-01-01",
+        })
+        .select("started_on")
+        .single();
+
+      expect(error).toBeNull();
+      expect(data?.started_on).toBe(getTodayInSaoPaulo());
+    });
+
     it.each([
       ["workspace_id", () => secondWorkspaceAId],
       ["created_at", () => "2000-01-01T00:00:00.000Z"],
