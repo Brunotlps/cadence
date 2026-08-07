@@ -212,7 +212,7 @@ continuam aparecendo sem duplicar o nome apagado.
 - [x] 3. Testes de compliance primeiro: constraints, imutabilidade, CRUD cruzado,
       aporte sem meta, meta de outro workspace, vínculo de `goal_id` só a aporte e
       exclusão de meta preservando aportes via `ON DELETE SET NULL`
-- [ ] 4. E2E primeiro: estado vazio, criação/edição/exclusão de meta, aporte,
+- [x] 4. E2E primeiro: estado vazio, criação/edição/exclusão de meta, aporte,
       reatribuição/edição/exclusão de aporte, saldo, ritmo, conclusão e aporte órfão
 - [ ] 5. `db/schema.ts` + migration com preflight, `started_on`, constraints,
       triggers de integridade/imutabilidade e índice de aportes
@@ -253,3 +253,11 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   não pode regredir esse comportamento. A suíte existente de integridade de
   transações permaneceu verde (19/19) após vincular sua fixture de `contribution` a
   uma meta real.
+- Subtarefa 4 confirmada em vermelho com
+  `npx playwright test tests/e2e/goals.spec.ts --workers=1`: cinco cenários falham
+  na navegação, rota e componentes de metas ainda ausentes, depois de fixtures e
+  autenticação completarem normalmente. A cobertura fixa estado vazio/criação,
+  aporte e saldo, edição/reatribuição/hard-delete de aporte, recálculo de conclusão,
+  exclusão de meta com aporte órfão e viewport móvel. O E2E existente de lançamentos
+  e Dashboard permaneceu verde (5/5) após sua fixture de aporte passar a usar uma
+  meta real.

@@ -51,6 +51,7 @@ async function seedTransaction(
     amount: string;
     category: string | null;
     description?: string;
+    goalId?: string;
     occurredOn: string;
   },
 ) {
@@ -64,7 +65,24 @@ async function seedTransaction(
         amount: transaction.amount,
         category: transaction.category,
         description: transaction.description,
+        goal_id: transaction.goalId,
         occurred_on: transaction.occurredOn,
+      })
+      .select("id")
+      .single(),
+  );
+  if (error) throw error;
+  return data.id as string;
+}
+
+async function seedGoal(client: SupabaseClient, workspaceId: string) {
+  const { data, error } = await retryAfterJwtClockSkew(() =>
+    client
+      .from("goals")
+      .insert({
+        workspace_id: workspaceId,
+        name: "Reserva do resumo",
+        target_amount: "1000.00",
       })
       .select("id")
       .single(),
@@ -201,6 +219,7 @@ test.describe("lançamentos e Dashboard", () => {
     const previousMonth = shiftMonth(currentMonth, -1);
 
     try {
+      const goalId = await seedGoal(fixture.client, fixture.workspaceId);
       await seedTransaction(fixture.client, {
         workspaceId: fixture.workspaceId,
         userId: fixture.id,
@@ -235,6 +254,7 @@ test.describe("lançamentos e Dashboard", () => {
         amount: "25.00",
         category: null,
         description: "Aporte",
+        goalId,
         occurredOn: today,
       });
 
