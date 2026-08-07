@@ -218,7 +218,7 @@ continuam aparecendo sem duplicar o nome apagado.
       triggers de integridade/imutabilidade e índice de aportes
 - [x] 6. Extrair o resolvedor compartilhado de workspace
 - [x] 7. Helpers puros de validação, moeda/data, progresso e ritmo em `lib/goals/`
-- [ ] 8. Repositório Supabase autenticado de metas e aportes
+- [x] 8. Repositório Supabase autenticado de metas e aportes
 - [ ] 9. Loaders de listagem e edição
 - [ ] 10. Server Actions finas de metas e aportes, com `revalidatePath`
 - [ ] 11. Página `/goals`, navegação, formulários, cards e destaque de conclusão
@@ -283,3 +283,10 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   truncar o percentual textual. O limite de `numeric(12,2)` foi centralizado no
   helper monetário já existente. Helpers de metas + toda a unidade de transações
   ficaram verdes (157/157 em 15 arquivos), com lint verde.
+- Subtarefa 8 implementou `lib/goals/repository.ts` com cliente Supabase autenticado
+  injetado: metas e aportes são limitados por `workspace_id`, leituras de progresso
+  excluem órfãos e datas futuras, get/update/delete reforçam `id + workspace_id` e
+  mutações de aporte também filtram `kind=contribution`. Payloads não aceitam campos
+  sistêmicos e erros do Supabase viram somente `query_failed`. Os testes foram
+  confirmados em vermelho antes do módulo e depois verdes (47 casos em 4 arquivos de
+  metas), com lint verde.
