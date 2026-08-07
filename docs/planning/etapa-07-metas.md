@@ -1,8 +1,9 @@
 # Etapa 07 — Metas financeiras
 
-**Status:** planejado
+**Status:** concluído
 **Aberto em:** 07/08/2026
 **Plano aprovado em:** 07/08/2026
+**Concluído em:** 07/08/2026
 **Depende de:** Etapa 06 (lançamentos, formatadores, camada de acesso a dado)
 
 ## Objetivo
@@ -225,7 +226,7 @@ continuam aparecendo sem duplicar o nome apagado.
 - [x] 12. Edição/hard-delete/reatribuição de aportes e tratamento de órfãos no
        Dashboard
 - [x] 13. Atualizar modelo de dados, portabilidade e compliance aplicável
-- [ ] 14. Validação final: migration no ambiente de teste, compliance, unitários,
+- [x] 14. Validação final: migration no ambiente de teste, compliance, unitários,
        E2E sem skips, lint, TypeScript e build verdes
 
 ## Estratégia de commits
@@ -319,3 +320,8 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   preservação exportável de aportes órfãos com `goal_id=null`. O mapeamento LGPD e o
   log de segurança foram revisados; os controles e riscos já registrados continuam
   válidos, sem exigir mudança adicional nesses documentos.
+- Subtarefa 14 concluiu a etapa com a migration aplicada no Supabase de teste, 255
+  testes Vitest verdes em 33 arquivos (incluindo toda a compliance), 16 E2E verdes
+  sem skips, lint, TypeScript e build de produção verdes. Uma geração Drizzle final
+  confirmou que schema, migration e snapshot permanecem sincronizados, sem mudança
+  adicional a gerar.
