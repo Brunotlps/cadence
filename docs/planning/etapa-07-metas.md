@@ -224,7 +224,7 @@ continuam aparecendo sem duplicar o nome apagado.
 - [x] 11. Página `/goals`, navegação, formulários, cards e destaque de conclusão
 - [x] 12. Edição/hard-delete/reatribuição de aportes e tratamento de órfãos no
        Dashboard
-- [ ] 13. Atualizar modelo de dados, portabilidade e compliance aplicável
+- [x] 13. Atualizar modelo de dados, portabilidade e compliance aplicável
 - [ ] 14. Validação final: migration no ambiente de teste, compliance, unitários,
        E2E sem skips, lint, TypeScript e build verdes
 
@@ -314,3 +314,8 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   `aria-expanded`. Locators de texto repetido foram escopados sem afrouxar as
   asserções. Metas + Dashboard ficaram verdes em conjunto (10/10), incluindo
   viewport móvel; TypeScript, lint, 204 unitários e build de produção passaram.
+- Subtarefa 13 atualizou o modelo e o contrato de portabilidade com `started_on`,
+  constraints, recálculo após edição, edição/reatribuição/exclusão de aportes e a
+  preservação exportável de aportes órfãos com `goal_id=null`. O mapeamento LGPD e o
+  log de segurança foram revisados; os controles e riscos já registrados continuam
+  válidos, sem exigir mudança adicional nesses documentos.

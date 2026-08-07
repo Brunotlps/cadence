@@ -94,6 +94,7 @@ export const goals = pgTable("goals", {
   name: text("name").notNull(),
   targetAmount: numeric("target_amount", { precision: 12, scale: 2 }).notNull(),
   suggestedMonthly: numeric("suggested_monthly", { precision: 12, scale: 2 }),
+  startedOn: date("started_on").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 ```
@@ -108,8 +109,7 @@ banco nem em exportações.
 
 - `expense` — despesa;
 - `income` — receita;
-- `contribution` — aporte criado por fluxos futuros de Metas, fora do formulário da
-  Etapa 06.
+- `contribution` — aporte vinculado a uma meta pelo fluxo de Metas.
 
 ### Categorias
 
@@ -156,6 +156,31 @@ navegador.
   mensal;
 - migrations fazem preflight e falham diante de dado antigo incompatível, sem
   reclassificar ou apagar lançamentos silenciosamente.
+
+## Integridade de metas e aportes
+
+- o nome da meta é normalizado sem espaços nas pontas, não pode ficar vazio e aceita
+  no máximo 100 caracteres;
+- `target_amount` deve ser positivo e caber em `numeric(12,2)`;
+  `suggested_monthly` pode ser `NULL`, mas, quando informado, também deve ser
+  positivo e caber no mesmo tipo;
+- `started_on` é uma data civil em `America/Sao_Paulo`, derivada pelo banco na
+  criação; `workspace_id`, `created_at` e `started_on` são imutáveis, enquanto nome,
+  alvo e ritmo continuam editáveis;
+- somente transações `contribution` podem ter `goal_id`;
+- ao inserir um aporte, uma trigger exclusivamente `BEFORE INSERT` exige `goal_id`
+  e confirma que transação e meta pertencem ao mesmo workspace. Essa validação não
+  roda em `UPDATE`: assim, o FK pode executar `ON DELETE SET NULL` quando a meta é
+  apagada;
+- editar alvo ou ritmo recalcula progresso, conclusão e comparação de ritmo desde o
+  `started_on` original; esses resultados não são snapshots persistidos;
+- aportes individuais podem ser editados, reatribuídos a outra meta do mesmo
+  workspace ou removidos por hard-delete.
+
+Apagar uma meta é hard-delete, mas não apaga seus lançamentos. Os aportes vinculados
+permanecem como `contribution`, passam a ter `goal_id=NULL` e continuam compondo
+histórico, saldo e exportação. A interface os identifica como “Aporte de meta
+excluída”; o nome apagado não é duplicado na transação nem mantido como tombstone.
 
 ## Row-Level Security (SQL)
 
