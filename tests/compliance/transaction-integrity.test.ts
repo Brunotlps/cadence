@@ -248,13 +248,25 @@ describe.skipIf(!hasSupabaseTestEnv())(
       });
     });
 
-    it("mantém contribution válido e fora das categorias desta etapa", async () => {
+    it("mantém contribution válido vinculado a uma meta", async () => {
+      const { data: goal, error: goalError } = await clientA
+        .from("goals")
+        .insert({
+          workspace_id: workspaceAId,
+          name: "Meta do aporte",
+          target_amount: "1000.00",
+        })
+        .select("id")
+        .single();
+      if (goalError) throw goalError;
+
       const { error } = await clientA.from("transactions").insert({
         workspace_id: workspaceAId,
         created_by: userAId,
         kind: "contribution",
         amount: "30.00",
         category: null,
+        goal_id: goal.id,
         occurred_on: "2026-08-05",
       });
 

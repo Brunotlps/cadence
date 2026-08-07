@@ -209,7 +209,7 @@ continuam aparecendo sem duplicar o nome apagado.
 - [x] 2. Testes unitários primeiro (TDD): validação de meta/aporte, ciclos mensais,
       progresso, conclusão, mudança de alvo/ritmo e reatribuição/edição/exclusão de
       aportes
-- [ ] 3. Testes de compliance primeiro: constraints, imutabilidade, CRUD cruzado,
+- [x] 3. Testes de compliance primeiro: constraints, imutabilidade, CRUD cruzado,
       aporte sem meta, meta de outro workspace, vínculo de `goal_id` só a aporte e
       exclusão de meta preservando aportes via `ON DELETE SET NULL`
 - [ ] 4. E2E primeiro: estado vazio, criação/edição/exclusão de meta, aporte,
@@ -244,3 +244,12 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   `lib/goals/*` e `lib/actions/goals.ts` ainda não existem. Os casos fixam validação,
   ciclos completos, progresso/conclusão, edição de alvo/ritmo e criação, edição,
   reatribuição e hard-delete de aportes antes da implementação.
+- Subtarefa 3 confirmada em vermelho contra o Supabase de teste com
+  `npx vitest run tests/compliance/goal-integrity.test.ts`: 22 casos executados, 6
+  já verdes pelas policies/FKs existentes e 16 falhando somente nas garantias ainda
+  ausentes (constraints de metas, `started_on`, campos imutáveis, aporte sem meta,
+  vínculo entre workspaces e `goal_id` em despesa/receita). O cenário de exclusão de
+  meta já prova que o FK atual preserva o aporte com `goal_id=null`; a trigger futura
+  não pode regredir esse comportamento. A suíte existente de integridade de
+  transações permaneceu verde (19/19) após vincular sua fixture de `contribution` a
+  uma meta real.
