@@ -217,7 +217,7 @@ continuam aparecendo sem duplicar o nome apagado.
 - [x] 5. `db/schema.ts` + migration com preflight, `started_on`, constraints,
       triggers de integridade/imutabilidade e índice de aportes
 - [x] 6. Extrair o resolvedor compartilhado de workspace
-- [ ] 7. Helpers puros de validação, moeda/data, progresso e ritmo em `lib/goals/`
+- [x] 7. Helpers puros de validação, moeda/data, progresso e ritmo em `lib/goals/`
 - [ ] 8. Repositório Supabase autenticado de metas e aportes
 - [ ] 9. Loaders de listagem e edição
 - [ ] 10. Server Actions finas de metas e aportes, com `revalidatePath`
@@ -276,3 +276,10 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   módulo compartilhado e a cobertura foi movida para `tests/unit/workspace`. Testes
   unitários de workspace + transações permaneceram verdes (128/128 em 14 arquivos),
   com lint dos arquivos afetados também verde.
+- Subtarefa 7 implementou `validate-goal.ts`, `validate-contribution.ts` e
+  `calculate-goal-progress.ts`: normalização monetária em centavos, data futura
+  rejeitada para aporte, ciclos mensais completos com aniversário ajustado ao fim do
+  mês, expectativa limitada pelo alvo, status de ritmo e barra limitada a 100% sem
+  truncar o percentual textual. O limite de `numeric(12,2)` foi centralizado no
+  helper monetário já existente. Helpers de metas + toda a unidade de transações
+  ficaram verdes (157/157 em 15 arquivos), com lint verde.

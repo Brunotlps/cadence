@@ -4,14 +4,17 @@ import {
   type TransactionCategoryCode,
 } from "./categories";
 import { isValidCivilDate } from "./civil-date";
-import { centsToNumeric, parseAmountToCents } from "./money";
+import {
+  centsToNumeric,
+  MAX_NUMERIC_12_2_CENTS,
+  parseAmountToCents,
+} from "./money";
 import {
   isPaymentMethodCode,
   type PaymentMethodCode,
 } from "./payment-methods";
 import type { EntryTransactionKind } from "./kinds";
 
-const MAX_AMOUNT_CENTS = 999_999_999_999;
 const MAX_DESCRIPTION_LENGTH = 200;
 
 export type TransactionInput = {
@@ -46,7 +49,7 @@ export function validateTransactionInput(
   if (
     amountCents === null ||
     amountCents <= 0 ||
-    amountCents > MAX_AMOUNT_CENTS
+    amountCents > MAX_NUMERIC_12_2_CENTS
   ) {
     fieldErrors.amount = "Informe um valor válido.";
   }
