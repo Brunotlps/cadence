@@ -47,6 +47,25 @@ O JSON pode acrescentar `category_label`, `payment_method_label` ou equivalentes
 para leitura humana, desde que preserve os campos de código acima. No CSV, cada
 entidade usa arquivo separado e cabeçalho estável.
 
+## Contrato de exportação de metas
+
+Cada meta existente no momento da exportação inclui:
+
+| Campo               | Representação                                  |
+| ------------------- | ---------------------------------------------- |
+| `id`                | UUID da meta                                   |
+| `workspace_id`      | UUID do workspace                              |
+| `name`              | nome normalizado, com até 100 caracteres       |
+| `target_amount`     | string decimal positiva com duas casas         |
+| `suggested_monthly` | string decimal positiva ou `null`              |
+| `started_on`        | data civil `YYYY-MM-DD` em `America/Sao_Paulo` |
+| `created_at`        | timestamp ISO 8601                             |
+
+Metas excluídas por hard-delete não aparecem em exportações posteriores. Seus
+aportes, porém, continuam no contrato de lançamentos com `kind=contribution` e
+`goal_id=null`: eles preservam o histórico financeiro sem reter ou duplicar o nome
+da meta apagada.
+
 ## Escopo
 
 - Exporta apenas dados dos workspaces em que o solicitante é membro (respeita RLS).

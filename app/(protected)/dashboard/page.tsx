@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import { signOutAction } from "@/lib/actions/auth";
 import { createTransactionAction } from "@/lib/actions/transactions";
 import { DeleteTransaction } from "@/components/transactions/delete-transaction";
+import { DeleteContribution } from "@/components/goals/delete-contribution";
 import { ExpenseDonut } from "@/components/transactions/expense-donut";
 import { TransactionForm } from "@/components/transactions/transaction-form";
 import { TRANSACTION_CATEGORIES } from "@/lib/transactions/categories";
@@ -27,7 +28,9 @@ type DashboardPageProps = {
 };
 
 function categoryLabel(transaction: TransactionRecord): string {
-  if (transaction.kind === "contribution") return "Aporte";
+  if (transaction.kind === "contribution") {
+    return transaction.goalId ? "Aporte" : "Aporte de meta excluída";
+  }
   return (
     TRANSACTION_CATEGORIES.find(
       (category) => category.code === transaction.category,
@@ -95,11 +98,12 @@ export default async function DashboardPage({
           <p className={styles.eyebrow}>Cadence</p>
           <h1>{data.workspace.name}</h1>
         </div>
-        <form action={signOutAction}>
-          <button className={styles.logout} type="submit">
-            Sair
-          </button>
-        </form>
+        <div className={styles.headerActions}>
+          <Link href="/goals">Metas</Link>
+          <form action={signOutAction}>
+            <button className={styles.logout} type="submit">Sair</button>
+          </form>
+        </div>
       </header>
 
       <nav className={styles.monthNav} aria-label="Navegação por mês">
@@ -213,7 +217,7 @@ export default async function DashboardPage({
                     >
                       {signedAmount(transaction)}
                     </p>
-                    {transaction.kind !== "contribution" && (
+                    {transaction.kind !== "contribution" ? (
                       <div className={styles.rowActions}>
                         <Link
                           href={`/transactions/${transaction.id}/edit?month=${data.month}`}
@@ -221,6 +225,11 @@ export default async function DashboardPage({
                           Editar
                         </Link>
                         <DeleteTransaction transactionId={transaction.id} />
+                      </div>
+                    ) : (
+                      <div className={styles.rowActions}>
+                        <Link href={`/contributions/${transaction.id}/edit`}>Editar</Link>
+                        <DeleteContribution transactionId={transaction.id} dashboardLabel />
                       </div>
                     )}
                   </article>

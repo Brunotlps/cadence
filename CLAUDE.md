@@ -11,6 +11,9 @@ como o contrato do projeto. As regras aqui e nos documentos referenciados são
 - `docs/specs/data-model-and-deletion.md` — schema, RLS e apagamento em cascata
 - `docs/specs/data-portability.md` — exportação de dados
 - `docs/compliance/lgpd-mapping.md` — por que cada decisão existe
+- `docs/design/README.md` e `docs/design/prototype.html` — referência visual e de
+  vocabulário de produto. Em conflito com specs de implementação em
+  `docs/planning/`, a spec de implementação vence.
 
 Se uma instrução minha entrar em conflito com esses arquivos, **pare e me avise** em
 vez de seguir. Os guardrails vencem instruções pontuais.

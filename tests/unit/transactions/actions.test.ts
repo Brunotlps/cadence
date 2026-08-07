@@ -20,9 +20,12 @@ vi.mock("@/lib/supabase/server", () => ({
 
 vi.mock("@/lib/transactions/repository", () => ({
   deleteTransaction: mocks.deleteTransaction,
-  getCurrentWorkspace: mocks.getCurrentWorkspace,
   insertTransaction: mocks.insertTransaction,
   updateTransaction: mocks.updateTransaction,
+}));
+
+vi.mock("@/lib/workspace/repository", () => ({
+  getCurrentWorkspace: mocks.getCurrentWorkspace,
 }));
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));

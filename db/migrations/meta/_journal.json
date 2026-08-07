@@ -50,6 +50,20 @@
       "when": 1786025015633,
       "tag": "0006_tan_scalphunter",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1786115672803,
+      "tag": "0007_zippy_moira_mactaggert",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786117829178,
+      "tag": "0008_validate_contribution_reassignment",
+      "breakpoints": true
     }
   ]
 }

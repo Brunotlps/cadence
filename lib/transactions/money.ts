@@ -1,3 +1,5 @@
+export const MAX_NUMERIC_12_2_CENTS = 999_999_999_999;
+
 function amountParts(input: string): { whole: string; fraction: string } | null {
   if (/^\d+$/.test(input)) {
     return { whole: input, fraction: "" };
