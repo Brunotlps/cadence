@@ -169,9 +169,11 @@ navegador.
   alvo e ritmo continuam editáveis;
 - somente transações `contribution` podem ter `goal_id`;
 - ao inserir um aporte, uma trigger exclusivamente `BEFORE INSERT` exige `goal_id`
-  e confirma que transação e meta pertencem ao mesmo workspace. Essa validação não
-  roda em `UPDATE`: assim, o FK pode executar `ON DELETE SET NULL` quando a meta é
-  apagada;
+  e confirma que transação e meta pertencem ao mesmo workspace;
+- ao reatribuir um aporte, uma segunda trigger `BEFORE UPDATE OF goal_id` repete a
+  validação de workspace somente quando `NEW.goal_id IS NOT NULL`. O FK pode executar
+  `ON DELETE SET NULL` quando a meta é apagada porque esse valor não satisfaz a
+  condição da trigger;
 - editar alvo ou ritmo recalcula progresso, conclusão e comparação de ritmo desde o
   `started_on` original; esses resultados não são snapshots persistidos;
 - aportes individuais podem ser editados, reatribuídos a outra meta do mesmo

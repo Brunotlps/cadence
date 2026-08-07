@@ -159,17 +159,22 @@ reclassificar ou apagar dado financeiro silenciosamente. Ela deverá:
   `UPDATE`**, que, ao inserir `kind=contribution`, exige `goal_id IS NOT NULL`, lê a
   meta referenciada e rejeita quando `transactions.workspace_id` difere de
   `goals.workspace_id`;
+- instalar uma segunda trigger `BEFORE UPDATE OF goal_id`, condicionada a
+  `WHEN (NEW.goal_id IS NOT NULL)`, que valida novamente a igualdade de workspace
+  durante reatribuições;
 - criar o índice da consulta de aportes.
 
 Esse desenho é obrigatório: `goal_id` não recebe `NOT NULL`, e a igualdade entre
-workspaces não será um `CHECK` entre tabelas. Como o `ON DELETE SET NULL` executa um
-`UPDATE`, ele nunca aciona a trigger escopada a `INSERT` e pode desvincular os
-aportes normalmente.
+workspaces não será um `CHECK` entre tabelas. A trigger de criação permanece
+escopada a `INSERT`; a de reatribuição só executa para `goal_id` não nulo. Como o
+`ON DELETE SET NULL` grava `NULL`, sua atualização não satisfaz o `WHEN` e pode
+desvincular os aportes normalmente.
 
 Os testes de compliance provarão exatamente: insert de aporte sem meta falha; insert
-com meta de outro workspace falha; insert legítimo passa; excluir meta com aportes
-passa e deixa as transações preservadas com `goal_id=null`. Também cobrirão RLS,
-imutabilidade, vínculo de `goal_id` apenas a aporte e CRUD cruzado.
+com meta de outro workspace falha; insert legítimo passa; reatribuição por `UPDATE`
+para meta de outro workspace falha; excluir meta com aportes passa e deixa as
+transações preservadas com `goal_id=null`. Também cobrirão RLS, imutabilidade,
+vínculo de `goal_id` apenas a aporte e CRUD cruzado.
 
 Não será adicionada `created_by` a metas: ela não é necessária para autorização ou
 produto, pois qualquer membro pode criar, editar e excluir qualquer meta.
@@ -228,6 +233,8 @@ continuam aparecendo sem duplicar o nome apagado.
 - [x] 13. Atualizar modelo de dados, portabilidade e compliance aplicável
 - [x] 14. Validação final: migration no ambiente de teste, compliance, unitários,
        E2E sem skips, lint, TypeScript e build verdes
+- [x] 15. Fortalecer a reatribuição com trigger de `UPDATE OF goal_id`, sem bloquear
+       `ON DELETE SET NULL`, e cobrir banco e Server Action em testes específicos
 
 ## Estratégia de commits
 
@@ -237,9 +244,11 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
 
 ## Notas
 
-- O plano foi aprovado com a trigger de integridade de aporte explicitamente
-  restrita a `BEFORE INSERT`; nenhuma migration ou implementação foi escrita antes
-  desse registro.
+- O plano inicial foi aprovado com a validação de criação explicitamente restrita a
+  `BEFORE INSERT`; nenhuma migration ou implementação foi escrita antes desse
+  registro. A auditoria final da reatribuição identificou que esse desenho não
+  protegia `UPDATE` direto. A proteção foi complementada, sem ampliar a trigger de
+  criação, por uma trigger separada cujo `WHEN` exclui `goal_id=NULL`.
 - Subtarefa 2 confirmada em vermelho com
   `npx vitest run tests/unit/goals`: quatro suítes falham somente porque os módulos
   `lib/goals/*` e `lib/actions/goals.ts` ainda não existem. Os casos fixam validação,
@@ -320,8 +329,16 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   preservação exportável de aportes órfãos com `goal_id=null`. O mapeamento LGPD e o
   log de segurança foram revisados; os controles e riscos já registrados continuam
   válidos, sem exigir mudança adicional nesses documentos.
-- Subtarefa 14 concluiu a etapa com a migration aplicada no Supabase de teste, 255
+- Subtarefa 14 concluiu a etapa com a migration aplicada no Supabase de teste, 256
   testes Vitest verdes em 33 arquivos (incluindo toda a compliance), 16 E2E verdes
   sem skips, lint, TypeScript e build de produção verdes. Uma geração Drizzle final
   confirmou que schema, migration e snapshot permanecem sincronizados, sem mudança
   adicional a gerar.
+- Subtarefa 15 confirmou primeiro o gap em vermelho: a Server Action já bloqueava a
+  meta de outro workspace por `id + workspace_id`, mas um `UPDATE` direto era aceito
+  pelo banco. A migration `0008_validate_contribution_reassignment.sql` adicionou
+  uma trigger `BEFORE UPDATE OF goal_id` com `WHEN (NEW.goal_id IS NOT NULL)`. O
+  compliance passou a provar a rejeição da reatribuição cruzada e continuou provando
+  que excluir a meta preserva o aporte com `goal_id=null`. Após aplicar a migration
+  no Supabase de teste, os gates completos passaram novamente: 256 testes Vitest em
+  33 arquivos, 16 E2E sem skips, lint, TypeScript, build e sincronização Drizzle.
