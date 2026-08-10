@@ -373,7 +373,7 @@ de revisão sem alteração.
        (`/fixed-bills/[id]/edit`, `/bill-payments/[id]/edit`, hard-delete), ajuste do
        editor genérico e marcação no Dashboard (S4)
 - [x] 14. Layout responsivo, estados vazios e falhas genéricas
-- [ ] 15. Atualizar modelo de dados, portabilidade e compliance aplicável, incluindo
+- [x] 15. Atualizar modelo de dados, portabilidade e compliance aplicável, incluindo
        o registro da limitação S3
 - [ ] 16. Validação final: migration no ambiente de teste, compliance, unitários, E2E
        sem skips, lint, TypeScript, build e sincronização Drizzle verdes
@@ -526,6 +526,16 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   de diálogo, confirmações e controles de formulário receberam alvo mínimo de 44 px
   e foco visível. Os cenários móveis de Contas Fixas e Dashboard ficaram verdes
   (2/2), sem overflow horizontal; lint e TypeScript permaneceram verdes.
+- Subtarefa 15 atualizou o modelo de dados com o domínio completo de contas fixas,
+  imutabilidade, exclusividade dos vínculos, as triggers separadas de insert/update,
+  o `WHEN` que preserva `ON DELETE SET NULL`, recálculo sem snapshot e a limitação de
+  competência S3. O contrato de portabilidade agora inclui `fixed_bill_id` nos
+  lançamentos e todos os campos persistidos de `fixed_bills`, deixando explícito que
+  status e totais são projeções e que pagamentos sobrevivem ao hard-delete sem reter
+  o nome da conta. `lgpd-mapping.md`, `security-findings-log.md` e
+  `security-exceptions.md` foram revisados: “contas” e dados financeiros já estavam
+  cobertos, e a etapa não introduziu novo dado pessoal, achado ou exceção; por isso
+  nenhum dos três foi editado.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
