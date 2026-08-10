@@ -366,7 +366,7 @@ de revisão sem alteração.
 - [x] 9. `lib/fixed-bills/repository.ts` com cliente Supabase autenticado injetado
 - [x] 10. Loaders de listagem mensal e de edição, incluindo o filtro de situação
        validado
-- [ ] 11. Server Actions finas em `lib/actions/fixed-bills.ts`, com `revalidatePath`
+- [x] 11. Server Actions finas em `lib/actions/fixed-bills.ts`, com `revalidatePath`
 - [ ] 12. Página `/fixed-bills`, navegação, formulários, cards, filtros e destaques
        visuais
 - [ ] 13. Edição de conta fixa e ciclo de vida do pagamento
@@ -490,6 +490,15 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   ou falha de consulta indistinguíveis. Os 13 casos novos e toda a pasta unitária de
   contas fixas ficaram verdes (109/109 em 7 arquivos), com lint sem avisos e
   TypeScript sem erros.
+- Subtarefa 11 implementou `lib/actions/fixed-bills.ts` como casca fina: cada Action
+  confirma a sessão e resolve o workspace novamente, valida somente campos
+  permitidos e delega ao repositório autenticado. Criação e reatribuição de pagamento
+  confirmam antes a conta de destino por `id + workspace_id`; categoria vem dessa
+  conta, enquanto tipo despesa, ausência de meta, autoria e workspace permanecem
+  derivados no servidor. Conta ausente e invisível geram o mesmo erro genérico.
+  Mutações de conta revalidam apenas `/fixed-bills`; pagamentos revalidam também
+  `/dashboard`. Os 10 casos novos ficaram verdes, assim como toda a suíte unitária
+  (323/323 em 35 arquivos), lint sem avisos e TypeScript sem erros.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
