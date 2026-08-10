@@ -363,7 +363,7 @@ de revisão sem alteração.
 - [x] 7. Validação pura de conta fixa e de pagamento, reaproveitando `money.ts`
 - [x] 8. `derive-bill-status.ts` — agregação pura de pagamentos por conta e derivação
       de status, previsto, realizado e aviso
-- [ ] 9. `lib/fixed-bills/repository.ts` com cliente Supabase autenticado injetado
+- [x] 9. `lib/fixed-bills/repository.ts` com cliente Supabase autenticado injetado
 - [ ] 10. Loaders de listagem mensal e de edição, incluindo o filtro de situação
        validado
 - [ ] 11. Server Actions finas em `lib/actions/fixed-bills.ts`, com `revalidatePath`
@@ -470,6 +470,16 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   e valores monetários não positivos falham explicitamente, sem fabricar totais. A
   pasta unitária de contas fixas ficou verde (84/84 em 4 arquivos), com lint sem
   avisos e TypeScript sem erros.
+- Subtarefa 9 implementou `lib/fixed-bills/repository.ts` com cliente Supabase
+  autenticado injetado e colunas explícitas: contas são limitadas por
+  `workspace_id` e `started_on`; pagamentos exigem também `kind='expense'`, vínculo
+  não nulo e intervalo civil do mês. Get, update e delete reforçam `id +
+  workspace_id`, e as mutações de pagamento ainda limitam a linha ao tipo e vínculo
+  esperados. Payloads excluem auxiliares em centavos e campos sistêmicos; categoria,
+  tipo, ausência de meta, autoria e workspace são derivados no servidor. Erros do
+  Supabase viram apenas `query_failed`, e ausência/invisibilidade têm o mesmo
+  resultado. Os 12 testes do repositório e toda a pasta unitária de contas fixas
+  ficaram verdes (96/96 em 5 arquivos), com lint sem avisos e TypeScript sem erros.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
