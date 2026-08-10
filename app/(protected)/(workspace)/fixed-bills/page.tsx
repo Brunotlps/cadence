@@ -123,13 +123,6 @@ export default async function FixedBillsPage({
           <p className={styles.eyebrow}>{data.workspace.name}</p>
           <h1>Contas fixas</h1>
         </div>
-        <nav className={styles.nav} aria-label="Navegação principal">
-          <Link href="/dashboard">Dashboard</Link>
-          <Link href="/goals">Metas</Link>
-          <Link href="/fixed-bills" aria-current="page">
-            Fixas
-          </Link>
-        </nav>
       </header>
 
       <nav className={styles.monthNav} aria-label="Navegação por mês">

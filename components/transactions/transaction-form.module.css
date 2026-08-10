@@ -1,6 +1,6 @@
 .form {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .primaryFields,
@@ -27,7 +27,7 @@
   width: 100%;
   min-height: 2.85rem;
   border: 1px solid var(--border);
-  border-radius: 0.7rem;
+  border-radius: var(--radius-md);
   background: var(--surface);
   color: var(--text);
   padding: 0.7rem 0.8rem;
@@ -39,7 +39,7 @@
 .field input:focus,
 .field select:focus {
   border-color: var(--brand);
-  box-shadow: 0 0 0 3px rgb(49 95 77 / 12%);
+  box-shadow: 0 0 0 3px var(--focus-ring);
   outline: none;
 }
 
@@ -91,7 +91,7 @@
   border: 0;
   border-radius: 0.75rem;
   background: var(--brand);
-  color: #fff;
+  color: var(--on-accent);
   cursor: pointer;
   font-weight: 750;
   padding: 0.75rem 1.1rem;

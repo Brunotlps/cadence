@@ -22,7 +22,7 @@
   width: 100%;
   min-height: 2.8rem;
   border: 1px solid var(--border);
-  border-radius: 0.7rem;
+  border-radius: var(--radius-md);
   background: var(--surface);
   color: var(--text);
   padding: 0.65rem 0.75rem;
@@ -31,7 +31,7 @@
 .field input:focus-visible,
 .field select:focus-visible,
 .submit:focus-visible {
-  outline: 3px solid rgb(49 95 77 / 24%);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -43,7 +43,7 @@
 .checkField {
   grid-template-columns: auto 1fr;
   align-items: center;
-  min-height: 2.75rem;
+  min-height: var(--control-min-height);
 }
 
 .checkField input {
@@ -80,7 +80,7 @@
   border: 0;
   border-radius: 0.72rem;
   background: var(--brand);
-  color: #fff;
+  color: var(--on-accent);
   cursor: pointer;
   font-weight: 750;
   padding: 0.7rem 1rem;

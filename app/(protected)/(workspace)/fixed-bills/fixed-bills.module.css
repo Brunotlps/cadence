@@ -35,7 +35,6 @@
   letter-spacing: -0.045em;
 }
 
-.nav,
 .filterNav,
 .monthNav {
   display: flex;
@@ -44,13 +43,8 @@
   font-weight: 750;
 }
 
-.nav {
-  gap: 1rem;
-}
-
-.nav a,
 .monthNav a {
-  min-height: 2.75rem;
+  min-height: var(--control-min-height);
   display: inline-flex;
   align-items: center;
 }
@@ -70,11 +64,11 @@
 }
 
 .filterNav a {
-  min-height: 2.75rem;
+  min-height: var(--control-min-height);
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.55rem 0.85rem;
 }
 
@@ -88,10 +82,10 @@
 .bill,
 .errorCard {
   border: 1px solid var(--border);
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow);
-  padding: 1.25rem;
+  padding: var(--space-5);
 }
 
 .create {
@@ -100,7 +94,7 @@
 
 .create > button,
 .paymentForm > button {
-  min-height: 2.75rem;
+  min-height: var(--control-min-height);
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -117,7 +111,7 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .bill {
@@ -155,7 +149,7 @@
 
 .badge,
 .autopayBadge {
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-muted);
   color: var(--text-muted);
   font-size: 0.75rem;
@@ -166,7 +160,7 @@
 
 .paidBadge {
   background: var(--success);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .paidBadge::before {
@@ -205,7 +199,7 @@
 }
 
 .actions a {
-  min-height: 2.75rem;
+  min-height: var(--control-min-height);
   display: inline-flex;
   align-items: center;
   font-weight: 750;
@@ -237,7 +231,7 @@
 }
 
 .paymentRow a {
-  min-height: 2.75rem;
+  min-height: var(--control-min-height);
   display: inline-flex;
   align-items: center;
   font-weight: 750;
@@ -260,14 +254,13 @@
   margin-block: 0.5rem 1rem;
 }
 
-.nav a:focus-visible,
 .monthNav a:focus-visible,
 .filterNav a:focus-visible,
 .actions a:focus-visible,
 .paymentRow a:focus-visible,
 .create > button:focus-visible,
 .paymentForm > button:focus-visible {
-  outline: 3px solid rgb(49 95 77 / 24%);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

@@ -17,9 +17,11 @@ desenvolvedor deve tratar estas regras como restrições rígidas, não sugestõ
 ## 2. Dados coletados (mínimo necessário)
 
 - E-mail e senha (senha nunca em texto puro — gerida pelo Supabase Auth).
-- Nome de exibição (opcional).
+- Perfil pessoal mínimo: nome de exibição (opcional) e preferência funcional de cor
+  de destaque, restrita a Preto, Rosa ou Verde. Esses campos pertencem à própria
+  pessoa e são isolados por `profiles.id = auth.uid()`, não por workspace.
 - Dados financeiros inseridos pelo próprio usuário (lançamentos, metas, contas).
-- Todos vinculados a um `workspace_id`.
+- Dados financeiros são sempre vinculados a um `workspace_id`.
 
 ## 3. Cookies
 

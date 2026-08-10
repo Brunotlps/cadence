@@ -1,0 +1,2 @@
+ALTER TABLE "profiles" ADD COLUMN "accent_color" text DEFAULT 'verde' NOT NULL;--> statement-breakpoint
+ALTER TABLE "profiles" ADD CONSTRAINT "profiles_accent_color_check" CHECK ("profiles"."accent_color" in ('preto', 'rosa', 'verde'));

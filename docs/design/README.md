@@ -5,9 +5,11 @@ abrir no navegador para inspeção visual). Como é um arquivo bundled (HTML/CSS
 compactados), não é diretamente legível como texto — este README resume o que
 importa para quem for implementar a UI.
 
-## Telas e navegação
+## Áreas e navegação
 
-Dashboard · Lançamentos · Fixas · Metas
+A navegação principal tem 3 rotas: Dashboard · Fixas · Metas.
+
+Lançamentos é uma seção do Dashboard (criação e listagem), não uma quarta rota.
 
 ## Vocabulário de produto (nomenclatura oficial das telas)
 

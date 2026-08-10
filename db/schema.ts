@@ -15,11 +15,21 @@ import { sql } from "drizzle-orm";
 
 // Espelho mínimo de auth.users — id compartilha o mesmo uuid, nunca duplica
 // dados de autenticação. Populada por trigger (ver migration de RLS).
-export const profiles = pgTable("profiles", {
-  id: uuid("id").primaryKey(),
-  displayName: text("display_name"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const profiles = pgTable(
+  "profiles",
+  {
+    id: uuid("id").primaryKey(),
+    displayName: text("display_name"),
+    accentColor: text("accent_color").default("verde").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    check(
+      "profiles_accent_color_check",
+      sql`${table.accentColor} in ('preto', 'rosa', 'verde')`,
+    ),
+  ],
+);
 
 export const workspaces = pgTable("workspaces", {
   id: uuid("id").primaryKey().defaultRandom(),

@@ -71,6 +71,13 @@
       "when": 1786379433100,
       "tag": "0009_fixed_bills_integrity",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1786401320135,
+      "tag": "0010_old_random",
+      "breakpoints": true
     }
   ]
 }

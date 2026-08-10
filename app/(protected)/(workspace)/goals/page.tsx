@@ -32,7 +32,7 @@ export default async function GoalsPage() {
   if (result.status === "error") return <main className={styles.errorPage}><div className={styles.errorCard}><h1>Metas financeiras</h1><p role="alert">Não foi possível carregar suas metas.</p><Link href="/dashboard">Voltar ao Dashboard</Link></div></main>;
 
   return <main className={styles.page}>
-    <header className={styles.header}><div><p className={styles.eyebrow}>{result.data.workspace.name}</p><h1>Metas financeiras</h1></div><nav className={styles.nav} aria-label="Navegação principal"><Link href="/dashboard">Dashboard</Link><Link href="/goals" aria-current="page">Metas</Link><Link href="/fixed-bills">Fixas</Link></nav></header>
+    <header className={styles.header}><div><p className={styles.eyebrow}>{result.data.workspace.name}</p><h1>Metas financeiras</h1></div></header>
     <RevealPanel className={`${styles.card} ${styles.create}`} label="Criar meta"><GoalForm action={createGoalAction} submitLabel="Salvar meta" initialValues={{ name: "", targetAmount: "", suggestedMonthly: "" }} /></RevealPanel>
     {result.data.goals.length === 0 ? <section className={`${styles.card} ${styles.empty}`}><p>Nenhuma meta ainda.</p></section> : <section className={styles.grid} aria-label="Metas">
       {result.data.goals.map((goal) => {

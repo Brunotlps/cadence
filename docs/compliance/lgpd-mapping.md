@@ -16,12 +16,14 @@ concreta de produto. `[REVISAR JURÍDICO]` marca pontos que precisam de validaç
 | --------------------------------------- | -------------------------- | ---------------------------------------------------- |
 | Autenticar o usuário                    | e-mail, senha              | Execução de contrato (art. 7º, V) [REVISAR JURÍDICO] |
 | Prover o serviço de controle financeiro | lançamentos, metas, contas | Execução de contrato [REVISAR JURÍDICO]              |
+| Personalizar a interface                | cor de destaque do perfil  | Execução de contrato [REVISAR JURÍDICO]              |
 | Segurança da conta                      | tokens de sessão           | Legítimo interesse [REVISAR JURÍDICO]                |
 
 ## Princípios (art. 6º) → implementação
 
 - Minimização → não coletamos IP, geolocalização, dado sensível ou analytics.
-- Necessidade → só o que é preciso para o serviço funcionar.
+- Necessidade → só o que é preciso para o serviço funcionar; a personalização guarda
+  apenas um de três códigos fixos, sem histórico de alterações ou dado comportamental.
 - Livre acesso → usuário pode ver e exportar seus dados (ver spec de portabilidade).
 - Transparência → política de privacidade clara e acessível.
 - Segurança → RLS, senha gerida pelo Auth, TLS, sem PII em log.
