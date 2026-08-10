@@ -218,9 +218,9 @@ Testes antes ou junto de cada implementação:
       Lançamentos como seção do Dashboard, antes de escrever código
 - [x] 2. Testes unitários primeiro (TDD): domínio/validação da cor, repositório,
       Server Action, fallback observável e mapeamento de rotas para estado ativo
-- [ ] 3. Testes de compliance primeiro: default, `CHECK`, leitura/update próprios,
+- [x] 3. Testes de compliance primeiro: default, `CHECK`, leitura/update próprios,
       isolamento cruzado e cascata do perfil
-- [ ] 4. E2E primeiro: shell persistente, estado ativo, logout, troca/persistência
+- [x] 4. E2E primeiro: shell persistente, estado ativo, logout, troca/persistência
       por pessoa, render sem JavaScript e viewport móvel
 - [ ] 5. `db/schema.ts` + migration de `profiles.accent_color`, default e `CHECK`,
       sem policy, grant ou trigger nova
@@ -263,3 +263,14 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   cores e o default verde, filtro de perfil por id além da RLS, payload editável
   mínimo, erro genérico, fallback com log sanitizado e o estado ativo das três rotas
   e suas telas de edição antes da implementação. O lint dos novos testes está verde.
+- Subtarefa 3 confirmada em vermelho contra o Supabase de teste com
+  `npx vitest run tests/compliance/profile-preference.test.ts`: os cinco casos
+  falham exclusivamente porque `profiles.accent_color` ainda não existe. A cobertura
+  fixa default verde, preferências independentes, leitura/update próprios, bloqueio
+  cruzado por RLS, domínio fechado e remoção junto do perfil antes da migration.
+- Subtarefa 4 confirmada em vermelho com
+  `npx playwright test tests/e2e/visual-foundation.spec.ts --workers=1`: os três
+  cenários falham no shell e seletor ainda ausentes. A cobertura fixa exatamente três
+  links, estado ativo nas rotas principais e edições, logout, persistência por pessoa,
+  preferência presente no HTML com JavaScript desabilitado e viewport móvel sem
+  overflow. O lint dos novos testes de compliance e E2E está verde.
