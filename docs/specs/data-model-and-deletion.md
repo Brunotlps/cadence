@@ -10,7 +10,8 @@ quando um workspace fica sem membros, ele é removido (ver rotina abaixo).
 ## Entidades
 
 - **users** — gerenciada pelo Supabase Auth (`auth.users`). Não duplicar dados de
-  autenticação. Um espelho mínimo em `public.profiles` guarda apenas nome de exibição.
+  autenticação. Um espelho mínimo em `public.profiles` guarda nome de exibição e a
+  preferência funcional de cor de destaque.
 - **workspaces** — o espaço financeiro compartilhado.
 - **workspace_members** — vínculo N:N entre usuários e workspaces, com papel.
 - **transactions** — lançamentos (despesa/receita/aporte).
@@ -41,6 +42,7 @@ import {
 export const profiles = pgTable("profiles", {
   id: uuid("id").primaryKey(), // = auth.users.id
   displayName: text("display_name"),
+  accentColor: text("accent_color").default("verde").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -105,6 +107,24 @@ export const goals = pgTable("goals", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 ```
+
+## Integridade do perfil e da preferência visual
+
+`profiles` é a entidade pessoal mínima do usuário e, por decisão da Etapa 04, não
+pertence a um workspace. A RLS permite `SELECT` e `UPDATE` somente quando
+`profiles.id = auth.uid()`; a aplicação repete o filtro explícito por esse mesmo id.
+
+`accent_color` aceita somente os códigos persistidos `preto`, `rosa` e `verde`, com
+`verde` como default para perfis existentes e novos. É uma preferência editável, por
+isso não recebe trigger de imutabilidade. A atualização aceita somente essa coluna e
+deriva o id da sessão, sem aceitar id de perfil do navegador.
+
+O layout autenticado lê a preferência no servidor e a inclui no HTML inicial. Perfil
+ausente ou falha de consulta usa verde como fallback e registra apenas o evento
+sanitizado `profile_missing` ou `query_failed`, sem UUID, e-mail, cor ou erro bruto.
+
+Apagar a conta remove a linha inteira de `profiles` pela rotina já documentada; a
+preferência não deixa tombstone, histórico ou cópia separada.
 
 ## Domínio e integridade de `transactions`
 

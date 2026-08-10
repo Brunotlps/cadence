@@ -237,7 +237,7 @@ Testes antes ou junto de cada implementação:
        tokens compartilhados
 - [x] 12. Validar acessibilidade, estado ativo, foco, contraste, mobile e ausência
        de FOUC
-- [ ] 13. Atualizar modelo, portabilidade, política de dados e mapeamento LGPD
+- [x] 13. Atualizar modelo, portabilidade, política de dados e mapeamento LGPD
 - [ ] 14. Validação final: migration no ambiente de teste, compliance, unitários,
        E2E sem skips, lint, TypeScript, build e sincronização Drizzle verdes
 
@@ -297,3 +297,8 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   sem overflow. A primeira execução expôs o botão de Dev Tools do Next cobrindo o
   último controle da sidebar no ambiente dev; o shell passou a reservar área segura
   inferior, e o teste voltou a usar clique real sem `force`.
+- Subtarefa 13 atualizou a política de tratamento, modelo de dados, portabilidade e
+  mapeamento LGPD. A preferência é um código funcional mínimo do perfil, exportável
+  somente pela própria pessoa e removido junto da conta. `security-findings-log.md`
+  e `security-exceptions.md` foram revisados e não exigem alteração: não houve achado
+  corrigido, risco aceito nem nova retenção.

@@ -18,6 +18,21 @@ workspace(s) de que participa, em formato aberto e legível por máquina.
   arredondamento de ponto flutuante; datas usam ISO (`YYYY-MM-DD`) e timestamps ISO
   8601.
 
+## Contrato de exportação do perfil
+
+O pacote inclui o perfil da própria pessoa autenticada:
+
+| Campo          | Representação                                      |
+| -------------- | -------------------------------------------------- |
+| `id`           | UUID da própria pessoa                             |
+| `display_name` | nome de exibição opcional                          |
+| `accent_color` | `preto`, `rosa` ou `verde`                         |
+| `created_at`   | timestamp ISO 8601                                 |
+
+A preferência é exportada como código persistido, não como valor hexadecimal. O
+perfil de outro membro do workspace não entra no pacote: `profiles` é isolado por
+`id = auth.uid()`, independentemente da membership compartilhada.
+
 ## Contrato de exportação de lançamentos
 
 Cada lançamento exportado inclui:
