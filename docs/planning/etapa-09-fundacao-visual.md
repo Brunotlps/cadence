@@ -222,9 +222,9 @@ Testes antes ou junto de cada implementação:
       isolamento cruzado e cascata do perfil
 - [x] 4. E2E primeiro: shell persistente, estado ativo, logout, troca/persistência
       por pessoa, render sem JavaScript e viewport móvel
-- [ ] 5. `db/schema.ts` + migration de `profiles.accent_color`, default e `CHECK`,
+- [x] 5. `db/schema.ts` + migration de `profiles.accent_color`, default e `CHECK`,
       sem policy, grant ou trigger nova
-- [ ] 6. Domínio, repositório Supabase autenticado e Server Action fina da
+- [x] 6. Domínio, repositório Supabase autenticado e Server Action fina da
       preferência
 - [ ] 7. `app/design-tokens.css` com paletas, tipografia, espaçamento e tokens
       semânticos
@@ -274,3 +274,13 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   links, estado ativo nas rotas principais e edições, logout, persistência por pessoa,
   preferência presente no HTML com JavaScript desabilitado e viewport móvel sem
   overflow. O lint dos novos testes de compliance e E2E está verde.
+- Subtarefa 5 implementada em `0010_old_random.sql`: `accent_color` é `text not
+  null default 'verde'` e o `CHECK` aceita somente `preto`, `rosa` e `verde`. A
+  migration não altera policy, grant ou trigger; `handle_new_user()` herda o default.
+  Após aplicação no Supabase de teste, os cinco casos de compliance ficaram verdes.
+- Subtarefa 6 implementou o domínio tipado, repositório autenticado limitado por
+  `id`, Server Action fina, fallback server-side e mapa puro da navegação. Erros do
+  Supabase são reduzidos a `query_failed`; o logger de fallback recebe somente
+  `profile_missing` ou `query_failed`. A primeira execução ativou os 38 casos e
+  encontrou uma asserção inválida do próprio teste para string vazia; corrigida sem
+  alterar o contrato. As cinco suítes ficaram verdes, assim como lint e TypeScript.

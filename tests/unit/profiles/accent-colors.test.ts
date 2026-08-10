@@ -41,7 +41,9 @@ describe("domínio da cor de destaque", () => {
           accentColor: "Selecione uma cor de destaque válida.",
         },
       });
-      expect(JSON.stringify(result)).not.toContain(String(value));
+      if (String(value).length > 0) {
+        expect(JSON.stringify(result)).not.toContain(String(value));
+      }
     },
   );
 });
