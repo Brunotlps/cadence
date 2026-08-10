@@ -226,16 +226,16 @@ Testes antes ou junto de cada implementação:
       sem policy, grant ou trigger nova
 - [x] 6. Domínio, repositório Supabase autenticado e Server Action fina da
       preferência
-- [ ] 7. `app/design-tokens.css` com paletas, tipografia, espaçamento e tokens
+- [x] 7. `app/design-tokens.css` com paletas, tipografia, espaçamento e tokens
       semânticos
-- [ ] 8. Aplicar a preferência no render server-side do layout protegido, com
+- [x] 8. Aplicar a preferência no render server-side do layout protegido, com
       fallback verde e log sanitizado
-- [ ] 9. Criar o route group `(workspace)` e mover as rotas sem alterar URLs
-- [ ] 10. Implementar shell e navegação responsiva, incluindo logout e seletor de
+- [x] 9. Criar o route group `(workspace)` e mover as rotas sem alterar URLs
+- [x] 10. Implementar shell e navegação responsiva, incluindo logout e seletor de
        cor
-- [ ] 11. Remover navegações locais duplicadas e migrar os CSS Modules para os
+- [x] 11. Remover navegações locais duplicadas e migrar os CSS Modules para os
        tokens compartilhados
-- [ ] 12. Validar acessibilidade, estado ativo, foco, contraste, mobile e ausência
+- [x] 12. Validar acessibilidade, estado ativo, foco, contraste, mobile e ausência
        de FOUC
 - [ ] 13. Atualizar modelo, portabilidade, política de dados e mapeamento LGPD
 - [ ] 14. Validação final: migration no ambiente de teste, compliance, unitários,
@@ -284,3 +284,16 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   `profile_missing` ou `query_failed`. A primeira execução ativou os 38 casos e
   encontrou uma asserção inválida do próprio teste para string vazia; corrigida sem
   alterar o contrato. As cinco suítes ficaram verdes, assim como lint e TypeScript.
+- Subtarefas 7–11 implementaram `design-tokens.css`, tema autenticado emitido no
+  HTML pelo Server Component, shell compartilhado e route group `(workspace)` sem
+  alterar URLs. Desktop usa sidebar; mobile usa cabeçalho compacto e navegação
+  inferior. As páginas perderam seus menus locais, e os CSS Modules passaram a
+  consumir tokens de foco, controle, raio, tipografia e espaçamento sem reescrever
+  seus grids específicos. Onboarding permanece fora do shell.
+- Subtarefa 12 validou as três paletas: contraste de texto branco sobre destaque é
+  7,30:1 no verde, 5,14:1 no rosa e 16,60:1 no preto; texto forte sobre os fundos
+  suaves fica acima de 7,8:1. O E2E focal passou 3/3 em 22,3 s, cobrindo estado ativo,
+  logout, preferência independente, HTML inicial sem JavaScript e viewport de 390 px
+  sem overflow. A primeira execução expôs o botão de Dev Tools do Next cobrindo o
+  último controle da sidebar no ambiente dev; o shell passou a reservar área segura
+  inferior, e o teste voltou a usar clique real sem `force`.

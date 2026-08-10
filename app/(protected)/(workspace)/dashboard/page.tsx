@@ -6,7 +6,6 @@ import {
   formatMonthPtBR,
 } from "@/lib/formatters";
 import { createClient } from "@/lib/supabase/server";
-import { signOutAction } from "@/lib/actions/auth";
 import { createTransactionAction } from "@/lib/actions/transactions";
 import { DeleteTransaction } from "@/components/transactions/delete-transaction";
 import { DeleteContribution } from "@/components/goals/delete-contribution";
@@ -80,11 +79,6 @@ export default async function DashboardPage({
           <p role="alert">
             Não foi possível carregar seus lançamentos. Tente novamente.
           </p>
-          <form action={signOutAction}>
-            <button className={styles.logout} type="submit">
-              Sair
-            </button>
-          </form>
         </div>
       </main>
     );
@@ -98,13 +92,6 @@ export default async function DashboardPage({
         <div className={styles.brand}>
           <p className={styles.eyebrow}>Cadence</p>
           <h1>{data.workspace.name}</h1>
-        </div>
-        <div className={styles.headerActions}>
-          <Link href="/fixed-bills">Fixas</Link>
-          <Link href="/goals">Metas</Link>
-          <form action={signOutAction}>
-            <button className={styles.logout} type="submit">Sair</button>
-          </form>
         </div>
       </header>
 

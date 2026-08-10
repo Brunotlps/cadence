@@ -54,6 +54,7 @@ async function openWithoutJavaScript(
 }
 
 test.describe("fundação visual compartilhada", () => {
+  test.describe.configure({ timeout: 150_000 });
   test.skip(!hasSupabaseTestEnv(), "sem credenciais de teste do Supabase");
 
   test("mantém três destinos, estado ativo nas edições e logout persistente", async ({
@@ -62,37 +63,51 @@ test.describe("fundação visual compartilhada", () => {
     const fixture = await createDashboardTestUser("shell-nav", "Casa navegação");
 
     try {
-      await login(page, fixture.email, fixture.password);
+      await test.step("autentica e valida os três destinos", async () => {
+        await login(page, fixture.email, fixture.password);
 
-      const navigation = page.getByRole("navigation", {
-        name: "Navegação principal",
+        const navigation = page.getByRole("navigation", {
+          name: "Navegação principal",
+        });
+        await expect(navigation.getByRole("link")).toHaveCount(3);
+        await expect(
+          navigation.getByRole("link", { name: "Dashboard" }),
+        ).toBeVisible();
+        await expect(
+          navigation.getByRole("link", { name: "Metas" }),
+        ).toBeVisible();
+        await expect(
+          navigation.getByRole("link", { name: "Fixas" }),
+        ).toBeVisible();
+        await expect(navigation.getByText("Lançamentos")).toHaveCount(0);
+        await expectActiveDestination(page, "Dashboard");
       });
-      await expect(navigation.getByRole("link")).toHaveCount(3);
-      await expect(navigation.getByRole("link", { name: "Dashboard" })).toBeVisible();
-      await expect(navigation.getByRole("link", { name: "Metas" })).toBeVisible();
-      await expect(navigation.getByRole("link", { name: "Fixas" })).toBeVisible();
-      await expect(navigation.getByText("Lançamentos")).toHaveCount(0);
-      await expectActiveDestination(page, "Dashboard");
 
-      await navigation.getByRole("link", { name: "Metas" }).click();
-      await expect(page).toHaveURL(/\/goals$/);
-      await expectActiveDestination(page, "Metas");
+      await test.step("mantém Metas ativa na rota e edição", async () => {
+        await page.getByRole("link", { name: "Metas" }).click();
+        await expect(page).toHaveURL(/\/goals$/);
+        await expectActiveDestination(page, "Metas");
+        await page.goto(`/contributions/${EDIT_ID}/edit`);
+        await expectActiveDestination(page, "Metas");
+      });
 
-      await page.goto(`/contributions/${EDIT_ID}/edit`);
-      await expectActiveDestination(page, "Metas");
+      await test.step("mantém Fixas ativa na rota e edição", async () => {
+        await page.getByRole("link", { name: "Fixas" }).click();
+        await expect(page).toHaveURL(/\/fixed-bills/);
+        await expectActiveDestination(page, "Fixas");
+        await page.goto(`/bill-payments/${EDIT_ID}/edit`);
+        await expectActiveDestination(page, "Fixas");
+      });
 
-      await navigation.getByRole("link", { name: "Fixas" }).click();
-      await expect(page).toHaveURL(/\/fixed-bills/);
-      await expectActiveDestination(page, "Fixas");
+      await test.step("mantém Dashboard ativo no editor de lançamento", async () => {
+        await page.goto(`/transactions/${EDIT_ID}/edit`);
+        await expectActiveDestination(page, "Dashboard");
+      });
 
-      await page.goto(`/bill-payments/${EDIT_ID}/edit`);
-      await expectActiveDestination(page, "Fixas");
-
-      await page.goto(`/transactions/${EDIT_ID}/edit`);
-      await expectActiveDestination(page, "Dashboard");
-
-      await page.getByRole("button", { name: "Sair" }).click();
-      await expect(page).toHaveURL(/\/login$/);
+      await test.step("encerra a sessão pelo shell", async () => {
+        await page.getByRole("button", { name: "Sair" }).click();
+        await expect(page).toHaveURL(/\/login$/);
+      });
     } finally {
       await deleteTestAccount(fixture.id);
     }

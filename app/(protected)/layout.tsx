@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { loadAuthenticatedProfile } from "@/lib/profiles/load-authenticated-profile";
+import styles from "./layout.module.css";
 
 // Checagem redundante ao middleware — mesmo princípio de "RLS não substitui
 // filtro de app" (etapa 04), aplicado a autorização de rota: se um matcher
@@ -11,14 +12,15 @@ export default async function ProtectedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const profile = await loadAuthenticatedProfile();
 
-  if (!user) {
+  if (profile.status === "unauthenticated") {
     redirect("/login");
   }
 
-  return <>{children}</>;
+  return (
+    <div className={styles.themeRoot} data-accent={profile.accentColor}>
+      {children}
+    </div>
+  );
 }

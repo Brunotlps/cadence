@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--space-4);
   margin-bottom: 1.25rem;
 }
 
@@ -31,32 +31,11 @@
   line-height: 1.15;
 }
 
-.logout {
-  min-height: 2.6rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: rgb(255 255 255 / 75%);
-  color: var(--text-muted);
-  cursor: pointer;
-  font-weight: 700;
-  padding: 0.55rem 1rem;
-}
-
-.headerActions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.headerActions a {
-  font-weight: 750;
-}
-
 .monthNav {
   display: grid;
   align-items: center;
   border-block: 1px solid var(--border);
-  gap: 1rem;
+  gap: var(--space-4);
   grid-template-columns: 1fr auto 1fr;
   margin-bottom: 1.4rem;
   padding-block: 0.8rem;
@@ -82,23 +61,23 @@
 .topGrid {
   display: grid;
   align-items: start;
-  gap: 1rem;
+  gap: var(--space-4);
   grid-template-columns: minmax(19rem, 0.85fr) minmax(0, 1.45fr);
 }
 
 .insights {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4);
   grid-template-columns: minmax(14rem, 0.8fr) minmax(20rem, 1.2fr);
 }
 
 .card {
   min-width: 0;
   border: 1px solid var(--border);
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow);
-  padding: 1.25rem;
+  padding: var(--space-5);
 }
 
 .cardTitle {
@@ -156,7 +135,7 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--space-4);
   margin-bottom: 0.9rem;
 }
 
@@ -197,7 +176,7 @@
 .transactionRow {
   display: grid;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-4);
   grid-template-columns: minmax(0, 1fr) auto auto;
   padding-block: 0.9rem;
 }
@@ -219,7 +198,7 @@
 }
 
 .fixedBillBadge {
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--brand-soft);
   color: var(--brand-strong);
   font-weight: 750;
@@ -258,13 +237,13 @@
   width: min(100% - 2rem, 38rem);
   min-height: 70vh;
   align-content: center;
-  gap: 1rem;
+  gap: var(--space-4);
   margin-inline: auto;
 }
 
 .errorCard {
-  border: 1px solid #ecc9c5;
-  border-radius: 1rem;
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow);
   padding: 1.4rem;

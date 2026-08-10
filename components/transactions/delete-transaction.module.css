@@ -1,5 +1,5 @@
 .trigger {
-  min-height: 2.75rem;
+  min-height: var(--control-min-height);
   display: inline-flex;
   align-items: center;
   border: 0;
@@ -12,14 +12,14 @@
 
 .trigger:focus-visible,
 .actions button:focus-visible {
-  outline: 3px solid rgb(49 95 77 / 24%);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
 .dialog {
   width: min(92vw, 28rem);
   border: 1px solid var(--border);
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   color: var(--text);
   margin: auto;
@@ -57,8 +57,8 @@
 }
 
 .actions button {
-  min-height: 2.75rem;
-  border-radius: 0.7rem;
+  min-height: var(--control-min-height);
+  border-radius: var(--radius-md);
   cursor: pointer;
   font-weight: 700;
   padding: 0.65rem 0.9rem;
@@ -73,7 +73,7 @@
 .confirm {
   border: 1px solid var(--danger);
   background: var(--danger);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .actions button:disabled {
