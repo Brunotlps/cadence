@@ -35,6 +35,7 @@ import {
   timestamp,
   date,
   boolean,
+  integer,
 } from "drizzle-orm/pg-core";
 
 export const profiles = pgTable("profiles", {
@@ -70,6 +71,9 @@ export const transactions = pgTable("transactions", {
   description: text("description"),
   paymentMethod: text("payment_method"),
   goalId: uuid("goal_id").references(() => goals.id, { onDelete: "set null" }),
+  fixedBillId: uuid("fixed_bill_id").references(() => fixedBills.id, {
+    onDelete: "set null",
+  }),
   occurredOn: date("occurred_on").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -80,9 +84,12 @@ export const fixedBills = pgTable("fixed_bills", {
     .notNull()
     .references(() => workspaces.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
-  dueDay: numeric("due_day").notNull(),
+  dueDay: integer("due_day").notNull(),
+  category: text("category").notNull(),
   autopay: boolean("autopay").notNull().default(false),
-  estimatedAmount: numeric("estimated_amount", { precision: 12, scale: 2 }),
+  variableAmount: boolean("variable_amount").notNull().default(false),
+  estimatedAmount: numeric("estimated_amount", { precision: 12, scale: 2 }).notNull(),
+  startedOn: date("started_on").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -183,6 +190,47 @@ Apagar uma meta é hard-delete, mas não apaga seus lançamentos. Os aportes vin
 permanecem como `contribution`, passam a ter `goal_id=NULL` e continuam compondo
 histórico, saldo e exportação. A interface os identifica como “Aporte de meta
 excluída”; o nome apagado não é duplicado na transação nem mantido como tombstone.
+
+## Integridade de contas fixas e pagamentos
+
+- o nome da conta é normalizado sem espaços nas pontas, não pode ficar vazio e aceita
+  no máximo 100 caracteres;
+- `due_day` é inteiro entre 1 e 31. No cálculo mensal, dias inexistentes são presos
+  ao último dia do mês, sem armazenar uma competência separada;
+- `category` é obrigatória e aceita somente os dez códigos de despesa. `renda` é
+  rejeitada porque todo pagamento de conta fixa é `kind='expense'`;
+- `estimated_amount` é obrigatório, positivo, diferente de `NaN` e limitado a
+  `numeric(12,2)`, inclusive quando `variable_amount=true`. Nesse modo o valor é uma
+  estimativa manual, não uma média materializada do histórico;
+- `autopay` e `variable_amount` são booleanos obrigatórios com padrão `false`;
+- `started_on` é uma data civil em `America/Sao_Paulo`, derivada pelo banco na
+  criação. `workspace_id`, `created_at` e `started_on` são imutáveis; nome,
+  vencimento, categoria, estimativa e os dois booleanos continuam editáveis;
+- `transactions.fixed_bill_id` é anulável, referencia `fixed_bills(id)` com
+  `ON DELETE SET NULL` e só pode estar preenchido quando `kind='expense'`;
+- `goal_id` e `fixed_bill_id` são mutuamente exclusivos: um lançamento nunca é ao
+  mesmo tempo aporte e pagamento de conta fixa;
+- a trigger `validate_fixed_bill_link_on_insert`, em `BEFORE INSERT`, valida que a
+  conta referenciada e a transação pertencem ao mesmo workspace;
+- a trigger `validate_fixed_bill_link_on_update`, em
+  `BEFORE UPDATE OF fixed_bill_id`, repete a validação durante reatribuições. Ambas
+  executam somente quando `NEW.fixed_bill_id IS NOT NULL`, de modo que o FK consegue
+  aplicar `ON DELETE SET NULL` ao encerrar a recorrência;
+- as funções de imutabilidade e validação são `SECURITY INVOKER`, têm `search_path`
+  fixo e não concedem `EXECUTE` a `PUBLIC`, `anon` ou `authenticated`;
+- o índice parcial `(workspace_id, fixed_bill_id, occurred_on desc)` para vínculos
+  não nulos sustenta a leitura mensal dos pagamentos.
+
+Status, vencimento do mês, previsto e realizado são recalculados na leitura; não há
+snapshot mensal. Editar estimativa, dia ou nome muda a apresentação histórica, mas
+não reescreve lançamentos. Alterar categoria afeta somente pagamentos futuros. Pelo
+contrato de mês civil, um pagamento é atribuído ao mês de `occurred_on`: pagar em
+agosto uma conta de julho marca agosto como pago e mantém julho como não registrada.
+
+Encerrar uma recorrência é hard-delete. Os pagamentos permanecem como despesas
+completas, recebem `fixed_bill_id=NULL` e voltam ao editor genérico; não existe
+tombstone nem cópia do nome apagado. Excluir um pagamento individual também é
+hard-delete imediato.
 
 ## Row-Level Security (SQL)
 

@@ -218,6 +218,14 @@
   margin-top: 0.2rem;
 }
 
+.fixedBillBadge {
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+  font-weight: 750;
+  padding-inline: 0.45rem;
+}
+
 .amount {
   font-variant-numeric: tabular-nums;
   font-weight: 780;

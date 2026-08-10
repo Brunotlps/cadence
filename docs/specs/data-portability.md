@@ -33,6 +33,7 @@ Cada lançamento exportado inclui:
 | `description`    | texto opcional, com até 200 caracteres             |
 | `payment_method` | código estável opcional                          |
 | `goal_id`        | UUID da meta associada ou `null`                    |
+| `fixed_bill_id`  | UUID da conta fixa associada ou `null`               |
 | `occurred_on`    | data civil `YYYY-MM-DD`                             |
 | `created_at`     | timestamp ISO 8601                                  |
 
@@ -65,6 +66,32 @@ Metas excluídas por hard-delete não aparecem em exportações posteriores. Seu
 aportes, porém, continuam no contrato de lançamentos com `kind=contribution` e
 `goal_id=null`: eles preservam o histórico financeiro sem reter ou duplicar o nome
 da meta apagada.
+
+## Contrato de exportação de contas fixas
+
+Cada conta fixa existente no momento da exportação inclui:
+
+| Campo              | Representação                                               |
+| ------------------ | ----------------------------------------------------------- |
+| `id`               | UUID da conta fixa                                          |
+| `workspace_id`     | UUID do workspace                                           |
+| `name`             | nome normalizado, com até 100 caracteres                    |
+| `due_day`          | inteiro entre 1 e 31                                        |
+| `category`         | código estável de categoria de despesa                      |
+| `autopay`          | booleano de débito automático                               |
+| `variable_amount`  | booleano que identifica estimativa variável                 |
+| `estimated_amount` | string decimal positiva com duas casas                      |
+| `started_on`       | data civil `YYYY-MM-DD` em `America/Sao_Paulo`              |
+| `created_at`       | timestamp ISO 8601                                          |
+
+Status mensal, data de vencimento ajustada, total realizado e quantidade de
+pagamentos não são exportados como campos da conta: são projeções recalculáveis a
+partir de `due_day`, mês de referência e lançamentos vinculados.
+
+Contas encerradas por hard-delete não aparecem em exportações posteriores. Os
+pagamentos já feitos continuam no contrato de lançamentos como despesas, com
+`fixed_bill_id=null`, categoria, valor e data preservados. O nome da conta apagada
+não é duplicado no lançamento nem mantido como tombstone.
 
 ## Escopo
 

@@ -6,6 +6,7 @@ import {
   timestamp,
   date,
   boolean,
+  integer,
   primaryKey,
   check,
   index,
@@ -87,6 +88,54 @@ export const goals = pgTable(
   ],
 );
 
+// Definida antes de transactions porque transactions.fixedBillId a referencia.
+// `category` é obrigatória porque pagar gera uma despesa, e o CHECK de
+// transactions exige categoria válida para kind='expense'.
+export const fixedBills = pgTable(
+  "fixed_bills",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    workspaceId: uuid("workspace_id")
+      .notNull()
+      .references(() => workspaces.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    dueDay: integer("due_day").notNull(),
+    category: text("category").notNull(),
+    autopay: boolean("autopay").notNull().default(false),
+    variableAmount: boolean("variable_amount").notNull().default(false),
+    estimatedAmount: numeric("estimated_amount", {
+      precision: 12,
+      scale: 2,
+    }).notNull(),
+    startedOn: date("started_on")
+      .default(sql`(timezone('America/Sao_Paulo', now()))::date`)
+      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    check(
+      "fixed_bills_name_check",
+      sql`btrim(${table.name}) <> '' and char_length(${table.name}) <= 100`,
+    ),
+    check(
+      "fixed_bills_due_day_check",
+      sql`${table.dueDay} between 1 and 31`,
+    ),
+    check(
+      "fixed_bills_estimated_amount_positive_check",
+      sql`${table.estimatedAmount} > 0 and ${table.estimatedAmount} <> 'NaN'::numeric`,
+    ),
+    check(
+      "fixed_bills_category_check",
+      sql`${table.category} in (
+        'alimentacao', 'aluguel', 'assinaturas', 'automoveis',
+        'combustivel', 'condominio', 'internet', 'lazer', 'luz', 'saude'
+      )`,
+    ),
+    index("fixed_bills_workspace_name_idx").on(table.workspaceId, table.name),
+  ],
+);
+
 export const transactions = pgTable(
   "transactions",
   {
@@ -101,6 +150,9 @@ export const transactions = pgTable(
     description: text("description"),
     paymentMethod: text("payment_method"),
     goalId: uuid("goal_id").references(() => goals.id, { onDelete: "set null" }),
+    fixedBillId: uuid("fixed_bill_id").references(() => fixedBills.id, {
+      onDelete: "set null",
+    }),
     occurredOn: date("occurred_on").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
@@ -139,6 +191,14 @@ export const transactions = pgTable(
       "transactions_goal_kind_check",
       sql`${table.goalId} is null or ${table.kind} = 'contribution'`,
     ),
+    check(
+      "transactions_fixed_bill_kind_check",
+      sql`${table.fixedBillId} is null or ${table.kind} = 'expense'`,
+    ),
+    check(
+      "transactions_single_link_check",
+      sql`not (${table.goalId} is not null and ${table.fixedBillId} is not null)`,
+    ),
     index("transactions_workspace_occurred_created_idx").on(
       table.workspaceId,
       table.occurredOn.desc(),
@@ -152,17 +212,8 @@ export const transactions = pgTable(
         table.createdAt.desc(),
       )
       .where(sql`${table.kind} = 'contribution' and ${table.goalId} is not null`),
+    index("transactions_fixed_bill_idx")
+      .on(table.workspaceId, table.fixedBillId, table.occurredOn.desc())
+      .where(sql`${table.fixedBillId} is not null`),
   ],
 );
-
-export const fixedBills = pgTable("fixed_bills", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  workspaceId: uuid("workspace_id")
-    .notNull()
-    .references(() => workspaces.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  dueDay: numeric("due_day").notNull(),
-  autopay: boolean("autopay").notNull().default(false),
-  estimatedAmount: numeric("estimated_amount", { precision: 12, scale: 2 }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});

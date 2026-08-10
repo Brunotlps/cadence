@@ -5,7 +5,7 @@ import type { PaymentMethodCode } from "./payment-methods";
 import type { NormalizedTransactionInput } from "./validate-transaction";
 
 const TRANSACTION_COLUMNS =
-  "id, kind, amount, category, description, payment_method, goal_id, occurred_on, created_at";
+  "id, kind, amount, category, description, payment_method, goal_id, fixed_bill_id, occurred_on, created_at";
 
 export type RepositoryResult<T> =
   | { data: T; error: null }
@@ -19,6 +19,7 @@ export type TransactionRecord = {
   description: string | null;
   paymentMethod: PaymentMethodCode | null;
   goalId: string | null;
+  fixedBillId: string | null;
   occurredOn: string;
   createdAt: string;
 };
@@ -31,6 +32,7 @@ type RawTransaction = {
   description: string | null;
   payment_method: PaymentMethodCode | null;
   goal_id: string | null;
+  fixed_bill_id: string | null;
   occurred_on: string;
   created_at: string;
 };
@@ -57,6 +59,7 @@ function mapTransaction(row: RawTransaction): TransactionRecord {
     description: row.description,
     paymentMethod: row.payment_method,
     goalId: row.goal_id ?? null,
+    fixedBillId: row.fixed_bill_id ?? null,
     occurredOn: row.occurred_on,
     createdAt: row.created_at,
   };

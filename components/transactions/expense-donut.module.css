@@ -72,7 +72,7 @@
   list-style: none;
 }
 
-.legend li {
+.legendItem {
   display: grid;
   align-items: center;
   gap: 0.45rem;
@@ -80,7 +80,7 @@
   font-size: 0.86rem;
 }
 
-.legend li span:last-child {
+.legendItem span:last-child {
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }

@@ -45,7 +45,9 @@ describe.skipIf(!hasSupabaseTestEnv())("Apagamento em cascata", () => {
       const { error: billError } = await client.from("fixed_bills").insert({
         workspace_id: workspaceId,
         name: "Aluguel",
-        due_day: "5",
+        due_day: 5,
+        category: "aluguel",
+        estimated_amount: "1200.00",
       });
       if (billError) throw billError;
 

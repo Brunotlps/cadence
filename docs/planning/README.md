@@ -19,4 +19,4 @@ como histórico depois.
 | [05](./etapa-05-autenticacao.md)         | Autenticação (email/senha)                                  | concluído |
 | [06](./etapa-06-lancamento-dashboard.md) | Lançamento de despesas + Dashboard                          | concluído |
 | [07](./etapa-07-metas.md)                | Metas financeiras                                           | concluído |
-| 08                                       | Contas fixas / recorrentes (placeholder salvo)              | planejado |
+| [08](./etapa-08-contas-fixas.md)         | Contas fixas / recorrentes                                  | em andamento |

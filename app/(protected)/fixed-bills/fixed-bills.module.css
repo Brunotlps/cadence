@@ -1,0 +1,317 @@
+.page,
+.errorPage {
+  width: min(100% - 2rem, 72rem);
+  margin-inline: auto;
+  padding-block: 2rem 4rem;
+}
+
+.header,
+.billHeader,
+.monthNav,
+.filterNav,
+.actions,
+.paymentRow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.header {
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 1.4rem;
+}
+
+.eyebrow {
+  color: var(--brand);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  letter-spacing: -0.045em;
+}
+
+.nav,
+.filterNav,
+.monthNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-weight: 750;
+}
+
+.nav {
+  gap: 1rem;
+}
+
+.nav a,
+.monthNav a {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.monthNav {
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.monthNav h2 {
+  font-size: 1.2rem;
+  text-transform: capitalize;
+}
+
+.filterNav {
+  margin-bottom: 1.2rem;
+}
+
+.filterNav a {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.55rem 0.85rem;
+}
+
+.filterNav a[aria-current="page"] {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+}
+
+.card,
+.bill,
+.errorCard {
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+}
+
+.create {
+  margin-bottom: 1.2rem;
+}
+
+.create > button,
+.paymentForm > button {
+  min-height: 2.75rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--brand-strong);
+  font-weight: 800;
+  padding: 0;
+}
+
+.create > button[aria-expanded="true"],
+.paymentForm > button[aria-expanded="true"] {
+  margin-bottom: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1rem;
+}
+
+.bill {
+  display: grid;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.billDueSoon {
+  border-color: var(--brand);
+  background: linear-gradient(145deg, var(--surface), var(--brand-soft));
+}
+
+.billOverdue {
+  border-color: var(--danger);
+}
+
+.billHeader {
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.bill h2 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 1.25rem;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.badge,
+.autopayBadge {
+  border-radius: 999px;
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.3rem 0.6rem;
+  white-space: nowrap;
+}
+
+.paidBadge {
+  background: var(--success);
+  color: #fff;
+}
+
+.paidBadge::before {
+  content: "Pago";
+}
+
+.overdueBadge {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.autopayBadge {
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+}
+
+.metadata,
+.amounts,
+.payments {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.metadata,
+.estimate {
+  color: var(--text-muted);
+}
+
+.paidAmount {
+  color: var(--success);
+  font-weight: 800;
+}
+
+.actions {
+  flex-wrap: wrap;
+}
+
+.actions a {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 750;
+}
+
+.paymentForm {
+  border-top: 1px solid var(--border);
+  padding-top: 0.65rem;
+}
+
+.payments {
+  border-top: 1px solid var(--border);
+  padding-top: 0.65rem;
+}
+
+.payments h3 {
+  font-size: 0.95rem;
+}
+
+.payments ul {
+  display: grid;
+  gap: 0.45rem;
+  list-style: none;
+}
+
+.paymentRow {
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.paymentRow a {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 750;
+}
+
+.empty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2rem;
+}
+
+.errorPage {
+  display: grid;
+  min-height: 70vh;
+  align-content: center;
+}
+
+.errorCard p {
+  color: var(--danger);
+  margin-block: 0.5rem 1rem;
+}
+
+.nav a:focus-visible,
+.monthNav a:focus-visible,
+.filterNav a:focus-visible,
+.actions a:focus-visible,
+.paymentRow a:focus-visible,
+.create > button:focus-visible,
+.paymentForm > button:focus-visible {
+  outline: 3px solid rgb(49 95 77 / 24%);
+  outline-offset: 2px;
+}
+
+@media (max-width: 580px) {
+  .page,
+  .errorPage {
+    width: min(100% - 1rem, 72rem);
+    padding-top: 1rem;
+  }
+
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .monthNav {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .monthNav h2 {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    text-align: center;
+  }
+
+  .monthNav a:last-child {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .card,
+  .bill {
+    padding: 1rem;
+  }
+
+  .billHeader,
+  .paymentRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .badges {
+    justify-content: flex-start;
+  }
+}
