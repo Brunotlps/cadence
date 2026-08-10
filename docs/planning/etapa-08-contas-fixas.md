@@ -367,7 +367,7 @@ de revisão sem alteração.
 - [x] 10. Loaders de listagem mensal e de edição, incluindo o filtro de situação
        validado
 - [x] 11. Server Actions finas em `lib/actions/fixed-bills.ts`, com `revalidatePath`
-- [ ] 12. Página `/fixed-bills`, navegação, formulários, cards, filtros e destaques
+- [x] 12. Página `/fixed-bills`, navegação, formulários, cards, filtros e destaques
        visuais
 - [ ] 13. Edição de conta fixa e ciclo de vida do pagamento
        (`/fixed-bills/[id]/edit`, `/bill-payments/[id]/edit`, hard-delete), ajuste do
@@ -499,6 +499,15 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   Mutações de conta revalidam apenas `/fixed-bills`; pagamentos revalidam também
   `/dashboard`. Os 10 casos novos ficaram verdes, assim como toda a suíte unitária
   (323/323 em 35 arquivos), lint sem avisos e TypeScript sem erros.
+- Subtarefa 12 implementou `/fixed-bills` como Server Component, navegação entre
+  Dashboard, Metas e Fixas, formulário de criação, navegação mensal, filtros que
+  preservam o mês e cards com categoria, vencimento, previsto, realizado, débito
+  automático e status derivado. Os formulários interativos são Client Components
+  mínimos e não fazem leitura remota. O primeiro E2E revelou que o locator textual
+  congelado de `Pago` também encontrava a frase `R$ X pago`; o selo permaneceu
+  visível e ganhou nome acessível sem duplicar esse texto no DOM. Os quatro cenários
+  E2E desta fatia ficaram verdes (4/4); a pasta unitária de contas fixas ficou verde
+  (119/119 em 8 arquivos), com lint sem avisos e TypeScript sem erros.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias

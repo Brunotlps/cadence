@@ -99,6 +99,7 @@ export default async function DashboardPage({
           <h1>{data.workspace.name}</h1>
         </div>
         <div className={styles.headerActions}>
+          <Link href="/fixed-bills">Fixas</Link>
           <Link href="/goals">Metas</Link>
           <form action={signOutAction}>
             <button className={styles.logout} type="submit">Sair</button>
