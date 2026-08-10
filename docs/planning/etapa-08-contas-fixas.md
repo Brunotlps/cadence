@@ -349,7 +349,7 @@ de revisão sem alteração.
       exclusividade com `goal_id`, insert com conta de outro workspace rejeitado,
       `UPDATE` de reatribuição cruzada rejeitado, encerrar recorrência preservando
       pagamentos com `fixed_bill_id=null`, CRUD cruzado e RLS
-- [ ] 4. E2E primeiro: estado vazio, criação, card com previsto e vencimento,
+- [x] 4. E2E primeiro: estado vazio, criação, card com previsto e vencimento,
       confirmar pagamento e virar "pago", navegação de mês, aviso de "vence em
       breve", filtros de situação, edição de conta com pagamento existente,
       edição/reatribuição/hard-delete de pagamento, encerrar recorrência e viewport
@@ -412,6 +412,23 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   `fixed_bill_id` continua aceita, porque a trigger é condicionada ao vínculo em vez
   de exigi-lo. Os outros 5 arquivos de compliance permaneceram verdes (53 casos), e
   o `tsc --noEmit` só acusa os módulos `lib/fixed-bills/*` ainda inexistentes.
+- Subtarefa 4 confirmada em vermelho com
+  `npx playwright test tests/e2e/fixed-bills.spec.ts --workers=1`: oito cenários
+  falham, o primeiro por timeout na navegação "Fixas" ainda inexistente, depois de a
+  autenticação completar normalmente, e os outros sete já na fixture, porque as
+  colunas de `fixed_bills` só chegam na subtarefa 5. A cobertura fixa estado
+  vazio/criação, aviso de vencimento próximo, pagamento com valor pré-preenchido e
+  reflexo no saldo, status relativo ao mês exibido, filtros de situação, edição
+  recalculando previsto/vencimento sem tocar no realizado, ciclo de vida do
+  pagamento com reatribuição e hard-delete devolvendo a conta a pendente,
+  encerramento preservando a despesa comum e viewport móvel. Os 16 E2E existentes
+  permaneceram verdes.
+- **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
+  qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
+  último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
+  até o fim do mês, então dependeriam da data em que a suíte roda. A matriz completa
+  de status fica nos testes unitários, onde a data de referência é parâmetro; o E2E
+  verifica a ligação da UI com o destaque e a relatividade ao mês exibido.
 - **Follow-up futuro:** cálculo automático de média real a partir do histórico de
   pagamentos para contas de valor variável — avaliado e conscientemente adiado nesta
   etapa por simplicidade. Retomar se o uso real mostrar que a estimativa manual
