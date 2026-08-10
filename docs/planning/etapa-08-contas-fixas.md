@@ -344,7 +344,7 @@ de revisão sem alteração.
       clamp de vencimento em meses curtos, faixa de "vence em breve"/"em atraso",
       derivação de status por mês, previsto vs. realizado, múltiplos pagamentos e
       recálculo após edição
-- [ ] 3. Testes de compliance primeiro: constraints de `fixed_bills`, imutabilidade
+- [x] 3. Testes de compliance primeiro: constraints de `fixed_bills`, imutabilidade
       de `workspace_id`/`created_at`/`started_on`, `fixed_bill_id` só em `expense`,
       exclusividade com `goal_id`, insert com conta de outro workspace rejeitado,
       `UPDATE` de reatribuição cruzada rejeitado, encerrar recorrência preservando
@@ -400,6 +400,18 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   pendência só no mês corrente, `not_recorded` fora dele, soma de múltiplos
   pagamentos, pagamento fora do mês ou de conta desconhecida ignorado e recálculo
   após edição sem tocar no histórico lançado. Lint verde nos arquivos novos.
+- Subtarefa 3 confirmada em vermelho contra o Supabase de teste com
+  `npx vitest run tests/compliance/fixed-bill-integrity.test.ts`: 32 casos, 30
+  falhando somente nas garantias ainda ausentes (colunas `category`,
+  `variable_amount`, `started_on`, constraints, imutabilidade e
+  `transactions.fixed_bill_id` com suas duas triggers) e 2 já verdes. Os dois verdes
+  merecem ressalva: hoje eles passam pelo erro de coluna inexistente, não pelo
+  controle que descrevem — "insert em workspace alheio" só provará a RLS e
+  "dia fracionário" só provará o tipo `integer` depois da migration da subtarefa 5.
+  A suíte cobre ainda a diferença deliberada em relação a Metas: despesa avulsa sem
+  `fixed_bill_id` continua aceita, porque a trigger é condicionada ao vínculo em vez
+  de exigi-lo. Os outros 5 arquivos de compliance permaneceram verdes (53 casos), e
+  o `tsc --noEmit` só acusa os módulos `lib/fixed-bills/*` ainda inexistentes.
 - **Follow-up futuro:** cálculo automático de média real a partir do histórico de
   pagamentos para contas de valor variável — avaliado e conscientemente adiado nesta
   etapa por simplicidade. Retomar se o uso real mostrar que a estimativa manual
