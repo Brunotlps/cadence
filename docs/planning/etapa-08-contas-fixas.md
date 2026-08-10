@@ -354,7 +354,7 @@ de revisão sem alteração.
       breve", filtros de situação, edição de conta com pagamento existente,
       edição/reatribuição/hard-delete de pagamento, encerrar recorrência e viewport
       móvel
-- [ ] 5. `db/schema.ts` + migration com preflight: colunas e constraints de
+- [x] 5. `db/schema.ts` + migration com preflight: colunas e constraints de
       `fixed_bills`, `started_on`, `fixed_bill_id` em `transactions`, CHECKs, índice
       parcial, trigger de imutabilidade e as duas triggers de validação
       cross-workspace na mesma migration
@@ -423,6 +423,25 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   pagamento com reatribuição e hard-delete devolvendo a conta a pendente,
   encerramento preservando a despesa comum e viewport móvel. Os 16 E2E existentes
   permaneceram verdes.
+- Subtarefa 5 implementada em `0009_fixed_bills_integrity.sql`, com `fixed_bills`
+  movida no schema para antes de `transactions`, que agora a referencia. O preflight
+  falha se existir qualquer linha em `fixed_bills`: `category` passou a ser
+  obrigatória e não tem origem histórica possível, porque a tabela nunca foi escrita
+  pela aplicação — um backfill ali seria inventar dado financeiro, então a migration
+  para e exige decisão explícita. A trigger de vínculo é uma função única servindo
+  duas triggers, `BEFORE INSERT` e `BEFORE UPDATE OF fixed_bill_id`, ambas com
+  `WHEN (new.fixed_bill_id IS NOT NULL)` — o mesmo `WHEN` que deixa o
+  `ON DELETE SET NULL` gravar `NULL` ao encerrar a recorrência. Migration aplicada no
+  Supabase de teste; os 32 casos de compliance de contas fixas ficaram verdes, e uma
+  segunda geração Drizzle confirmou schema, migration e snapshot sincronizados.
+- Regressão encontrada e corrigida na mesma subtarefa: a fixture de
+  `cascade-deletion.test.ts` inseria conta fixa sem `category` nem
+  `estimated_amount`, o que as novas colunas obrigatórias passaram a rejeitar. A
+  fixture foi ajustada (e `due_day` deixou de ser string), sem afrouxar nenhuma
+  asserção do teste. Toda a pasta de compliance voltou verde (83/83 em 6 arquivos),
+  com 288 unitários verdes, lint, TypeScript e build de produção também verdes; os
+  únicos vermelhos restantes são as quatro suítes de `lib/fixed-bills/*` ainda não
+  implementadas.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
