@@ -48,6 +48,13 @@
   gap: 1rem;
 }
 
+.nav a,
+.monthNav a {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+
 .monthNav {
   justify-content: space-between;
   margin-bottom: 0.8rem;
@@ -289,6 +296,7 @@
   }
 
   .monthNav a:last-child {
+    justify-content: flex-end;
     text-align: right;
   }
 

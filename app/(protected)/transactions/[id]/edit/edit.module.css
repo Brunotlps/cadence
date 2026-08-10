@@ -43,7 +43,16 @@
 
 .footer a,
 .errorCard a {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
   font-weight: 700;
+}
+
+.footer a:focus-visible,
+.errorCard a:focus-visible {
+  outline: 3px solid rgb(49 95 77 / 24%);
+  outline-offset: 2px;
 }
 
 .errorPage {
@@ -67,5 +76,10 @@
   .card,
   .errorCard {
     padding: 1rem;
+  }
+
+  .footer {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

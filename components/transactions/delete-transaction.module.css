@@ -1,10 +1,19 @@
 .trigger {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
   border: 0;
   background: transparent;
   color: var(--danger);
   cursor: pointer;
   font-weight: 700;
-  padding: 0.25rem;
+  padding: 0.55rem 0.35rem;
+}
+
+.trigger:focus-visible,
+.actions button:focus-visible {
+  outline: 3px solid rgb(49 95 77 / 24%);
+  outline-offset: 2px;
 }
 
 .dialog {
@@ -48,7 +57,7 @@
 }
 
 .actions button {
-  min-height: 2.7rem;
+  min-height: 2.75rem;
   border-radius: 0.7rem;
   cursor: pointer;
   font-weight: 700;

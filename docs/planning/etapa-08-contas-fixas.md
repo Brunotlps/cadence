@@ -372,7 +372,7 @@ de revisão sem alteração.
 - [x] 13. Edição de conta fixa e ciclo de vida do pagamento
        (`/fixed-bills/[id]/edit`, `/bill-payments/[id]/edit`, hard-delete), ajuste do
        editor genérico e marcação no Dashboard (S4)
-- [ ] 14. Layout responsivo, estados vazios e falhas genéricas
+- [x] 14. Layout responsivo, estados vazios e falhas genéricas
 - [ ] 15. Atualizar modelo de dados, portabilidade e compliance aplicável, incluindo
        o registro da limitação S3
 - [ ] 16. Validação final: migration no ambiente de teste, compliance, unitários, E2E
@@ -520,6 +520,12 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   deixando `listitem` para a lista real. Toda a unidade ficou verde (324/324 em 35
   arquivos), assim como a regressão combinada de Contas Fixas + Dashboard (13/13
   E2E), lint sem avisos e TypeScript sem erros.
+- Subtarefa 14 concluiu a revisão responsiva dos estados principal, vazio, filtrado,
+  erro e edição. A grade usa colunas limitadas pela largura disponível, textos longos
+  quebram dentro do card e a navegação mensal reorganiza em 390 px. Links, gatilhos
+  de diálogo, confirmações e controles de formulário receberam alvo mínimo de 44 px
+  e foco visível. Os cenários móveis de Contas Fixas e Dashboard ficaram verdes
+  (2/2), sem overflow horizontal; lint e TypeScript permaneceram verdes.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
