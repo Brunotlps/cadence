@@ -364,7 +364,7 @@ de revisão sem alteração.
 - [x] 8. `derive-bill-status.ts` — agregação pura de pagamentos por conta e derivação
       de status, previsto, realizado e aviso
 - [x] 9. `lib/fixed-bills/repository.ts` com cliente Supabase autenticado injetado
-- [ ] 10. Loaders de listagem mensal e de edição, incluindo o filtro de situação
+- [x] 10. Loaders de listagem mensal e de edição, incluindo o filtro de situação
        validado
 - [ ] 11. Server Actions finas em `lib/actions/fixed-bills.ts`, com `revalidatePath`
 - [ ] 12. Página `/fixed-bills`, navegação, formulários, cards, filtros e destaques
@@ -480,6 +480,16 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   Supabase viram apenas `query_failed`, e ausência/invisibilidade têm o mesmo
   resultado. Os 12 testes do repositório e toda a pasta unitária de contas fixas
   ficaram verdes (96/96 em 5 arquivos), com lint sem avisos e TypeScript sem erros.
+- Subtarefa 10 implementou os loaders de listagem mensal e edição. Depois de resolver
+  o workspace, a listagem valida mês e filtro estritamente, dispara em paralelo a
+  consulta de contas iniciadas até o fim do mês e a de pagamentos no intervalo,
+  deriva status e totais no servidor e só então aplica em memória `todas`,
+  `pendentes`, `pagas` ou `automaticas`. A contagem total permanece separada do
+  resultado filtrado para distinguir workspace sem conta de filtro sem resultado.
+  Os loaders de edição reforçam o mesmo workspace e tornam dado ausente, invisível
+  ou falha de consulta indistinguíveis. Os 13 casos novos e toda a pasta unitária de
+  contas fixas ficaram verdes (109/109 em 7 arquivos), com lint sem avisos e
+  TypeScript sem erros.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
