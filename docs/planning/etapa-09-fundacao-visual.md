@@ -1,8 +1,9 @@
 # Etapa 09 — Fundação visual (navegação + tokens + cor de destaque)
 
-**Status:** em andamento
+**Status:** concluído
 **Aberto em:** 10/08/2026
 **Plano aprovado em:** 10/08/2026
+**Concluído em:** 10/08/2026
 **Depende de:** Etapas 05–08 (todas as telas existentes: dashboard, lançamentos,
 metas, contas fixas)
 
@@ -238,7 +239,7 @@ Testes antes ou junto de cada implementação:
 - [x] 12. Validar acessibilidade, estado ativo, foco, contraste, mobile e ausência
        de FOUC
 - [x] 13. Atualizar modelo, portabilidade, política de dados e mapeamento LGPD
-- [ ] 14. Validação final: migration no ambiente de teste, compliance, unitários,
+- [x] 14. Validação final: migration no ambiente de teste, compliance, unitários,
        E2E sem skips, lint, TypeScript, build e sincronização Drizzle verdes
 
 ## Estratégia de commits
@@ -302,3 +303,10 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   somente pela própria pessoa e removido junto da conta. `security-findings-log.md`
   e `security-exceptions.md` foram revisados e não exigem alteração: não houve achado
   corrigido, risco aceito nem nova retenção.
+- Subtarefa 14 concluiu a etapa com a migration aplicada no Supabase de teste,
+  451/451 testes Vitest verdes em 48 arquivos (incluindo 88 casos de compliance),
+  27/27 E2E sem skips, lint sem avisos, TypeScript sem erros e build de produção
+  completo com todas as URLs preservadas. A geração Drizzle final relatou
+  `No schema changes, nothing to migrate`, confirmando schema, migration e snapshot
+  sincronizados. A primeira tentativa de migration/compliance dentro do sandbox não
+  alcançou a rede; a repetição autorizada contra o mesmo ambiente passou.

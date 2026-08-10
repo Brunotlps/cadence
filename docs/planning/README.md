@@ -20,5 +20,5 @@ como histórico depois.
 | [06](./etapa-06-lancamento-dashboard.md) | Lançamento de despesas + Dashboard                          | concluído    |
 | [07](./etapa-07-metas.md)                | Metas financeiras                                           | concluído    |
 | [08](./etapa-08-contas-fixas.md)         | Contas fixas / recorrentes                                  | concluído    |
-| [09](./etapa-09-fundacao-visual.md)      | Fundação visual (navegação + tokens + cor de destaque)      | em andamento |
+| [09](./etapa-09-fundacao-visual.md)      | Fundação visual (navegação + tokens + cor de destaque)      | concluído    |
 | 10                                       | Polimento visual por tela (aguardando 09)                   | planejado    |
