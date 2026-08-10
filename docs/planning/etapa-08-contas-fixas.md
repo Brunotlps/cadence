@@ -360,7 +360,7 @@ de revisão sem alteração.
       cross-workspace na mesma migration
 - [x] 6. Helpers puros de vencimento e calendário (`due-date.ts`), reaproveitando
       `civil-date.ts`
-- [ ] 7. Validação pura de conta fixa e de pagamento, reaproveitando `money.ts`
+- [x] 7. Validação pura de conta fixa e de pagamento, reaproveitando `money.ts`
 - [ ] 8. `derive-bill-status.ts` — agregação pura de pagamentos por conta e derivação
       de status, previsto, realizado e aviso
 - [ ] 9. `lib/fixed-bills/repository.ts` com cliente Supabase autenticado injetado
@@ -451,6 +451,17 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   mês ficou local em vez de compartilhado com `calculate-goal-progress.ts`: as duas
   assinaturas diferem e mexer no módulo de metas já fechado custaria mais do que as
   duas linhas duplicadas. Suíte verde (19/19), lint e TypeScript verdes.
+- Subtarefa 7 implementada em `validate-fixed-bill.ts` e `validate-bill-payment.ts`,
+  reaproveitando o parser monetário, o domínio de categorias e o de formas de
+  pagamento da Etapa 06. A categoria da conta é validada por
+  `deriveTransactionKind(...) === "expense"`, o que rejeita `renda` pela mesma regra
+  que o banco aplicaria depois, em vez de por uma lista paralela que poderia
+  divergir. Dia de vencimento aceita só dígitos, descartando `5.5` e `5,5` antes de
+  virar número. Caixa de seleção ausente vira `false` sem erro de campo, porque
+  checkbox não marcada não chega no `FormData`. Pagamento futuro é rejeitado e
+  retroativo permitido, mesma regra do aporte; `today` inválido é `RangeError`, não
+  estado de formulário. Nenhum retorno ecoa o input inválido. Suítes verdes (50/50),
+  lint e TypeScript verdes.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
