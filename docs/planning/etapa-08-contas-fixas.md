@@ -369,7 +369,7 @@ de revisão sem alteração.
 - [x] 11. Server Actions finas em `lib/actions/fixed-bills.ts`, com `revalidatePath`
 - [x] 12. Página `/fixed-bills`, navegação, formulários, cards, filtros e destaques
        visuais
-- [ ] 13. Edição de conta fixa e ciclo de vida do pagamento
+- [x] 13. Edição de conta fixa e ciclo de vida do pagamento
        (`/fixed-bills/[id]/edit`, `/bill-payments/[id]/edit`, hard-delete), ajuste do
        editor genérico e marcação no Dashboard (S4)
 - [ ] 14. Layout responsivo, estados vazios e falhas genéricas
@@ -508,6 +508,18 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   visível e ganhou nome acessível sem duplicar esse texto no DOM. Os quatro cenários
   E2E desta fatia ficaram verdes (4/4); a pasta unitária de contas fixas ficou verde
   (119/119 em 8 arquivos), com lint sem avisos e TypeScript sem erros.
+- Subtarefa 13 implementou edição de conta, edição/reatribuição/hard-delete de
+  pagamento e encerramento da recorrência, com diálogos acessíveis e as rotas
+  dedicadas previstas. A contagem exibida ao encerrar inclui todo o histórico por
+  uma agregação embutida na própria consulta de contas, preservando as duas leituras
+  paralelas do loader mensal. O Dashboard agora lê `fixed_bill_id`, marca pagamentos
+  vinculados e os envia ao editor específico; `loadTransactionForEdit` rejeita o
+  vínculo conforme S4, mas a despesa volta ao editor genérico depois do `SET NULL`.
+  O E2E encontrou uma colisão entre o `listitem` da legenda do donut e o lançamento
+  preservado; a legenda manteve conteúdo e nome acessível em agrupamentos neutros,
+  deixando `listitem` para a lista real. Toda a unidade ficou verde (324/324 em 35
+  arquivos), assim como a regressão combinada de Contas Fixas + Dashboard (13/13
+  E2E), lint sem avisos e TypeScript sem erros.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias

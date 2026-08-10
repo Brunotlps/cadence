@@ -5,7 +5,7 @@ import type { NormalizedBillPaymentInput } from "./validate-bill-payment";
 import type { NormalizedFixedBillInput } from "./validate-fixed-bill";
 
 const FIXED_BILL_COLUMNS =
-  "id, name, due_day, category, autopay, variable_amount, estimated_amount, started_on, created_at";
+  "id, name, due_day, category, autopay, variable_amount, estimated_amount, started_on, created_at, transactions(count)";
 const BILL_PAYMENT_COLUMNS =
   "id, fixed_bill_id, created_by, amount, payment_method, occurred_on, created_at";
 
@@ -23,6 +23,7 @@ export type FixedBillRecord = {
   estimatedAmount: string;
   startedOn: string;
   createdAt: string;
+  linkedPaymentCount: number;
 };
 
 export type BillPaymentRecord = {
@@ -45,6 +46,7 @@ type RawFixedBill = {
   estimated_amount: string | number;
   started_on: string;
   created_at: string;
+  transactions: Array<{ count: number }> | { count: number } | null;
 };
 
 type RawBillPayment = {
@@ -72,6 +74,10 @@ function queryFailed<T>(): FixedBillRepositoryResult<T> {
 }
 
 function mapFixedBill(row: RawFixedBill): FixedBillRecord {
+  const linkedTransactions = Array.isArray(row.transactions)
+    ? row.transactions[0]
+    : row.transactions;
+
   return {
     id: row.id,
     name: row.name,
@@ -82,6 +88,7 @@ function mapFixedBill(row: RawFixedBill): FixedBillRecord {
     estimatedAmount: String(row.estimated_amount),
     startedOn: row.started_on,
     createdAt: row.created_at,
+    linkedPaymentCount: linkedTransactions?.count ?? 0,
   };
 }
 

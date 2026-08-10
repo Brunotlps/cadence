@@ -24,6 +24,7 @@ const transaction = {
   category: "alimentacao" as const,
   description: "Mercado",
   paymentMethod: "pix" as const,
+  fixedBillId: null,
   occurredOn: "2026-08-06",
   createdAt: "2026-08-06T12:00:00.000Z",
 };
@@ -99,6 +100,20 @@ describe("loadTransactionForEdit", () => {
 
     await expect(
       loadTransactionForEdit(client, "user-id", "contribution-id"),
+    ).resolves.toEqual({ status: "error" });
+  });
+
+  it("não edita pagamento de conta fixa pela tela genérica", async () => {
+    mocks.getTransactionById.mockResolvedValue({
+      data: {
+        ...transaction,
+        fixedBillId: "11111111-1111-4111-8111-111111111111",
+      },
+      error: null,
+    });
+
+    await expect(
+      loadTransactionForEdit(client, "user-id", "bill-payment-id"),
     ).resolves.toEqual({ status: "error" });
   });
 });

@@ -87,6 +87,7 @@ const databaseBill = {
   estimated_amount: 180,
   started_on: "2026-08-01",
   created_at: "2026-08-01T12:00:00.000Z",
+  transactions: [{ count: 3 }],
 };
 
 const databasePayment = {
@@ -113,7 +114,7 @@ describe("repositório de contas fixas", () => {
 
     expect(from).toHaveBeenCalledWith("fixed_bills");
     expect(query.select).toHaveBeenCalledWith(
-      "id, name, due_day, category, autopay, variable_amount, estimated_amount, started_on, created_at",
+      "id, name, due_day, category, autopay, variable_amount, estimated_amount, started_on, created_at, transactions(count)",
     );
     expect(query.eq).toHaveBeenCalledWith("workspace_id", "workspace-id");
     expect(query.lte).toHaveBeenCalledWith("started_on", "2026-08-31");
@@ -130,6 +131,7 @@ describe("repositório de contas fixas", () => {
           estimatedAmount: "180",
           startedOn: "2026-08-01",
           createdAt: "2026-08-01T12:00:00.000Z",
+          linkedPaymentCount: 3,
         },
       ],
       error: null,

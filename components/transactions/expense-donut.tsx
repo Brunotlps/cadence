@@ -115,9 +115,9 @@ export function ExpenseDonut({ data }: ExpenseDonutProps) {
             )}
           </div>
 
-          <ul className={styles.legend} aria-label="Legenda do gráfico mensal">
+          <div className={styles.legend} aria-label="Legenda do gráfico mensal">
             {data.map((item) => (
-              <li key={item.category}>
+              <div className={styles.legendItem} key={item.category}>
                 <span
                   aria-hidden="true"
                   className={styles.swatch}
@@ -125,9 +125,9 @@ export function ExpenseDonut({ data }: ExpenseDonutProps) {
                 />
                 <span>{categoryLabel(item.category)}</span>{" "}
                 <span>{formatCurrencyBRL(item.totalCents)}</span>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </figure>

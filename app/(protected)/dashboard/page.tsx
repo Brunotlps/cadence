@@ -10,6 +10,7 @@ import { signOutAction } from "@/lib/actions/auth";
 import { createTransactionAction } from "@/lib/actions/transactions";
 import { DeleteTransaction } from "@/components/transactions/delete-transaction";
 import { DeleteContribution } from "@/components/goals/delete-contribution";
+import { DeleteBillPayment } from "@/components/fixed-bills/delete-bill-payment";
 import { ExpenseDonut } from "@/components/transactions/expense-donut";
 import { TransactionForm } from "@/components/transactions/transaction-form";
 import { TRANSACTION_CATEGORIES } from "@/lib/transactions/categories";
@@ -207,6 +208,9 @@ export default async function DashboardPage({
                         <span>{category}</span>
                         <span>{formatCivilDatePtBR(transaction.occurredOn)}</span>
                         {paymentMethod && <span>{paymentMethod}</span>}
+                        {transaction.fixedBillId && (
+                          <span className={styles.fixedBillBadge}>Conta fixa</span>
+                        )}
                       </div>
                     </div>
                     <p
@@ -218,7 +222,17 @@ export default async function DashboardPage({
                     >
                       {signedAmount(transaction)}
                     </p>
-                    {transaction.kind !== "contribution" ? (
+                    {transaction.kind === "contribution" ? (
+                      <div className={styles.rowActions}>
+                        <Link href={`/contributions/${transaction.id}/edit`}>Editar</Link>
+                        <DeleteContribution transactionId={transaction.id} dashboardLabel />
+                      </div>
+                    ) : transaction.fixedBillId ? (
+                      <div className={styles.rowActions}>
+                        <Link href={`/bill-payments/${transaction.id}/edit`}>Editar</Link>
+                        <DeleteBillPayment transactionId={transaction.id} dashboardLabel />
+                      </div>
+                    ) : (
                       <div className={styles.rowActions}>
                         <Link
                           href={`/transactions/${transaction.id}/edit?month=${data.month}`}
@@ -226,11 +240,6 @@ export default async function DashboardPage({
                           Editar
                         </Link>
                         <DeleteTransaction transactionId={transaction.id} />
-                      </div>
-                    ) : (
-                      <div className={styles.rowActions}>
-                        <Link href={`/contributions/${transaction.id}/edit`}>Editar</Link>
-                        <DeleteContribution transactionId={transaction.id} dashboardLabel />
                       </div>
                     )}
                   </article>

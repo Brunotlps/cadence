@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BillPaymentForm } from "@/components/fixed-bills/bill-payment-form";
+import { DeleteBillPayment } from "@/components/fixed-bills/delete-bill-payment";
+import { DeleteFixedBill } from "@/components/fixed-bills/delete-fixed-bill";
 import { FixedBillForm } from "@/components/fixed-bills/fixed-bill-form";
 import { RevealPanel } from "@/components/goals/reveal-panel";
 import {
@@ -240,6 +242,10 @@ export default async function FixedBillsPage({
                   <Link href={`/fixed-bills/${bill.id}/edit`}>
                     Editar conta
                   </Link>
+                  <DeleteFixedBill
+                    fixedBillId={bill.id}
+                    paymentCount={bill.linkedPaymentCount}
+                  />
                 </div>
 
                 <RevealPanel
@@ -273,6 +279,7 @@ export default async function FixedBillsPage({
                           <Link href={`/bill-payments/${payment.id}/edit`}>
                             Editar pagamento
                           </Link>
+                          <DeleteBillPayment transactionId={payment.id} />
                         </li>
                       ))}
                     </ul>

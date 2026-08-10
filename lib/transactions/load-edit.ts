@@ -33,7 +33,8 @@ export async function loadTransactionForEdit(
   if (
     transactionResult.error ||
     !transactionResult.data ||
-    transactionResult.data.kind === "contribution"
+    transactionResult.data.kind === "contribution" ||
+    transactionResult.data.fixedBillId !== null
   ) {
     return { status: "error" };
   }
