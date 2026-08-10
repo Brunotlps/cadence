@@ -361,7 +361,7 @@ de revisão sem alteração.
 - [x] 6. Helpers puros de vencimento e calendário (`due-date.ts`), reaproveitando
       `civil-date.ts`
 - [x] 7. Validação pura de conta fixa e de pagamento, reaproveitando `money.ts`
-- [ ] 8. `derive-bill-status.ts` — agregação pura de pagamentos por conta e derivação
+- [x] 8. `derive-bill-status.ts` — agregação pura de pagamentos por conta e derivação
       de status, previsto, realizado e aviso
 - [ ] 9. `lib/fixed-bills/repository.ts` com cliente Supabase autenticado injetado
 - [ ] 10. Loaders de listagem mensal e de edição, incluindo o filtro de situação
@@ -462,6 +462,14 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   retroativo permitido, mesma regra do aporte; `today` inválido é `RangeError`, não
   estado de formulário. Nenhum retorno ecoa o input inválido. Suítes verdes (50/50),
   lint e TypeScript verdes.
+- Subtarefa 8 implementada em `derive-bill-status.ts`: a agregação preserva a ordem
+  das contas e dos pagamentos, descarta vínculos desconhecidos e lançamentos fora do
+  mês, soma valores em centavos com guarda de inteiro seguro e dá precedência ao
+  estado pago. Contas sem pagamento só recebem atraso, aviso ou pendência no mês
+  corrente; nos demais meses ficam como não registradas. Referências civis inválidas
+  e valores monetários não positivos falham explicitamente, sem fabricar totais. A
+  pasta unitária de contas fixas ficou verde (84/84 em 4 arquivos), com lint sem
+  avisos e TypeScript sem erros.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
