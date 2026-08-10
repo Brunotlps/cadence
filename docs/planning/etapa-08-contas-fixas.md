@@ -358,7 +358,7 @@ de revisão sem alteração.
       `fixed_bills`, `started_on`, `fixed_bill_id` em `transactions`, CHECKs, índice
       parcial, trigger de imutabilidade e as duas triggers de validação
       cross-workspace na mesma migration
-- [ ] 6. Helpers puros de vencimento e calendário (`due-date.ts`), reaproveitando
+- [x] 6. Helpers puros de vencimento e calendário (`due-date.ts`), reaproveitando
       `civil-date.ts`
 - [ ] 7. Validação pura de conta fixa e de pagamento, reaproveitando `money.ts`
 - [ ] 8. `derive-bill-status.ts` — agregação pura de pagamentos por conta e derivação
@@ -442,6 +442,15 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   com 288 unitários verdes, lint, TypeScript e build de produção também verdes; os
   únicos vermelhos restantes são as quatro suítes de `lib/fixed-bills/*` ainda não
   implementadas.
+- Subtarefa 6 implementada em `lib/fixed-bills/due-date.ts`, consumindo
+  `isValidMonth`/`isValidCivilDate` da Etapa 06: vencimento preso ao último dia em
+  meses curtos, diferença de dias com sinal ancorada em meia-noite UTC (sem depender
+  do fuso do servidor) e a janela de aviso centralizada em `DUE_SOON_WINDOW_DAYS`.
+  Dia fora da faixa, não inteiro, mês ou data civil inválidos são erro de
+  programação (`RangeError`), não estado de formulário. O cálculo do último dia do
+  mês ficou local em vez de compartilhado com `calculate-goal-progress.ts`: as duas
+  assinaturas diferem e mexer no módulo de metas já fechado custaria mais do que as
+  duas linhas duplicadas. Suíte verde (19/19), lint e TypeScript verdes.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
