@@ -1,8 +1,9 @@
 # Etapa 08 — Contas fixas / recorrentes
 
-**Status:** em andamento
+**Status:** concluído
 **Aberto em:** 10/08/2026
 **Plano aprovado em:** 10/08/2026
+**Concluído em:** 10/08/2026
 **Depende de:** Etapa 06 (lançamentos), Etapa 07 (padrão de entidade vinculada +
 lançamento, resolvedor de workspace compartilhado, trigger BEFORE INSERT/UPDATE
 condicionada)
@@ -375,7 +376,7 @@ de revisão sem alteração.
 - [x] 14. Layout responsivo, estados vazios e falhas genéricas
 - [x] 15. Atualizar modelo de dados, portabilidade e compliance aplicável, incluindo
        o registro da limitação S3
-- [ ] 16. Validação final: migration no ambiente de teste, compliance, unitários, E2E
+- [x] 16. Validação final: migration no ambiente de teste, compliance, unitários, E2E
        sem skips, lint, TypeScript, build e sincronização Drizzle verdes
 
 ## Estratégia de commits
@@ -536,6 +537,15 @@ implementação correspondente; nenhuma implementação precede sua cobertura TD
   `security-exceptions.md` foram revisados: “contas” e dados financeiros já estavam
   cobertos, e a etapa não introduziu novo dado pessoal, achado ou exceção; por isso
   nenhum dos três foi editado.
+- Subtarefa 16 concluiu a validação final com 408/408 testes Vitest em 42 arquivos,
+  incluindo 83/83 casos de compliance em 6 arquivos, e 24/24 E2E sem skips; a suíte
+  específica de contas fixas passou 8/8. Lint ficou sem avisos, TypeScript sem erros
+  e o build de produção compilou e gerou todas as 13 páginas estáticas previstas,
+  além das rotas dinâmicas. A geração Drizzle final relatou `No schema changes,
+  nothing to migrate`, confirmando schema, migrations e snapshot sincronizados. A
+  primeira tentativa de Vitest completo dentro do sandbox não alcançou o Supabase
+  (`fetch failed`/`ENOTFOUND`); o mesmo comando, repetido com rede autorizada, passou
+  integralmente — falha de ambiente, não de asserção ou produto.
 - **Decisão de cobertura E2E:** só o estado "vence em breve" é construível em
   qualquer dia do mês (vencimento entre hoje e hoje+2, com o clamp prendendo no
   último dia). "Em atraso" exige hoje ≥ dia 2 e "pendente" exige mais de cinco dias
