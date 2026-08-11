@@ -7,7 +7,7 @@ export function RevealPanel({
   className,
   children,
 }: {
-  label: string;
+  label: ReactNode;
   className?: string;
   children: ReactNode;
 }) {

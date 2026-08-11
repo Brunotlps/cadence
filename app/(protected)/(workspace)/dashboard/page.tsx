@@ -16,6 +16,7 @@ import { TransactionForm } from "@/components/transactions/transaction-form";
 import { FeedbackState } from "@/components/ui/feedback-state";
 import { MonthNavigation } from "@/components/ui/month-navigation";
 import { PageHeader } from "@/components/ui/page-header";
+import { RevealPanel } from "@/components/ui/reveal-panel";
 import { TRANSACTION_CATEGORIES } from "@/lib/transactions/categories";
 import {
   getTodayInSaoPaulo,
@@ -110,24 +111,34 @@ export default async function DashboardPage({
       <div className={styles.topGrid}>
         <section
           className={`${styles.card} ${styles.composer}`}
-          aria-labelledby="new-transaction-title"
+          aria-label="Novo lançamento"
         >
-          <h2 className={styles.cardTitle} id="new-transaction-title">
-            Novo lançamento
-          </h2>
-          <TransactionForm
-            action={createTransactionAction}
-            month={data.month}
-            submitLabel="Registrar lançamento"
-            compact
-            initialValues={{
-              amount: "",
-              category: "",
-              occurredOn: getTodayInSaoPaulo(),
-              description: "",
-              paymentMethod: "",
-            }}
-          />
+          <RevealPanel
+            className={styles.composerPanel}
+            label={
+              <>
+                <span className={styles.composerLabel}>
+                  <span className={styles.composerMarker} aria-hidden="true" />
+                  Novo lançamento
+                </span>
+                <span className={styles.composerToggle} aria-hidden="true" />
+              </>
+            }
+          >
+            <TransactionForm
+              action={createTransactionAction}
+              month={data.month}
+              submitLabel="Registrar lançamento"
+              compact
+              initialValues={{
+                amount: "",
+                category: "",
+                occurredOn: getTodayInSaoPaulo(),
+                description: "",
+                paymentMethod: "",
+              }}
+            />
+          </RevealPanel>
         </section>
 
         <section
