@@ -247,3 +247,16 @@ correspondente.
   compliance; 30/30 E2E executados e aprovados sem skips; lint sem avisos, TypeScript
   sem erros, build de produção verde e `git diff --check` limpo. Nenhum arquivo de
   schema ou migration foi alterado.
+- Após revisão visual local, o Dashboard recebeu uma composição mais densa: entrada
+  rápida de lançamento em linha, resumo ao lado, histórico como conteúdo principal e
+  donut complementar com layout orientado pela largura do próprio card. Cabeçalhos,
+  cards, formulários, shell, Metas, Contas fixas e edições tiveram espaçamentos,
+  raios e sombras harmonizados sem reduzir os alvos interativos de 44 px.
+- O seletor persistente de cor passou a ficar recolhido sob “Aparência”. Escolher
+  Preto, Rosa ou Verde envia imediatamente a mesma Server Action já auditada, fecha
+  o painel após sucesso e elimina o passo “Salvar cor”. O E2E continua provando
+  persistência independente por pessoa, HTML inicial correto sem JavaScript,
+  ausência de overflow móvel e agora também a inexistência do botão antigo.
+- O usuário aprovou o passe visual final no servidor local. A validação integral foi
+  repetida depois desses ajustes com os mesmos resultados verdes: 454/454 Vitest,
+  30/30 E2E sem skips, lint, TypeScript, build e `git diff --check`.
