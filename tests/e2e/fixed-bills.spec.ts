@@ -177,7 +177,7 @@ test.describe("contas fixas", () => {
       await page.getByRole("button", { name: "Salvar pagamento" }).click();
 
       await expect(bill.getByText("Vence em breve")).toHaveCount(0);
-      await expect(bill.getByText("Pago")).toBeVisible();
+      await expect(bill.getByText("Pago", { exact: true })).toBeVisible();
       await expect(bill).toContainText("R$ 134,90 pago");
       await expect(bill).toContainText("R$ 120,00 previsto");
 
@@ -215,16 +215,16 @@ test.describe("contas fixas", () => {
       await page.goto("/fixed-bills");
 
       const bill = page.getByRole("article", { name: "Aluguel" });
-      await expect(bill.getByText("Pago")).toBeVisible();
+      await expect(bill.getByText("Pago", { exact: true })).toBeVisible();
 
       await page.getByRole("link", { name: "Próximo mês" }).click();
       await expect(bill.getByText("Não registrado")).toBeVisible();
-      await expect(bill.getByText("Pago")).toHaveCount(0);
+      await expect(bill.getByText("Pago", { exact: true })).toHaveCount(0);
       await expect(bill.getByText("Vence em breve")).toHaveCount(0);
       await expect(bill.getByText("Em atraso")).toHaveCount(0);
 
       await page.getByRole("link", { name: "Mês anterior" }).click();
-      await expect(bill.getByText("Pago")).toBeVisible();
+      await expect(bill.getByText("Pago", { exact: true })).toBeVisible();
     } finally {
       await deleteTestAccount(fixture.id);
     }

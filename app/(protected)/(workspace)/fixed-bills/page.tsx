@@ -1,10 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BillPaymentForm } from "@/components/fixed-bills/bill-payment-form";
 import { DeleteBillPayment } from "@/components/fixed-bills/delete-bill-payment";
 import { DeleteFixedBill } from "@/components/fixed-bills/delete-fixed-bill";
 import { FixedBillForm } from "@/components/fixed-bills/fixed-bill-form";
-import { RevealPanel } from "@/components/goals/reveal-panel";
+import { RevealPanel } from "@/components/ui/reveal-panel";
+import { FeedbackState } from "@/components/ui/feedback-state";
+import { MonthNavigation } from "@/components/ui/month-navigation";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   createBillPaymentAction,
   createFixedBillAction,
@@ -32,6 +36,10 @@ type FixedBillsPageProps = {
     month?: string | string[];
     filter?: string | string[];
   }>;
+};
+
+export const metadata: Metadata = {
+  title: "Contas fixas | Cadence",
 };
 
 const filters: Array<{ value: FixedBillFilter; label: string }> = [
@@ -105,11 +113,13 @@ export default async function FixedBillsPage({
   if (result.status === "error") {
     return (
       <main className={styles.errorPage}>
-        <div className={styles.errorCard}>
-          <h1>Contas fixas</h1>
-          <p role="alert">Não foi possível carregar suas contas fixas.</p>
+        <FeedbackState
+          kind="error"
+          title="Não foi possível carregar suas contas fixas."
+          description="Tente novamente em alguns instantes."
+        >
           <Link href="/dashboard">Voltar ao Dashboard</Link>
-        </div>
+        </FeedbackState>
       </main>
     );
   }
@@ -118,24 +128,17 @@ export default async function FixedBillsPage({
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <p className={styles.eyebrow}>{data.workspace.name}</p>
-          <h1>Contas fixas</h1>
-        </div>
-      </header>
+      <PageHeader
+        eyebrow={data.workspace.name}
+        title="Contas fixas"
+        description="Compare o previsto com o que foi pago em cada mês."
+      />
 
-      <nav className={styles.monthNav} aria-label="Navegação por mês">
-        <Link
-          href={monthHref(shiftMonth(data.month, -1), data.filter)}
-        >
-          Mês anterior
-        </Link>
-        <h2>{formatMonthPtBR(data.month)}</h2>
-        <Link href={monthHref(shiftMonth(data.month, 1), data.filter)}>
-          Próximo mês
-        </Link>
-      </nav>
+      <MonthNavigation
+        label={formatMonthPtBR(data.month)}
+        previousHref={monthHref(shiftMonth(data.month, -1), data.filter)}
+        nextHref={monthHref(shiftMonth(data.month, 1), data.filter)}
+      />
 
       <nav className={styles.filterNav} aria-label="Filtrar contas fixas">
         {filters.map((item) => (
@@ -168,13 +171,17 @@ export default async function FixedBillsPage({
       </RevealPanel>
 
       {data.totalBillCount === 0 ? (
-        <section className={`${styles.card} ${styles.empty}`}>
-          <p>Nenhuma conta fixa ainda.</p>
-        </section>
+        <FeedbackState
+          kind="empty"
+          title="Nenhuma conta fixa ainda."
+          description="Cadastre uma recorrência para comparar o previsto com os pagamentos do mês."
+        />
       ) : data.bills.length === 0 ? (
-        <section className={`${styles.card} ${styles.empty}`}>
-          <p>Nenhuma conta fixa neste filtro.</p>
-        </section>
+        <FeedbackState
+          kind="empty"
+          title="Nenhuma conta fixa neste filtro."
+          description="Escolha outra situação para ver as demais contas."
+        />
       ) : (
         <section className={styles.grid} aria-label="Contas fixas">
           {data.bills.map((bill) => {
@@ -194,11 +201,14 @@ export default async function FixedBillsPage({
                     {bill.status === "paid" ? (
                       <span
                         className={`${styles.badge} ${styles.paidBadge}`}
-                        aria-label="Pago"
-                      />
+                        data-status="paid"
+                      >
+                        Pago
+                      </span>
                     ) : (
                       <span
                         className={`${styles.badge} ${statusBadgeClass(bill)}`}
+                        data-status={bill.status}
                       >
                         {statusLabel(bill.status)}
                       </span>
