@@ -1,8 +1,9 @@
 # Etapa 12 — Experiência mobile completa
 
-**Status:** em andamento
+**Status:** concluído
 **Aberto em:** 11/08/2026
 **Plano aprovado em:** 11/08/2026
+**Concluído em:** 11/08/2026
 **Depende de:** Etapas 09–11 (fundação, polimento por tela e login concluídos)
 
 ## Objetivo
@@ -182,18 +183,18 @@ biblioteca de componentes, Tailwind, CSS-in-JS ou pacote de ícones.
 
 - [x] 1. Registrar o plano aprovado, atualizar o índice e corrigir a frase obsoleta
       sobre signup em `security-exceptions.md`
-- [ ] 2. Escrever contratos E2E mobile com conteúdo longo e confirmar o vermelho
-- [ ] 3. Compactar o shell, refinar o seletor e compensar a navegação fixa
-- [ ] 4. Refinar cabeçalhos e navegação mensal
-- [ ] 5. Refinar Dashboard, formulário, lista e gráfico
-- [ ] 6. Refinar Metas, aportes e seus grupos de ação
-- [ ] 7. Refinar Contas fixas, filtros, pagamentos e seus grupos de ação
-- [ ] 8. Uniformizar edições, diálogos, foco e scroll em telas estreitas
-- [ ] 9. Criar padrão compartilhado para signup, confirmação, recuperação,
+- [x] 2. Escrever contratos E2E mobile com conteúdo longo e confirmar o vermelho
+- [x] 3. Compactar o shell, refinar o seletor e compensar a navegação fixa
+- [x] 4. Refinar cabeçalhos e navegação mensal
+- [x] 5. Refinar Dashboard, formulário, lista e gráfico
+- [x] 6. Refinar Metas, aportes e seus grupos de ação
+- [x] 7. Refinar Contas fixas, filtros, pagamentos e seus grupos de ação
+- [x] 8. Uniformizar edições, diálogos, foco e scroll em telas estreitas
+- [x] 9. Criar padrão compartilhado para signup, confirmação, recuperação,
       redefinição e onboarding
-- [ ] 10. Inspecionar 320/360/390 px, paisagem, conteúdo longo e três paletas
-- [ ] 11. Revisar documentação de compliance aplicável
-- [ ] 12. Validação final: unitários, compliance, E2E sem skips, lint, TypeScript e
+- [x] 10. Inspecionar 320/360/390 px, paisagem, conteúdo longo e três paletas
+- [x] 11. Revisar documentação de compliance aplicável
+- [x] 12. Validação final: unitários, compliance, E2E sem skips, lint, TypeScript e
       build verdes
 
 ## Estratégia de commits
@@ -209,3 +210,37 @@ separados.
   temporário. Nenhum dado pessoal ou financeiro real foi registrado.
 - A árvore estava limpa em `main` antes da abertura desta etapa.
 - Nenhuma decisão das Etapas 04–11 foi reaberta.
+- Os três contratos E2E foram confirmados em vermelho antes da implementação: o
+  cabeçalho media 121 px contra o limite de 72 px; o Dashboard ainda usava o nome do
+  workspace como `h1`; e as páginas públicas não exibiam a marca Cadence nem o padrão
+  de controles mobile.
+- O shell mobile passou a ocupar uma única linha com marca, cor atual e logout. O
+  seletor fecha após persistência, clique externo ou `Escape`, retorna foco pelo
+  teclado e deriva o estado aberto da rota atual sem persistência client-side nova.
+- O Dashboard agora usa o nome da rota como `h1` e o workspace como contexto. A
+  navegação mensal ficou compacta, a data não forma linha órfã em 390 px e descrições
+  longas podem ocupar duas linhas. Metas receberam ações estáveis; Contas fixas usam
+  filtros 2 × 2 e hierarquia explícita entre ações secundárias e pagamento.
+- Os cinco editores preservam a composição compartilhada e centralizam ações em telas
+  estreitas. Diálogos respeitam largura, altura dinâmica, rolagem e safe area. A barra
+  inferior continua com exatamente três destinos e o conteúdo interativo recebe
+  margem de scroll equivalente à área fixa.
+- Signup, confirmação, recuperação, redefinição e onboarding passaram a consumir um
+  shell compacto compartilhado. As mesmas Server Actions, mensagens genéricas,
+  redirects e contratos de autenticação foram preservados. Signup e redefinição
+  receberam somente inspeção local da senha, sem persistir ou registrar seu valor.
+- A inspeção visual final cobriu conteúdo longo em 320 e 390 px, além do contrato de
+  360 px e paisagem estreita. As capturas e fixtures eram temporárias e foram
+  removidas após a revisão.
+- A revisão de tratamento de dados, modelo, portabilidade, LGPD, achados e exceções
+  confirmou ausência de dado, finalidade, query, log, schema, RLS ou retenção nova.
+  Apenas a frase obsoleta sobre signup em `security-exceptions.md` foi corrigida. A
+  exceção de retenção de contas não confirmadas continua ativa e exige decisão própria;
+  esta etapa não a declara resolvida.
+- A primeira execução de Vitest dentro do sandbox sem rede falhou somente por DNS ao
+  tentar alcançar Supabase. Repetida com acesso ao ambiente de teste, passou
+  integralmente.
+- Validação final: 454/454 testes Vitest verdes em 49 arquivos, incluindo compliance;
+  35/35 E2E aprovados sem skips; lint sem avisos, TypeScript sem erros, build de
+  produção verde e `git diff --check` limpo. Nenhum arquivo de schema ou migration foi
+  alterado.
