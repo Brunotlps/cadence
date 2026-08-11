@@ -9,6 +9,9 @@ config({ path: ".env.local", quiet: true });
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
+  // Os cenários usam o Supabase hospedado e cada fixture autentica pelo fluxo
+  // real. Um worker evita rajadas concorrentes no rate limit do Auth.
+  workers: 1,
   forbidOnly: !!process.env.CI, // impede test.only esquecido de passar no CI
   retries: process.env.CI ? 2 : 0,
   reporter: "html",
