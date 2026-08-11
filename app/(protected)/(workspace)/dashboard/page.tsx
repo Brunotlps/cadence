@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -12,6 +13,9 @@ import { DeleteContribution } from "@/components/goals/delete-contribution";
 import { DeleteBillPayment } from "@/components/fixed-bills/delete-bill-payment";
 import { ExpenseDonut } from "@/components/transactions/expense-donut";
 import { TransactionForm } from "@/components/transactions/transaction-form";
+import { FeedbackState } from "@/components/ui/feedback-state";
+import { MonthNavigation } from "@/components/ui/month-navigation";
+import { PageHeader } from "@/components/ui/page-header";
 import { TRANSACTION_CATEGORIES } from "@/lib/transactions/categories";
 import {
   getTodayInSaoPaulo,
@@ -25,6 +29,10 @@ import styles from "./dashboard.module.css";
 
 type DashboardPageProps = {
   searchParams: Promise<{ month?: string | string[] }>;
+};
+
+export const metadata: Metadata = {
+  title: "Dashboard | Cadence",
 };
 
 function categoryLabel(transaction: TransactionRecord): string {
@@ -74,12 +82,11 @@ export default async function DashboardPage({
   if (result.status === "error") {
     return (
       <main className={styles.errorPage}>
-        <div className={styles.errorCard}>
-          <h1>Dashboard</h1>
-          <p role="alert">
-            Não foi possível carregar seus lançamentos. Tente novamente.
-          </p>
-        </div>
+        <FeedbackState
+          kind="error"
+          title="Não foi possível carregar seus lançamentos."
+          description="Tente novamente em alguns instantes."
+        />
       </main>
     );
   }
@@ -88,22 +95,17 @@ export default async function DashboardPage({
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.brand}>
-          <p className={styles.eyebrow}>Cadence</p>
-          <h1>{data.workspace.name}</h1>
-        </div>
-      </header>
+      <PageHeader
+        eyebrow="Dashboard"
+        title={data.workspace.name}
+        description="Registre o que entrou e saiu e acompanhe o resultado do mês."
+      />
 
-      <nav className={styles.monthNav} aria-label="Navegação por mês">
-        <Link href={`/dashboard?month=${shiftMonth(data.month, -1)}`}>
-          Mês anterior
-        </Link>
-        <h2>{formatMonthPtBR(data.month)}</h2>
-        <Link href={`/dashboard?month=${shiftMonth(data.month, 1)}`}>
-          Próximo mês
-        </Link>
-      </nav>
+      <MonthNavigation
+        label={formatMonthPtBR(data.month)}
+        previousHref={`/dashboard?month=${shiftMonth(data.month, -1)}`}
+        nextHref={`/dashboard?month=${shiftMonth(data.month, 1)}`}
+      />
 
       <div className={styles.topGrid}>
         <section
@@ -116,7 +118,7 @@ export default async function DashboardPage({
           <TransactionForm
             action={createTransactionAction}
             month={data.month}
-            submitLabel="Salvar lançamento"
+            submitLabel="Registrar lançamento"
             initialValues={{
               amount: "",
               category: "",
@@ -168,17 +170,19 @@ export default async function DashboardPage({
         </div>
         {data.transactions.length === 0 ? (
           data.isWorkspaceEmpty ? (
-            <div className={styles.emptyState}>
-              <p>Nenhum lançamento neste mês.</p>
-              <p>
-                Nenhum lançamento ainda. Registre sua primeira receita ou despesa
-                para começar a acompanhar o mês.
-              </p>
-            </div>
+            <FeedbackState
+              kind="empty"
+              headingLevel={3}
+              title="Nenhum lançamento neste mês."
+              description="Registre sua primeira receita ou despesa para começar a acompanhar o mês."
+            />
           ) : (
-            <div className={styles.emptyState}>
-              <p>Nenhum lançamento neste mês.</p>
-            </div>
+            <FeedbackState
+              kind="empty"
+              headingLevel={3}
+              title="Nenhum lançamento neste mês."
+              description="Use a navegação acima para consultar outro período."
+            />
           )
         ) : (
           <ul className={styles.transactionList}>
