@@ -192,6 +192,15 @@
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
+  .transactionRow h3 {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
   .rowActions {
     grid-column: 1 / -1;
     justify-content: flex-end;
@@ -209,5 +218,16 @@
 
   .amount {
     font-size: 0.9rem;
+  }
+
+  .sectionHeader {
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .sectionHeader span {
+    flex: none;
+    max-width: 5.5rem;
+    text-align: right;
   }
 }
