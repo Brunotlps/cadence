@@ -244,3 +244,8 @@ separados.
   35/35 E2E aprovados sem skips; lint sem avisos, TypeScript sem erros, build de
   produção verde e `git diff --check` limpo. Nenhum arquivo de schema ou migration foi
   alterado.
+- Após a revisão da etapa, o card de novo lançamento do Dashboard passou a iniciar
+  recolhido e a expandir ou recolher pelo próprio cabeçalho, com `aria-expanded` e
+  `aria-controls`. O formulário, a Server Action e o comportamento de registro foram
+  preservados. O ajuste foi inspecionado nos dois estados em 320 px e seus 11 cenários
+  E2E afetados passaram integralmente.
