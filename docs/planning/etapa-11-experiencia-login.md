@@ -1,8 +1,9 @@
 # Etapa 11 — Experiência de login
 
-**Status:** em andamento
+**Status:** concluído
 **Aberto em:** 11/08/2026
 **Plano aprovado em:** 11/08/2026
+**Concluído em:** 11/08/2026
 **Depende de:** Etapa 10 (fundação e polimento visual concluídos)
 
 ## Objetivo
@@ -125,12 +126,12 @@ necessário.
 
 - [x] 1. Registrar o plano aprovado, atualizar o índice e corrigir o escopo obsoleto
       no `CLAUDE.md`
-- [ ] 2. Escrever o contrato E2E do login e confirmar o vermelho
-- [ ] 3. Implementar metadata e composição visual responsiva
-- [ ] 4. Refinar campos, links, pending, erro e visibilidade da senha
-- [ ] 5. Validar teclado, foco, alvos e reflow em 320/390 px
-- [ ] 6. Revisar segurança, privacidade e documentação aplicável
-- [ ] 7. Validação final: unitários, compliance, E2E sem skips, lint, TypeScript e
+- [x] 2. Escrever o contrato E2E do login e confirmar o vermelho
+- [x] 3. Implementar metadata e composição visual responsiva
+- [x] 4. Refinar campos, links, pending, erro e visibilidade da senha
+- [x] 5. Validar teclado, foco, alvos e reflow em 320/390 px
+- [x] 6. Revisar segurança, privacidade e documentação aplicável
+- [x] 7. Validação final: unitários, compliance, E2E sem skips, lint, TypeScript e
       build verdes
 
 ## Estratégia de commits
@@ -145,3 +146,24 @@ conclusão documental ficam em commits lógicos separados.
   marca e densidade aprovados nas Etapas 09–10, sem importar funcionalidades do
   protótipo.
 - Nenhuma decisão da Etapa 05 foi reaberta.
+- O contrato focal foi confirmado em vermelho antes da implementação: o título ainda
+  era apenas `Cadence`, em vez de `Entrar | Cadence`, e o campo de e-mail tinha 28 px,
+  abaixo do alvo mínimo de 44 px.
+- A rota recebeu metadata própria, composição responsiva de marca e acesso, estados
+  visuais consistentes e inspeção local da senha. `signInAction`, Supabase Auth,
+  sessão, cookies, redirects e mensagens de segurança permaneceram inalterados.
+- A inspeção visual cobriu desktop e viewport de 320 px. Teclado, foco, ordem dos
+  controles, alvos mínimos, valor da senha durante a alternância e ausência de scroll
+  horizontal também ficaram cobertos por E2E.
+- `CLAUDE.md` foi corrigido na fonte: além do erro de digitação, o escopo agora
+  reconhece signup público por e-mail/senha e onboarding inicial já entregues na
+  Etapa 05; convites e métodos adicionais de autenticação continuam fora do MVP.
+- A documentação de segurança, privacidade e compliance foi revisada. Como não houve
+  dado, finalidade, persistência, query, log, schema, RLS ou regra de autenticação
+  nova, nenhum documento adicional exigiu alteração.
+- A regressão inicialmente revelou apenas uma expectativa textual obsoleta no teste
+  de rota protegida (`Entrar`); ela foi alinhada ao novo `h1` e a suíte integral foi
+  repetida com sucesso.
+- Validação final: 454/454 testes Vitest verdes em 49 arquivos, incluindo compliance;
+  32/32 E2E aprovados sem skips; lint sem avisos, TypeScript sem erros, build de
+  produção verde e `git diff --check` limpo.
