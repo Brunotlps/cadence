@@ -101,3 +101,9 @@
     margin-inline: auto;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .visual path {
+    transition: none;
+  }
+}
