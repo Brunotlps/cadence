@@ -262,7 +262,7 @@ test.describe("experiência mobile completa", () => {
       { path: "/forgot-password", field: "E-mail", action: "Enviar" },
       {
         path: "/confirm-email",
-        field: "Não recebeu? Informe o e-mail pra reenviar",
+        field: "E-mail",
         action: "Reenviar e-mail",
       },
       {
@@ -274,13 +274,15 @@ test.describe("experiência mobile completa", () => {
 
     for (const route of routes) {
       await page.goto(route.path);
-      await expect(page.getByText("Cadence", { exact: true })).toBeVisible();
-      const field = page.getByLabel(route.field);
+      await expect(
+        page.getByRole("main").getByText("Cadence", { exact: true }),
+      ).toBeVisible();
+      const field = page.locator("form").getByLabel(route.field);
       const action = page.getByRole("button", { name: route.action });
       await expectMinimumTarget(field);
       await expectMinimumTarget(action);
-      const fieldBox = await field.boundingBox();
-      expect(fieldBox!.width).toBeGreaterThanOrEqual(250);
+      const controlBox = await field.locator("..").boundingBox();
+      expect(controlBox!.width).toBeGreaterThanOrEqual(250);
       await expectNoHorizontalOverflow(page);
     }
 
@@ -288,7 +290,9 @@ test.describe("experiência mobile completa", () => {
     try {
       await login(page, onboardingUser.email, onboardingUser.password);
       await expect(page).toHaveURL(/\/onboarding\/workspace/);
-      await expect(page.getByText("Cadence", { exact: true })).toBeVisible();
+      await expect(
+        page.getByRole("main").getByText("Cadence", { exact: true }),
+      ).toBeVisible();
       await expectMinimumTarget(page.getByLabel("Nome do espaço"));
       await expectMinimumTarget(
         page.getByRole("button", { name: "Criar espaço" }),

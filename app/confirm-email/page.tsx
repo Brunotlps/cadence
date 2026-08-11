@@ -1,10 +1,13 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
+import { AuthShell } from "@/components/auth/auth-shell";
 import {
   resendConfirmationAction,
   type ResendConfirmationState,
 } from "@/lib/actions/auth";
+import styles from "@/components/auth/auth-shell.module.css";
 
 const initialState: ResendConfirmationState = { message: null };
 
@@ -15,22 +18,26 @@ export default function ConfirmEmailPage() {
   );
 
   return (
-    <main>
-      <h1>Confirme seu e-mail</h1>
-      <p>
-        Enviamos um link de confirmação para o e-mail informado no cadastro.
-        Clique no link para ativar sua conta.
-      </p>
-      <form action={formAction}>
-        <div>
-          <label htmlFor="email">Não recebeu? Informe o e-mail pra reenviar</label>
+    <AuthShell
+      eyebrow="Quase lá"
+      title="Confirme seu e-mail"
+      description="Enviamos um link de confirmação para o e-mail informado no cadastro. Clique nele para ativar sua conta."
+      footer={<Link href="/login">Voltar para entrar</Link>}
+    >
+      <form className={styles.form} action={formAction} aria-busy={pending}>
+        <div className={styles.field}>
+          <label htmlFor="email">E-mail</label>
           <input id="email" name="email" type="email" required autoComplete="email" />
         </div>
-        <button type="submit" disabled={pending}>
-          Reenviar e-mail
+        <button className={styles.submit} type="submit" disabled={pending}>
+          {pending ? "Reenviando…" : "Reenviar e-mail"}
         </button>
-        {state.message && <p role="status">{state.message}</p>}
+        {state.message && (
+          <p className={styles.message} role="status">
+            {state.message}
+          </p>
+        )}
       </form>
-    </main>
+    </AuthShell>
   );
 }
