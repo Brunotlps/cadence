@@ -2,7 +2,7 @@
 .errorPage {
   width: min(100% - 2rem, var(--content-width));
   margin-inline: auto;
-  padding-block: var(--space-8) var(--space-12);
+  padding-block: var(--space-6) var(--space-8);
 }
 
 .card,
@@ -11,11 +11,11 @@
   border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow);
-  padding: var(--space-5);
+  padding: var(--space-4);
 }
 
 .create {
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-3);
 }
 
 .create > button,
@@ -33,19 +33,19 @@
 
 .create > button[aria-expanded="true"],
 .contributionForm > button[aria-expanded="true"] {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 29rem), 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  gap: var(--space-3);
 }
 
 .goal {
   display: grid;
   min-width: 0;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .goalComplete {
@@ -79,7 +79,7 @@
   color: var(--on-accent);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  padding: 0.3rem 0.6rem;
+  padding: 0.25rem 0.55rem;
 }
 
 .progressSummary {
@@ -108,7 +108,7 @@
   border-radius: var(--radius-md);
   background: var(--surface-muted);
   color: var(--text-muted);
-  padding: var(--space-3);
+  padding: var(--space-2) var(--space-3);
 }
 
 .pace[data-pace="completed"] {

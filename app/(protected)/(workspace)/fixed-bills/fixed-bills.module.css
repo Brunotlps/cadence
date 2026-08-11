@@ -2,7 +2,7 @@
 .errorPage {
   width: min(100% - 2rem, var(--content-width));
   margin-inline: auto;
-  padding-block: var(--space-8) var(--space-12);
+  padding-block: var(--space-6) var(--space-8);
 }
 
 .billHeader,
@@ -21,7 +21,7 @@
 }
 
 .filterNav {
-  margin-bottom: 1.2rem;
+  margin-bottom: var(--space-3);
 }
 
 .filterNav a {
@@ -30,7 +30,7 @@
   align-items: center;
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
-  padding: 0.55rem 0.85rem;
+  padding-inline: var(--space-3);
 }
 
 .filterNav a[aria-current="page"] {
@@ -45,11 +45,11 @@
   border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow);
-  padding: var(--space-5);
+  padding: var(--space-4);
 }
 
 .create {
-  margin-bottom: 1.2rem;
+  margin-bottom: var(--space-3);
 }
 
 .create > button,
@@ -67,18 +67,18 @@
 
 .create > button[aria-expanded="true"],
 .paymentForm > button[aria-expanded="true"] {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-3);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-3);
 }
 
 .bill {
   display: grid;
-  gap: 0.9rem;
+  gap: var(--space-3);
   min-width: 0;
 }
 
@@ -116,7 +116,7 @@
   color: var(--text-muted);
   font-size: 0.75rem;
   font-weight: 800;
-  padding: 0.3rem 0.6rem;
+  padding: 0.25rem 0.55rem;
   white-space: nowrap;
 }
 

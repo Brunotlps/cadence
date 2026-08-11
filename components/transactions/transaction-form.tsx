@@ -35,6 +35,7 @@ type TransactionFormProps = {
   initialValues: TransactionFormValues;
   month: string;
   submitLabel: string;
+  compact?: boolean;
 };
 
 export function TransactionForm({
@@ -42,6 +43,7 @@ export function TransactionForm({
   initialValues,
   month,
   submitLabel,
+  compact = false,
 }: TransactionFormProps) {
   const [state, formAction, pending] = useActionState(action, initialState);
   const [detailsOpen, setDetailsOpen] = useState(
@@ -49,7 +51,11 @@ export function TransactionForm({
   );
 
   return (
-    <form action={formAction} className={formStyles.form} aria-busy={pending}>
+    <form
+      action={formAction}
+      className={`${formStyles.form} ${compact ? styles.compactForm : ""}`}
+      aria-busy={pending}
+    >
       <input type="hidden" name="month" value={month} />
 
       <div className={styles.primaryFields}>
@@ -89,7 +95,7 @@ export function TransactionForm({
                 : undefined
             }
           >
-            <option value="">Selecione uma categoria</option>
+            <option value="">Selecione</option>
             {TRANSACTION_CATEGORIES.map((category) => (
               <option key={category.code} value={category.code}>
                 {category.label}

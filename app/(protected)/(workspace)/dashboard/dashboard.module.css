@@ -1,20 +1,19 @@
 .page {
   width: min(100% - 2rem, var(--content-width));
   margin-inline: auto;
-  padding-block: var(--space-8) var(--space-12);
+  padding-block: var(--space-6) var(--space-8);
 }
 
-.topGrid {
+.topGrid,
+.contentGrid {
   display: grid;
   align-items: start;
-  gap: var(--space-4);
-  grid-template-columns: minmax(19rem, 0.85fr) minmax(0, 1.45fr);
+  gap: var(--space-3);
+  grid-template-columns: minmax(0, 1.65fr) minmax(18rem, 0.72fr);
 }
 
-.insights {
-  display: grid;
-  gap: var(--space-4);
-  grid-template-columns: minmax(14rem, 0.8fr) minmax(20rem, 1.2fr);
+.contentGrid {
+  margin-top: var(--space-3);
 }
 
 .card {
@@ -23,12 +22,18 @@
   border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow);
-  padding: var(--space-5);
+  padding: var(--space-4);
 }
 
 .cardTitle {
-  font-size: 1rem;
-  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  margin-bottom: var(--space-3);
+}
+
+.composer {
+  background:
+    linear-gradient(135deg, var(--accent-wash), transparent 58%),
+    var(--surface);
 }
 
 .summary {
@@ -43,17 +48,17 @@
 }
 
 .balance {
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-size: clamp(1.7rem, 3.4vw, 2.3rem);
   font-variant-numeric: tabular-nums;
   font-weight: 780;
   letter-spacing: -0.05em;
   line-height: 1.15;
-  margin-block: 0.35rem 1.25rem;
+  margin-block: var(--space-1) var(--space-3);
 }
 
 .summary dl {
   display: grid;
-  gap: 0.75rem;
+  gap: var(--space-2);
 }
 
 .summary dl div {
@@ -61,7 +66,7 @@
   justify-content: space-between;
   border-top: 1px solid var(--border);
   gap: 0.7rem;
-  padding-top: 0.65rem;
+  padding-top: var(--space-2);
 }
 
 .summary dt {
@@ -73,16 +78,12 @@
   font-weight: 700;
 }
 
-.transactions {
-  margin-top: 1rem;
-}
-
 .sectionHeader {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-4);
-  margin-bottom: 0.9rem;
+  margin-bottom: var(--space-2);
 }
 
 .sectionHeader h2 {
@@ -106,9 +107,9 @@
 .transactionRow {
   display: grid;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   grid-template-columns: minmax(0, 1fr) auto auto;
-  padding-block: 0.9rem;
+  padding-block: 0.65rem;
 }
 
 .transactionRow h3 {
@@ -153,7 +154,7 @@
 .rowActions {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: var(--space-1);
 }
 
 .rowActions a {
@@ -174,8 +175,9 @@
   margin-inline: auto;
 }
 
-@media (max-width: 1100px) {
-  .topGrid {
+@media (max-width: 1180px) {
+  .topGrid,
+  .contentGrid {
     grid-template-columns: 1fr;
   }
 }
@@ -184,10 +186,6 @@
   .page {
     width: min(100% - 1rem, 44rem);
     padding-top: 0.9rem;
-  }
-
-  .insights {
-    grid-template-columns: 1fr;
   }
 
   .transactionRow {
@@ -202,8 +200,7 @@
 
 @media (max-width: 480px) {
   .card {
-    border-radius: 0.85rem;
-    padding: 1rem;
+    padding: var(--space-3);
   }
 
   .transactionRow {

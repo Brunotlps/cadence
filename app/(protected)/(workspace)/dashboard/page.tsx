@@ -109,7 +109,7 @@ export default async function DashboardPage({
 
       <div className={styles.topGrid}>
         <section
-          className={styles.card}
+          className={`${styles.card} ${styles.composer}`}
           aria-labelledby="new-transaction-title"
         >
           <h2 className={styles.cardTitle} id="new-transaction-title">
@@ -119,6 +119,7 @@ export default async function DashboardPage({
             action={createTransactionAction}
             month={data.month}
             submitLabel="Registrar lançamento"
+            compact
             initialValues={{
               amount: "",
               category: "",
@@ -129,117 +130,131 @@ export default async function DashboardPage({
           />
         </section>
 
-        <div className={styles.insights}>
-          <section
-            className={`${styles.card} ${styles.summary}`}
-            aria-label="Resumo do mês"
-          >
-            <p className={styles.balanceLabel}>Saldo do mês</p>
-            <p className={styles.balance}>
-              {formatCurrencyBRL(data.summary.balanceCents)}
-            </p>
-            <dl>
+        <section
+          className={`${styles.card} ${styles.summary}`}
+          aria-label="Resumo do mês"
+        >
+          <p className={styles.balanceLabel}>Saldo do mês</p>
+          <p className={styles.balance}>
+            {formatCurrencyBRL(data.summary.balanceCents)}
+          </p>
+          <dl>
+            <div>
+              <dt>Receitas</dt>
+              <dd>{formatCurrencyBRL(data.summary.incomeCents)}</dd>
+            </div>
+            <div>
+              <dt>Despesas</dt>
+              <dd>{formatCurrencyBRL(data.summary.expenseCents)}</dd>
+            </div>
+            {data.summary.contributionCents > 0 && (
               <div>
-                <dt>Receitas</dt>
-                <dd>{formatCurrencyBRL(data.summary.incomeCents)}</dd>
+                <dt>Aportes</dt>
+                <dd>{formatCurrencyBRL(data.summary.contributionCents)}</dd>
               </div>
-              <div>
-                <dt>Despesas</dt>
-                <dd>{formatCurrencyBRL(data.summary.expenseCents)}</dd>
-              </div>
-              {data.summary.contributionCents > 0 && (
-                <div>
-                  <dt>Aportes</dt>
-                  <dd>{formatCurrencyBRL(data.summary.contributionCents)}</dd>
-                </div>
-              )}
-            </dl>
-          </section>
-
-          <ExpenseDonut data={data.summary.expensesByCategory} />
-        </div>
+            )}
+          </dl>
+        </section>
       </div>
 
-      <section
-        className={`${styles.card} ${styles.transactions}`}
-        aria-labelledby="transactions-title"
-      >
-        <div className={styles.sectionHeader}>
-          <h2 id="transactions-title">Lançamentos do mês</h2>
-          <span>{data.transactions.length} no período</span>
-        </div>
-        {data.transactions.length === 0 ? (
-          data.isWorkspaceEmpty ? (
-            <FeedbackState
-              kind="empty"
-              headingLevel={3}
-              title="Nenhum lançamento neste mês."
-              description="Registre sua primeira receita ou despesa para começar a acompanhar o mês."
-            />
+      <div className={styles.contentGrid}>
+        <section
+          className={`${styles.card} ${styles.transactions}`}
+          aria-labelledby="transactions-title"
+        >
+          <div className={styles.sectionHeader}>
+            <h2 id="transactions-title">Lançamentos do mês</h2>
+            <span>{data.transactions.length} no período</span>
+          </div>
+          {data.transactions.length === 0 ? (
+            data.isWorkspaceEmpty ? (
+              <FeedbackState
+                kind="empty"
+                headingLevel={3}
+                title="Nenhum lançamento neste mês."
+                description="Registre sua primeira receita ou despesa para começar a acompanhar o mês."
+              />
+            ) : (
+              <FeedbackState
+                kind="empty"
+                headingLevel={3}
+                title="Nenhum lançamento neste mês."
+                description="Use a navegação acima para consultar outro período."
+              />
+            )
           ) : (
-            <FeedbackState
-              kind="empty"
-              headingLevel={3}
-              title="Nenhum lançamento neste mês."
-              description="Use a navegação acima para consultar outro período."
-            />
-          )
-        ) : (
-          <ul className={styles.transactionList}>
-            {data.transactions.map((transaction) => {
-              const category = categoryLabel(transaction);
-              const paymentMethod = paymentMethodLabel(transaction);
+            <ul className={styles.transactionList}>
+              {data.transactions.map((transaction) => {
+                const category = categoryLabel(transaction);
+                const paymentMethod = paymentMethodLabel(transaction);
 
-              return (
-                <li key={transaction.id}>
-                  <article className={styles.transactionRow}>
-                    <div>
-                      <h3>{transaction.description ?? category}</h3>
-                      <div className={styles.metadata}>
-                        <span>{category}</span>
-                        <span>{formatCivilDatePtBR(transaction.occurredOn)}</span>
-                        {paymentMethod && <span>{paymentMethod}</span>}
-                        {transaction.fixedBillId && (
-                          <span className={styles.fixedBillBadge}>Conta fixa</span>
-                        )}
+                return (
+                  <li key={transaction.id}>
+                    <article className={styles.transactionRow}>
+                      <div>
+                        <h3>{transaction.description ?? category}</h3>
+                        <div className={styles.metadata}>
+                          <span>{category}</span>
+                          <span>
+                            {formatCivilDatePtBR(transaction.occurredOn)}
+                          </span>
+                          {paymentMethod && <span>{paymentMethod}</span>}
+                          {transaction.fixedBillId && (
+                            <span className={styles.fixedBillBadge}>
+                              Conta fixa
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <p
-                      className={`${styles.amount} ${
-                        transaction.kind === "income"
-                          ? styles.income
-                          : styles.outflow
-                      }`}
-                    >
-                      {signedAmount(transaction)}
-                    </p>
-                    {transaction.kind === "contribution" ? (
-                      <div className={styles.rowActions}>
-                        <Link href={`/contributions/${transaction.id}/edit`}>Editar</Link>
-                        <DeleteContribution transactionId={transaction.id} dashboardLabel />
-                      </div>
-                    ) : transaction.fixedBillId ? (
-                      <div className={styles.rowActions}>
-                        <Link href={`/bill-payments/${transaction.id}/edit`}>Editar</Link>
-                        <DeleteBillPayment transactionId={transaction.id} dashboardLabel />
-                      </div>
-                    ) : (
-                      <div className={styles.rowActions}>
-                        <Link
-                          href={`/transactions/${transaction.id}/edit?month=${data.month}`}
-                        >
-                          Editar
-                        </Link>
-                        <DeleteTransaction transactionId={transaction.id} />
-                      </div>
-                    )}
-                  </article>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+                      <p
+                        className={`${styles.amount} ${
+                          transaction.kind === "income"
+                            ? styles.income
+                            : styles.outflow
+                        }`}
+                      >
+                        {signedAmount(transaction)}
+                      </p>
+                      {transaction.kind === "contribution" ? (
+                        <div className={styles.rowActions}>
+                          <Link href={`/contributions/${transaction.id}/edit`}>
+                            Editar
+                          </Link>
+                          <DeleteContribution
+                            transactionId={transaction.id}
+                            dashboardLabel
+                          />
+                        </div>
+                      ) : transaction.fixedBillId ? (
+                        <div className={styles.rowActions}>
+                          <Link href={`/bill-payments/${transaction.id}/edit`}>
+                            Editar
+                          </Link>
+                          <DeleteBillPayment
+                            transactionId={transaction.id}
+                            dashboardLabel
+                          />
+                        </div>
+                      ) : (
+                        <div className={styles.rowActions}>
+                          <Link
+                            href={`/transactions/${transaction.id}/edit?month=${data.month}`}
+                          >
+                            Editar
+                          </Link>
+                          <DeleteTransaction transactionId={transaction.id} />
+                        </div>
+                      )}
+                    </article>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
+        <ExpenseDonut data={data.summary.expensesByCategory} />
+      </div>
     </main>
   );
 }

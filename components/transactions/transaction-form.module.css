@@ -1,7 +1,7 @@
 .primaryFields,
 .details {
   display: grid;
-  gap: 0.9rem;
+  gap: var(--space-3);
 }
 
 .detailsToggle {
@@ -12,16 +12,45 @@
   color: var(--brand-strong);
   cursor: pointer;
   font-weight: 700;
-  padding: var(--space-2);
+  padding-block: var(--space-2);
 }
 
 .details {
   border-left: 2px solid var(--brand-soft);
-  padding-left: 1rem;
+  padding-left: var(--space-3);
 }
 
 .details[hidden] {
   display: none;
+}
+
+.compactForm {
+  align-items: end;
+  gap: var(--space-3);
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.compactForm .primaryFields,
+.compactForm .details,
+.compactForm > p {
+  grid-column: 1 / -1;
+}
+
+.compactForm .primaryFields {
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 9.5rem), 1fr)
+  );
+}
+
+.compactForm .details {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+.compactForm > button[type="submit"] {
+  min-width: 12rem;
+  grid-column: 2;
+  justify-self: end;
 }
 
 @media (min-width: 620px) {
@@ -31,5 +60,27 @@
 
   .primaryFields > :last-child {
     grid-column: 1 / -1;
+  }
+
+  .compactForm .primaryFields {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, 9.5rem), 1fr)
+    );
+  }
+
+  .compactForm .primaryFields > :last-child {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .compactForm {
+    grid-template-columns: 1fr;
+  }
+
+  .compactForm > button[type="submit"] {
+    width: 100%;
+    grid-column: 1;
   }
 }
