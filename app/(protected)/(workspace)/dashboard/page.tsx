@@ -96,8 +96,8 @@ export default async function DashboardPage({
   return (
     <main className={styles.page}>
       <PageHeader
-        eyebrow="Dashboard"
-        title={data.workspace.name}
+        eyebrow={data.workspace.name}
+        title="Dashboard"
         description="Registre o que entrou e saiu e acompanhe o resultado do mês."
       />
 

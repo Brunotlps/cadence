@@ -156,7 +156,7 @@ test.describe("experiência mobile completa", () => {
     await expect(appearance).toBeFocused();
 
     await appearance.click();
-    await page.getByRole("heading", { level: 1 }).click();
+    await page.mouse.click(310, 300);
     await expect(
       page.getByRole("group", { name: "Cor de destaque" }),
     ).toBeHidden();
