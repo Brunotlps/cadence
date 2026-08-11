@@ -190,7 +190,7 @@ verdes. Helper puro novo, se necessário, recebe teste unitário próprio.
 ## Subtarefas
 
 - [x] 1. Registrar o plano aprovado e alinhar o índice antes de escrever código
-- [ ] 2. Escrever os contratos E2E de polimento e confirmar o vermelho
+- [x] 2. Escrever os contratos E2E de polimento e confirmar o vermelho
 - [ ] 3. Extrair cabeçalho, navegação mensal, feedback, painel expansível, diálogo e
       estilos compartilhados de formulário
 - [ ] 4. Implementar `loading.tsx` e `error.tsx` do grupo financeiro sem log bruto
@@ -218,3 +218,9 @@ correspondente.
   está concluída.
 - O aviso do GitHub Actions sobre actions baseadas em Node 20 sendo forçadas a Node
   24 é manutenção de CI, não polimento de interface, e permanece fora desta etapa.
+- Subtarefa 2 confirmada em vermelho. A suíte unitária de estados compartilhados
+  falha exclusivamente porque `FeedbackState`, `loading.tsx` e `error.tsx` ainda não
+  existem. O E2E focal executa fixtures e autenticação normalmente e falha nos dois
+  contratos deliberadamente ausentes: título específico por rota (`Cadence` ainda é
+  global) e alvo mínimo de 44 px no gatilho “Criar meta” (24 px antes do polimento).
+  O lint dos arquivos de teste está verde.
