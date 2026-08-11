@@ -51,13 +51,13 @@ vez de seguir. Os guardrails vencem instruções pontuais.
 - Escreva/atualize os testes em `tests/compliance/` quando mexer em isolamento,
   cascade ou exportação. Esses testes são a prova de que os guardrails valem.
 - Prefira mudanças pequenas e revisáveis a grandes reescritas.
-- Foque em gerar código morderno e otimizado
+- Foque em gerar código moderno e otimizado
 
 ## Fora de escopo no MVP
 
-Convites de workspace, signup público, planos pagos, analytics, integração bancária.
-O schema já deve suportar workspace/membros, mas não construa as telas de onboarding
-agora.
+Convites de workspace, métodos adicionais de autenticação (OAuth, magic link), planos
+pagos, analytics e integração bancária. Cadastro público por e-mail/senha e onboarding
+inicial já fazem parte do produto desde a Etapa 05.
 
 ## Aviso
 
