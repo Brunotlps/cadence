@@ -21,4 +21,4 @@ como histórico depois.
 | [07](./etapa-07-metas.md)                | Metas financeiras                                           | concluído    |
 | [08](./etapa-08-contas-fixas.md)         | Contas fixas / recorrentes                                  | concluído    |
 | [09](./etapa-09-fundacao-visual.md)      | Fundação visual (navegação + tokens + cor de destaque)      | concluído    |
-| 10                                       | Polimento visual por tela (aguardando 09)                   | planejado    |
+| [10](./etapa-10-polimento-por-tela.md)   | Polimento visual por tela                                   | em andamento |
