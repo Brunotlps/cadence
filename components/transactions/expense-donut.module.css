@@ -1,12 +1,13 @@
 .figure {
   display: grid;
   min-width: 0;
+  container-type: inline-size;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow);
-  gap: var(--space-4);
-  padding: var(--space-5);
+  gap: var(--space-3);
+  padding: var(--space-4);
 }
 
 .figure figcaption {
@@ -16,15 +17,15 @@
 
 .empty {
   color: var(--text-muted);
-  padding: 2.5rem 0;
+  padding: var(--space-8) 0;
   text-align: center;
 }
 
 .content {
   display: grid;
   align-items: center;
-  gap: var(--space-4);
-  grid-template-columns: minmax(10rem, 0.9fr) minmax(9rem, 1.1fr);
+  gap: var(--space-3);
+  grid-template-columns: minmax(8rem, 0.85fr) minmax(0, 1.15fr);
 }
 
 .visual {
@@ -34,7 +35,7 @@
 
 .visual svg {
   display: block;
-  max-height: 15rem;
+  max-height: 12rem;
 }
 
 .visual path {
@@ -68,7 +69,7 @@
 
 .legend {
   display: grid;
-  gap: 0.6rem;
+  gap: var(--space-2);
   list-style: none;
 }
 
@@ -78,6 +79,11 @@
   gap: 0.45rem;
   grid-template-columns: 0.65rem minmax(0, 1fr) auto;
   font-size: 0.86rem;
+}
+
+.legendItem span:nth-child(2) {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .legendItem span:last-child {
@@ -99,5 +105,22 @@
   .visual {
     max-width: 15rem;
     margin-inline: auto;
+  }
+}
+
+@container (max-width: 24rem) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .visual {
+    width: min(100%, 10rem);
+    margin-inline: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visual path {
+    transition: none;
   }
 }

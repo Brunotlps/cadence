@@ -2,9 +2,9 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import formStyles from "@/components/ui/form-controls.module.css";
 import type { FixedBillActionState } from "@/lib/actions/fixed-bills";
 import { PAYMENT_METHODS } from "@/lib/transactions/payment-methods";
-import styles from "./form.module.css";
 
 const initialState: FixedBillActionState = {
   error: null,
@@ -39,6 +39,10 @@ export function BillPaymentForm({
 }: BillPaymentFormProps) {
   const [state, formAction, pending] = useActionState(action, initialState);
   const router = useRouter();
+  const amountErrorId = `${idPrefix}-amount-error`;
+  const dateErrorId = `${idPrefix}-date-error`;
+  const methodErrorId = `${idPrefix}-method-error`;
+  const billErrorId = `${idPrefix}-bill-error`;
 
   useEffect(() => {
     if (!state.success) return;
@@ -47,8 +51,8 @@ export function BillPaymentForm({
   }, [redirectOnSuccess, router, state.success]);
 
   return (
-    <form action={formAction} className={styles.form}>
-      <div className={styles.field}>
+    <form action={formAction} className={formStyles.form} aria-busy={pending}>
+      <div className={formStyles.field}>
         <label htmlFor={`${idPrefix}-amount`}>Valor do pagamento</label>
         <input
           id={`${idPrefix}-amount`}
@@ -57,12 +61,15 @@ export function BillPaymentForm({
           required
           defaultValue={initialValues.amount}
           aria-invalid={Boolean(state.fieldErrors.amount)}
+          aria-describedby={state.fieldErrors.amount ? amountErrorId : undefined}
         />
         {state.fieldErrors.amount && (
-          <p className={styles.fieldError}>{state.fieldErrors.amount}</p>
+          <p className={formStyles.fieldError} id={amountErrorId}>
+            {state.fieldErrors.amount}
+          </p>
         )}
       </div>
-      <div className={styles.field}>
+      <div className={formStyles.field}>
         <label htmlFor={`${idPrefix}-date`}>Data do pagamento</label>
         <input
           id={`${idPrefix}-date`}
@@ -71,18 +78,26 @@ export function BillPaymentForm({
           required
           defaultValue={initialValues.occurredOn}
           aria-invalid={Boolean(state.fieldErrors.occurredOn)}
+          aria-describedby={
+            state.fieldErrors.occurredOn ? dateErrorId : undefined
+          }
         />
         {state.fieldErrors.occurredOn && (
-          <p className={styles.fieldError}>{state.fieldErrors.occurredOn}</p>
+          <p className={formStyles.fieldError} id={dateErrorId}>
+            {state.fieldErrors.occurredOn}
+          </p>
         )}
       </div>
-      <div className={styles.field}>
+      <div className={formStyles.field}>
         <label htmlFor={`${idPrefix}-method`}>Forma de pagamento</label>
         <select
           id={`${idPrefix}-method`}
           name="paymentMethod"
           defaultValue={initialValues.paymentMethod}
           aria-invalid={Boolean(state.fieldErrors.paymentMethod)}
+          aria-describedby={
+            state.fieldErrors.paymentMethod ? methodErrorId : undefined
+          }
         >
           <option value="">Não informada</option>
           {PAYMENT_METHODS.map((method) => (
@@ -92,11 +107,13 @@ export function BillPaymentForm({
           ))}
         </select>
         {state.fieldErrors.paymentMethod && (
-          <p className={styles.fieldError}>{state.fieldErrors.paymentMethod}</p>
+          <p className={formStyles.fieldError} id={methodErrorId}>
+            {state.fieldErrors.paymentMethod}
+          </p>
         )}
       </div>
       {fixedBills && (
-        <div className={styles.field}>
+        <div className={formStyles.field}>
           <label htmlFor={`${idPrefix}-bill`}>Conta fixa</label>
           <select
             id={`${idPrefix}-bill`}
@@ -104,6 +121,9 @@ export function BillPaymentForm({
             required
             defaultValue={initialValues.fixedBillId}
             aria-invalid={Boolean(state.fieldErrors.fixedBillId)}
+            aria-describedby={
+              state.fieldErrors.fixedBillId ? billErrorId : undefined
+            }
           >
             <option value="">Selecione uma conta fixa</option>
             {fixedBills.map((bill) => (
@@ -113,21 +133,23 @@ export function BillPaymentForm({
             ))}
           </select>
           {state.fieldErrors.fixedBillId && (
-            <p className={styles.fieldError}>{state.fieldErrors.fixedBillId}</p>
+            <p className={formStyles.fieldError} id={billErrorId}>
+              {state.fieldErrors.fixedBillId}
+            </p>
           )}
         </div>
       )}
       {state.error && (
-        <p className={styles.formError} role="alert">
+        <p className={formStyles.formError} role="alert">
           {state.error}
         </p>
       )}
       {state.success && !redirectOnSuccess && (
-        <p className={styles.success} role="status">
+        <p className={formStyles.success} role="status">
           Pagamento salvo.
         </p>
       )}
-      <button className={styles.submit} type="submit" disabled={pending}>
+      <button className={formStyles.submit} type="submit" disabled={pending}>
         {pending ? "Salvando…" : submitLabel}
       </button>
     </form>

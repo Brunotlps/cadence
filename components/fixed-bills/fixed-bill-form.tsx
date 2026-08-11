@@ -2,9 +2,9 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import formStyles from "@/components/ui/form-controls.module.css";
 import type { FixedBillActionState } from "@/lib/actions/fixed-bills";
 import { TRANSACTION_CATEGORIES } from "@/lib/transactions/categories";
-import styles from "./form.module.css";
 
 const initialState: FixedBillActionState = {
   error: null,
@@ -49,8 +49,8 @@ export function FixedBillForm({
   }, [redirectOnSuccess, router, state.success]);
 
   return (
-    <form action={formAction} className={styles.form}>
-      <div className={styles.field}>
+    <form action={formAction} className={formStyles.form} aria-busy={pending}>
+      <div className={formStyles.field}>
         <label htmlFor="fixed-bill-name">Nome da conta</label>
         <input
           id="fixed-bill-name"
@@ -59,12 +59,17 @@ export function FixedBillForm({
           required
           defaultValue={initialValues.name}
           aria-invalid={Boolean(state.fieldErrors.name)}
+          aria-describedby={
+            state.fieldErrors.name ? "fixed-bill-name-error" : undefined
+          }
         />
         {state.fieldErrors.name && (
-          <p className={styles.fieldError}>{state.fieldErrors.name}</p>
+          <p className={formStyles.fieldError} id="fixed-bill-name-error">
+            {state.fieldErrors.name}
+          </p>
         )}
       </div>
-      <div className={styles.field}>
+      <div className={formStyles.field}>
         <label htmlFor="fixed-bill-due-day">Dia do vencimento</label>
         <input
           id="fixed-bill-due-day"
@@ -75,12 +80,17 @@ export function FixedBillForm({
           required
           defaultValue={initialValues.dueDay}
           aria-invalid={Boolean(state.fieldErrors.dueDay)}
+          aria-describedby={
+            state.fieldErrors.dueDay ? "fixed-bill-due-day-error" : undefined
+          }
         />
         {state.fieldErrors.dueDay && (
-          <p className={styles.fieldError}>{state.fieldErrors.dueDay}</p>
+          <p className={formStyles.fieldError} id="fixed-bill-due-day-error">
+            {state.fieldErrors.dueDay}
+          </p>
         )}
       </div>
-      <div className={styles.field}>
+      <div className={formStyles.field}>
         <label htmlFor="fixed-bill-category">Categoria</label>
         <select
           id="fixed-bill-category"
@@ -88,6 +98,9 @@ export function FixedBillForm({
           required
           defaultValue={initialValues.category}
           aria-invalid={Boolean(state.fieldErrors.category)}
+          aria-describedby={
+            state.fieldErrors.category ? "fixed-bill-category-error" : undefined
+          }
         >
           <option value="">Selecione uma categoria</option>
           {expenseCategories.map((category) => (
@@ -97,10 +110,12 @@ export function FixedBillForm({
           ))}
         </select>
         {state.fieldErrors.category && (
-          <p className={styles.fieldError}>{state.fieldErrors.category}</p>
+          <p className={formStyles.fieldError} id="fixed-bill-category-error">
+            {state.fieldErrors.category}
+          </p>
         )}
       </div>
-      <div className={styles.field}>
+      <div className={formStyles.field}>
         <label htmlFor="fixed-bill-estimate">Valor previsto</label>
         <input
           id="fixed-bill-estimate"
@@ -109,14 +124,19 @@ export function FixedBillForm({
           required
           defaultValue={initialValues.estimatedAmount}
           aria-invalid={Boolean(state.fieldErrors.estimatedAmount)}
+          aria-describedby={
+            state.fieldErrors.estimatedAmount
+              ? "fixed-bill-estimate-error"
+              : undefined
+          }
         />
         {state.fieldErrors.estimatedAmount && (
-          <p className={styles.fieldError}>
+          <p className={formStyles.fieldError} id="fixed-bill-estimate-error">
             {state.fieldErrors.estimatedAmount}
           </p>
         )}
       </div>
-      <label className={styles.checkField}>
+      <label className={formStyles.checkField}>
         <input
           name="variableAmount"
           type="checkbox"
@@ -124,7 +144,7 @@ export function FixedBillForm({
         />
         <span>Valor variável</span>
       </label>
-      <label className={styles.checkField}>
+      <label className={formStyles.checkField}>
         <input
           name="autopay"
           type="checkbox"
@@ -133,16 +153,16 @@ export function FixedBillForm({
         <span>Débito automático</span>
       </label>
       {state.error && (
-        <p className={styles.formError} role="alert">
+        <p className={formStyles.formError} role="alert">
           {state.error}
         </p>
       )}
       {state.success && !redirectOnSuccess && (
-        <p className={styles.success} role="status">
+        <p className={formStyles.success} role="status">
           Conta fixa salva.
         </p>
       )}
-      <button className={styles.submit} type="submit" disabled={pending}>
+      <button className={formStyles.submit} type="submit" disabled={pending}>
         {pending ? "Salvando…" : submitLabel}
       </button>
     </form>

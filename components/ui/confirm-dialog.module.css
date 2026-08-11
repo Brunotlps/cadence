@@ -1,0 +1,93 @@
+.trigger,
+.cancel,
+.confirm {
+  min-height: var(--control-min-height);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-2) var(--space-3);
+}
+
+.trigger {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--danger);
+}
+
+.trigger:hover {
+  border-color: var(--danger-border);
+  background: var(--danger-soft);
+}
+
+.dialog {
+  width: min(calc(100% - 2rem), 30rem);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 24px 70px rgb(32 30 29 / 24%);
+  margin: auto;
+  padding: var(--space-5);
+}
+
+.dialog::backdrop {
+  background: rgb(32 30 29 / 48%);
+  backdrop-filter: blur(2px);
+}
+
+.dialog h2 {
+  font-size: var(--font-size-lg);
+}
+
+.dialog > p {
+  color: var(--text-muted);
+  margin-top: var(--space-2);
+}
+
+.error {
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  color: var(--danger) !important;
+  padding: var(--space-3);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.cancel {
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.confirm {
+  border: 1px solid var(--danger);
+  background: var(--danger);
+  color: var(--on-accent);
+}
+
+.cancel:disabled,
+.confirm:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+@media (max-width: 420px) {
+  .dialog {
+    padding: var(--space-4);
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .actions form,
+  .actions button {
+    width: 100%;
+  }
+}

@@ -114,7 +114,7 @@ test.describe("lançamentos e Dashboard", () => {
       await expect(page.getByLabel("Forma de pagamento")).toBeHidden();
       await expect(
         page.getByText(
-          "Nenhum lançamento ainda. Registre sua primeira receita ou despesa para começar a acompanhar o mês.",
+          "Registre sua primeira receita ou despesa para começar a acompanhar o mês.",
         ),
       ).toBeVisible();
     } finally {
@@ -173,7 +173,7 @@ test.describe("lançamentos e Dashboard", () => {
       await page.getByRole("button", { name: "+ mais detalhes" }).click();
       await page.getByLabel("Descrição").fill("Mercado do mês");
       await page.getByLabel("Forma de pagamento").selectOption({ label: "Pix" });
-      await page.getByRole("button", { name: "Salvar lançamento" }).click();
+      await page.getByRole("button", { name: "Registrar lançamento" }).click();
 
       const expense = page.getByRole("listitem").filter({
         hasText: "Mercado do mês",
@@ -191,7 +191,7 @@ test.describe("lançamentos e Dashboard", () => {
       await page
         .getByLabel("Forma de pagamento")
         .selectOption({ label: "Transferência" });
-      await page.getByRole("button", { name: "Salvar lançamento" }).click();
+      await page.getByRole("button", { name: "Registrar lançamento" }).click();
 
       await expect(page.getByText("Reembolso de viagem")).toBeVisible();
       await expect(

@@ -116,7 +116,7 @@ test.describe("metas financeiras", () => {
 
       await expect(page).toHaveURL(/\/goals/);
       await expect(
-        page.getByRole("heading", { name: "Metas financeiras" }),
+        page.getByRole("heading", { name: "Metas", exact: true }),
       ).toBeVisible();
       await expect(page.getByText("Nenhuma meta ainda.")).toBeVisible();
 
@@ -327,7 +327,7 @@ test.describe("metas financeiras", () => {
       await page.goto("/goals");
 
       await expect(
-        page.getByRole("heading", { name: "Metas financeiras" }),
+        page.getByRole("heading", { name: "Metas", exact: true }),
       ).toBeVisible();
       await expect
         .poll(() =>

@@ -2,33 +2,23 @@
 .errorPage {
   width: min(100% - 2rem, 42rem);
   margin-inline: auto;
-  padding-block: 2rem 3rem;
+  padding-block: var(--space-6) var(--space-8);
 }
 
-.header {
-  margin-bottom: 1rem;
-}
-
-.workspace {
-  color: var(--brand);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.header h1 {
-  font-size: clamp(1.6rem, 4vw, 2.2rem);
-  letter-spacing: -0.035em;
-}
-
-.card,
-.errorCard {
+.card {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow);
-  padding: 1.35rem;
+  padding: var(--space-4);
+}
+
+.notice {
+  border-left: 3px solid var(--warning);
+  background: var(--warning-soft);
+  color: var(--text-muted);
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
 }
 
 .footer {
@@ -36,21 +26,19 @@
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--border);
-  gap: var(--space-4);
-  margin-top: 1.3rem;
-  padding-top: 1rem;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
 }
 
-.footer a,
-.errorCard a {
+.footer a {
   min-height: var(--control-min-height);
   display: inline-flex;
   align-items: center;
   font-weight: 700;
 }
 
-.footer a:focus-visible,
-.errorCard a:focus-visible {
+.footer a:focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
@@ -61,21 +49,15 @@
   align-content: center;
 }
 
-.errorCard p {
-  color: var(--danger);
-  margin-block: 0.55rem 1rem;
-}
-
 @media (max-width: 520px) {
   .page,
   .errorPage {
     width: min(100% - 1rem, 42rem);
-    padding-top: 1rem;
+    padding-top: var(--space-4);
   }
 
-  .card,
-  .errorCard {
-    padding: 1rem;
+  .card {
+    padding: var(--space-3);
   }
 
   .footer {

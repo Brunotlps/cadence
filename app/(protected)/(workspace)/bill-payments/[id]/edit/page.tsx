@@ -1,12 +1,19 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BillPaymentForm } from "@/components/fixed-bills/bill-payment-form";
 import { DeleteBillPayment } from "@/components/fixed-bills/delete-bill-payment";
+import { FeedbackState } from "@/components/ui/feedback-state";
+import { PageHeader } from "@/components/ui/page-header";
 import { updateBillPaymentAction } from "@/lib/actions/fixed-bills";
 import { loadBillPaymentForEdit } from "@/lib/fixed-bills/load-edit";
 import { createClient } from "@/lib/supabase/server";
 import { numericToAmountInput } from "@/lib/transactions/money";
 import styles from "../../../transactions/[id]/edit/edit.module.css";
+
+export const metadata: Metadata = {
+  title: "Editar pagamento | Cadence",
+};
 
 export default async function EditBillPaymentPage({
   params,
@@ -26,11 +33,13 @@ export default async function EditBillPaymentPage({
   if (result.status === "error") {
     return (
       <main className={styles.errorPage}>
-        <div className={styles.errorCard}>
-          <h1>Editar pagamento</h1>
-          <p role="alert">Não foi possível carregar este pagamento.</p>
+        <FeedbackState
+          kind="error"
+          title="Não foi possível carregar este pagamento."
+          description="O registro pode não estar disponível."
+        >
           <Link href="/fixed-bills">Voltar às contas fixas</Link>
-        </div>
+        </FeedbackState>
       </main>
     );
   }
@@ -40,10 +49,11 @@ export default async function EditBillPaymentPage({
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <p className={styles.workspace}>{workspace.name}</p>
-        <h1>Editar pagamento</h1>
-      </header>
+      <PageHeader
+        eyebrow={workspace.name}
+        title="Editar pagamento"
+        description="Corrija o valor, a data, a forma de pagamento ou a conta vinculada."
+      />
       <section className={styles.card} aria-label="Dados do pagamento">
         <BillPaymentForm
           action={action}

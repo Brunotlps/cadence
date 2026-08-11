@@ -20,13 +20,15 @@ async function login(page: Page, email: string, password: string) {
 }
 
 async function chooseAccent(page: Page, label: "Preto" | "Rosa" | "Verde") {
+  const trigger = page.getByRole("button", { name: /Aparência/ });
+  await trigger.click();
   const group = page.getByRole("group", { name: "Cor de destaque" });
   await group.getByLabel(label).check();
-  await group.getByRole("button", { name: "Salvar cor" }).click();
   await expect(page.locator("[data-accent]")).toHaveAttribute(
     "data-accent",
     label.toLocaleLowerCase("pt-BR"),
   );
+  await expect(trigger).toHaveAttribute("aria-expanded", "false");
 }
 
 async function expectActiveDestination(page: Page, label: string) {
@@ -174,7 +176,12 @@ test.describe("fundação visual compartilhada", () => {
       });
       await expect(navigation).toBeVisible();
       await expect(navigation.getByRole("link")).toHaveCount(3);
+      const appearance = page.getByRole("button", { name: /Aparência/ });
+      await expect(appearance).toBeVisible();
+      await expect(page.getByRole("group", { name: "Cor de destaque" })).toBeHidden();
+      await appearance.click();
       await expect(page.getByRole("group", { name: "Cor de destaque" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Salvar cor" })).toHaveCount(0);
       await expect
         .poll(() =>
           page.evaluate(

@@ -1,0 +1,15 @@
+.page {
+  width: min(100% - 2rem, var(--content-width));
+  min-height: 65vh;
+  display: grid;
+  align-content: center;
+  margin-inline: auto;
+  padding-block: var(--space-8) var(--space-12);
+}
+
+@media (max-width: 580px) {
+  .page {
+    width: min(100% - 1rem, var(--content-width));
+    padding-top: var(--space-4);
+  }
+}

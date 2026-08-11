@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { updateTransactionAction } from "@/lib/actions/transactions";
 import { DeleteTransaction } from "@/components/transactions/delete-transaction";
 import { TransactionForm } from "@/components/transactions/transaction-form";
+import { FeedbackState } from "@/components/ui/feedback-state";
+import { PageHeader } from "@/components/ui/page-header";
 import { createClient } from "@/lib/supabase/server";
 import { resolveMonth } from "@/lib/transactions/civil-date";
 import { loadTransactionForEdit } from "@/lib/transactions/load-edit";
@@ -12,6 +15,10 @@ import styles from "./edit.module.css";
 type EditTransactionPageProps = {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ month?: string | string[] }>;
+};
+
+export const metadata: Metadata = {
+  title: "Editar lançamento | Cadence",
 };
 
 export default async function EditTransactionPage({
@@ -37,11 +44,13 @@ export default async function EditTransactionPage({
   if (result.status === "error") {
     return (
       <main className={styles.errorPage}>
-        <div className={styles.errorCard}>
-          <h1>Editar lançamento</h1>
-          <p role="alert">Não foi possível carregar este lançamento.</p>
+        <FeedbackState
+          kind="error"
+          title="Não foi possível carregar este lançamento."
+          description="O registro pode não estar disponível."
+        >
           <Link href={`/dashboard?month=${month}`}>Voltar ao Dashboard</Link>
-        </div>
+        </FeedbackState>
       </main>
     );
   }
@@ -51,10 +60,11 @@ export default async function EditTransactionPage({
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <p className={styles.workspace}>{workspace.name}</p>
-        <h1>Editar lançamento</h1>
-      </header>
+      <PageHeader
+        eyebrow={workspace.name}
+        title="Editar lançamento"
+        description="Atualize somente as informações que precisam de correção."
+      />
       <section className={styles.card} aria-label="Dados do lançamento">
         <TransactionForm
           action={updateAction}

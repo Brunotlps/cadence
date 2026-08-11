@@ -10,6 +10,7 @@ import {
   PAYMENT_METHODS,
   type PaymentMethodCode,
 } from "@/lib/transactions/payment-methods";
+import formStyles from "@/components/ui/form-controls.module.css";
 import styles from "./transaction-form.module.css";
 
 const initialState: TransactionActionState = {
@@ -34,6 +35,7 @@ type TransactionFormProps = {
   initialValues: TransactionFormValues;
   month: string;
   submitLabel: string;
+  compact?: boolean;
 };
 
 export function TransactionForm({
@@ -41,6 +43,7 @@ export function TransactionForm({
   initialValues,
   month,
   submitLabel,
+  compact = false,
 }: TransactionFormProps) {
   const [state, formAction, pending] = useActionState(action, initialState);
   const [detailsOpen, setDetailsOpen] = useState(
@@ -48,11 +51,15 @@ export function TransactionForm({
   );
 
   return (
-    <form action={formAction} className={styles.form}>
+    <form
+      action={formAction}
+      className={`${formStyles.form} ${compact ? styles.compactForm : ""}`}
+      aria-busy={pending}
+    >
       <input type="hidden" name="month" value={month} />
 
       <div className={styles.primaryFields}>
-        <div className={styles.field}>
+        <div className={formStyles.field}>
           <label htmlFor="transaction-amount">Valor</label>
           <input
             id="transaction-amount"
@@ -68,13 +75,13 @@ export function TransactionForm({
             }
           />
           {state.fieldErrors.amount && (
-            <p className={styles.fieldError} id="transaction-amount-error">
+            <p className={formStyles.fieldError} id="transaction-amount-error">
               {state.fieldErrors.amount}
             </p>
           )}
         </div>
 
-        <div className={styles.field}>
+        <div className={formStyles.field}>
           <label htmlFor="transaction-category">Categoria</label>
           <select
             id="transaction-category"
@@ -88,7 +95,7 @@ export function TransactionForm({
                 : undefined
             }
           >
-            <option value="">Selecione uma categoria</option>
+            <option value="">Selecione</option>
             {TRANSACTION_CATEGORIES.map((category) => (
               <option key={category.code} value={category.code}>
                 {category.label}
@@ -96,13 +103,13 @@ export function TransactionForm({
             ))}
           </select>
           {state.fieldErrors.category && (
-            <p className={styles.fieldError} id="transaction-category-error">
+            <p className={formStyles.fieldError} id="transaction-category-error">
               {state.fieldErrors.category}
             </p>
           )}
         </div>
 
-        <div className={styles.field}>
+        <div className={formStyles.field}>
           <label htmlFor="transaction-date">Data</label>
           <input
             id="transaction-date"
@@ -118,7 +125,7 @@ export function TransactionForm({
             }
           />
           {state.fieldErrors.occurredOn && (
-            <p className={styles.fieldError} id="transaction-date-error">
+            <p className={formStyles.fieldError} id="transaction-date-error">
               {state.fieldErrors.occurredOn}
             </p>
           )}
@@ -139,7 +146,7 @@ export function TransactionForm({
         id="transaction-details"
         hidden={!detailsOpen}
       >
-        <div className={styles.field}>
+        <div className={formStyles.field}>
           <label htmlFor="transaction-description">Descrição</label>
           <input
             id="transaction-description"
@@ -156,7 +163,7 @@ export function TransactionForm({
           />
           {state.fieldErrors.description && (
             <p
-              className={styles.fieldError}
+              className={formStyles.fieldError}
               id="transaction-description-error"
             >
               {state.fieldErrors.description}
@@ -164,7 +171,7 @@ export function TransactionForm({
           )}
         </div>
 
-        <div className={styles.field}>
+        <div className={formStyles.field}>
           <label htmlFor="transaction-payment-method">
             Forma de pagamento
           </label>
@@ -188,7 +195,7 @@ export function TransactionForm({
           </select>
           {state.fieldErrors.paymentMethod && (
             <p
-              className={styles.fieldError}
+              className={formStyles.fieldError}
               id="transaction-payment-method-error"
             >
               {state.fieldErrors.paymentMethod}
@@ -198,17 +205,17 @@ export function TransactionForm({
       </div>
 
       {state.error && (
-        <p className={styles.formError} role="alert">
+        <p className={formStyles.formError} role="alert">
           {state.error}
         </p>
       )}
       {state.success && (
-        <p className={styles.success} role="status">
+        <p className={formStyles.success} role="status">
           Lançamento salvo.
         </p>
       )}
 
-      <button className={styles.submit} type="submit" disabled={pending}>
+      <button className={formStyles.submit} type="submit" disabled={pending}>
         {pending ? "Salvando…" : submitLabel}
       </button>
     </form>
