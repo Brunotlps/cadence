@@ -207,6 +207,19 @@ test.describe("experiência mobile completa", () => {
     );
     expect(transactionWhiteSpace).not.toBe("nowrap");
 
+    const composerRegion = page.getByRole("region", {
+      name: "Novo lançamento",
+    });
+    const composer = composerRegion.getByRole("button", {
+      name: "Novo lançamento",
+    });
+    await expect(composer).toHaveAttribute("aria-expanded", "false");
+    await expect(page.getByLabel("Valor")).toBeHidden();
+    const collapsedComposer = await composerRegion.boundingBox();
+    expect(collapsedComposer).not.toBeNull();
+    expect(collapsedComposer!.height).toBeLessThanOrEqual(84);
+    await composer.click();
+
     await page.setViewportSize({ width: 390, height: 844 });
     const amount = await page.getByLabel("Valor").boundingBox();
     const category = await page.getByLabel("Categoria").boundingBox();
