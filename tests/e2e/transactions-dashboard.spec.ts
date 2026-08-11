@@ -103,7 +103,10 @@ test.describe("lançamentos e Dashboard", () => {
     try {
       await login(page, fixture.email, fixture.password);
 
-      await expect(page.getByRole("heading", { name: "Casa vazia" })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Dashboard" }),
+      ).toBeVisible();
+      await expect(page.getByText("Casa vazia", { exact: true })).toBeVisible();
       await expect(
         page.getByRole("heading", { name: "Novo lançamento" }),
       ).toBeVisible();
@@ -134,8 +137,15 @@ test.describe("lançamentos e Dashboard", () => {
       await page.setViewportSize({ width: 390, height: 844 });
       await login(page, fixture.email, fixture.password);
 
-      await expect(page.getByRole("heading", { name: "Casa responsiva" })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Novo lançamento" })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Dashboard" }),
+      ).toBeVisible();
+      await expect(
+        page.getByText("Casa responsiva", { exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Novo lançamento" }),
+      ).toBeVisible();
       await expect(
         page.getByRole("region", { name: "Resumo do mês" }),
       ).toBeVisible();
