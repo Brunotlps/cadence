@@ -172,6 +172,11 @@ test.describe("experiência mobile completa", () => {
     }
 
     await expectNoHorizontalOverflow(page);
+    await page.setViewportSize({ width: 360, height: 800 });
+    await expectNoHorizontalOverflow(page);
+    const intermediateHeader = await shellHeader.boundingBox();
+    expect(intermediateHeader!.height).toBeLessThanOrEqual(72);
+
     await page.setViewportSize({ width: 667, height: 375 });
     await expectNoHorizontalOverflow(page);
     const landscapeHeader = await shellHeader.boundingBox();
