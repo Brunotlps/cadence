@@ -1,8 +1,9 @@
 # Etapa 10 — Polimento visual por tela
 
-**Status:** em andamento
+**Status:** concluído
 **Aberto em:** 11/08/2026
 **Plano aprovado em:** 11/08/2026
+**Concluído em:** 11/08/2026
 **Depende de:** Etapa 09 (fundação visual concluída: shell persistente, tokens e
 cor de destaque por pessoa)
 
@@ -191,18 +192,18 @@ verdes. Helper puro novo, se necessário, recebe teste unitário próprio.
 
 - [x] 1. Registrar o plano aprovado e alinhar o índice antes de escrever código
 - [x] 2. Escrever os contratos E2E de polimento e confirmar o vermelho
-- [ ] 3. Extrair cabeçalho, navegação mensal, feedback, painel expansível, diálogo e
+- [x] 3. Extrair cabeçalho, navegação mensal, feedback, painel expansível, diálogo e
       estilos compartilhados de formulário
-- [ ] 4. Implementar `loading.tsx` e `error.tsx` do grupo financeiro sem log bruto
-- [ ] 5. Polir o Dashboard e a seção de Lançamentos
-- [ ] 6. Polir Metas e seus aportes
-- [ ] 7. Polir Contas fixas e seus pagamentos
-- [ ] 8. Uniformizar as cinco rotas de edição
-- [ ] 9. Corrigir associações acessíveis, teclado, foco, contraste e conteúdo não
+- [x] 4. Implementar `loading.tsx` e `error.tsx` do grupo financeiro sem log bruto
+- [x] 5. Polir o Dashboard e a seção de Lançamentos
+- [x] 6. Polir Metas e seus aportes
+- [x] 7. Polir Contas fixas e seus pagamentos
+- [x] 8. Uniformizar as cinco rotas de edição
+- [x] 9. Corrigir associações acessíveis, teclado, foco, contraste e conteúdo não
       dependente de cor
-- [ ] 10. Validar reflow em 320/390 px, desktop e conteúdo longo
-- [ ] 11. Revisar documentação de compliance aplicável
-- [ ] 12. Validação final: unitários, compliance, E2E sem skips, lint, TypeScript e
+- [x] 10. Validar reflow em 320/390 px, desktop e conteúdo longo
+- [x] 11. Revisar documentação de compliance aplicável
+- [x] 12. Validação final: unitários, compliance, E2E sem skips, lint, TypeScript e
       build verdes
 
 ## Estratégia de commits
@@ -224,3 +225,25 @@ correspondente.
   contratos deliberadamente ausentes: título específico por rota (`Cadence` ainda é
   global) e alvo mínimo de 44 px no gatilho “Criar meta” (24 px antes do polimento).
   O lint dos arquivos de teste está verde.
+- Subtarefas 3–8 concluídas com componentes compartilhados sem dependência nova,
+  fallbacks do grupo financeiro e hierarquia/microcopy consistentes nas três rotas e
+  nas cinco edições. As regras, queries e Server Actions financeiras não mudaram.
+- Subtarefas 9–10 concluídas com erros de campo associados por
+  `aria-describedby`, painéis com estado exposto, confirmações nativas por teclado e
+  retorno de foco, alternativa textual do donut, status “Pago” real no DOM, alvos de
+  44 px e reflow sem scroll horizontal em 320/390 px. Transições decorativas respeitam
+  `prefers-reduced-motion`. O token de aviso foi ajustado para `#8a621f`, com contraste
+  de 4,77:1 sobre o fundo suave e 5,46:1 sobre branco; sucesso e perigo também
+  permanecem acima de 4,5:1 nos usos textuais auditados.
+- A documentação de tratamento de dados, modelo, portabilidade, mapeamento LGPD,
+  achados e exceções de segurança foi revisada. Como não houve coleta, finalidade,
+  persistência, query, log, schema, RLS ou risco novo, esses documentos não exigiram
+  alteração. O fallback de cor e seu log sanitizado da Etapa 09 permanecem intactos.
+- A primeira tentativa integral com seis workers expôs apenas o rate limit do Auth
+  hospedado, sem falha de produto; os mesmos cenários já estavam verdes em série. O
+  Playwright passou a usar um worker para evitar rajadas concorrentes e tornar o
+  caminho local/CI determinístico.
+- Validação final: 454/454 testes Vitest verdes em 49 arquivos, incluindo toda a
+  compliance; 30/30 E2E executados e aprovados sem skips; lint sem avisos, TypeScript
+  sem erros, build de produção verde e `git diff --check` limpo. Nenhum arquivo de
+  schema ou migration foi alterado.
