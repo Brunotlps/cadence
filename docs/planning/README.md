@@ -23,3 +23,4 @@ como histórico depois.
 | [09](./etapa-09-fundacao-visual.md)      | Fundação visual (navegação + tokens + cor de destaque)      | concluído    |
 | [10](./etapa-10-polimento-por-tela.md)   | Polimento visual por tela                                   | concluído    |
 | [11](./etapa-11-experiencia-login.md)    | Experiência visual e acessível de login                     | concluído    |
+| [12](./etapa-12-experiencia-mobile.md)   | Experiência mobile completa                                 | em andamento |
