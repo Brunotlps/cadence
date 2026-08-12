@@ -94,7 +94,9 @@ async function seedGoal(client: SupabaseClient, workspaceId: string) {
 test.describe("lançamentos e Dashboard", () => {
   test.skip(!hasSupabaseTestEnv(), "sem credenciais de teste do Supabase");
 
-  test("exibe estado vazio e o formulário no mês atual", async ({ page }) => {
+  test("exibe estado vazio e mantém o formulário recolhido no mês atual", async ({
+    page,
+  }) => {
     const fixture = await createDashboardTestUser(
       "dashboard-empty",
       "Casa vazia",
@@ -103,15 +105,26 @@ test.describe("lançamentos e Dashboard", () => {
     try {
       await login(page, fixture.email, fixture.password);
 
-      await expect(page.getByRole("heading", { name: "Casa vazia" })).toBeVisible();
       await expect(
-        page.getByRole("heading", { name: "Novo lançamento" }),
+        page.getByRole("heading", { level: 1, name: "Dashboard" }),
       ).toBeVisible();
+      await expect(page.getByText("Casa vazia", { exact: true })).toBeVisible();
+      const composer = page.getByRole("button", { name: "Novo lançamento" });
+      await expect(composer).toHaveAttribute("aria-expanded", "false");
+      await expect(composer).toHaveAttribute("aria-controls");
+      await expect(page.getByLabel("Valor")).toBeHidden();
+
+      await composer.click();
+      await expect(composer).toHaveAttribute("aria-expanded", "true");
       await expect(page.getByLabel("Valor")).toBeVisible();
       await expect(page.getByLabel("Categoria")).toBeVisible();
       await expect(page.getByLabel("Data")).toHaveValue(todayInSaoPaulo());
       await expect(page.getByLabel("Descrição")).toBeHidden();
       await expect(page.getByLabel("Forma de pagamento")).toBeHidden();
+
+      await composer.click();
+      await expect(composer).toHaveAttribute("aria-expanded", "false");
+      await expect(page.getByLabel("Valor")).toBeHidden();
       await expect(
         page.getByText(
           "Registre sua primeira receita ou despesa para começar a acompanhar o mês.",
@@ -134,8 +147,15 @@ test.describe("lançamentos e Dashboard", () => {
       await page.setViewportSize({ width: 390, height: 844 });
       await login(page, fixture.email, fixture.password);
 
-      await expect(page.getByRole("heading", { name: "Casa responsiva" })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Novo lançamento" })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Dashboard" }),
+      ).toBeVisible();
+      await expect(
+        page.getByText("Casa responsiva", { exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: "Novo lançamento" }),
+      ).toHaveAttribute("aria-expanded", "false");
       await expect(
         page.getByRole("region", { name: "Resumo do mês" }),
       ).toBeVisible();
@@ -167,6 +187,7 @@ test.describe("lançamentos e Dashboard", () => {
     try {
       await login(page, fixture.email, fixture.password);
 
+      await page.getByRole("button", { name: "Novo lançamento" }).click();
       await expect(page.getByLabel("Valor")).toBeVisible();
       await page.getByLabel("Valor").fill("123,45");
       await page.getByLabel("Categoria").selectOption({ label: "Alimentação" });

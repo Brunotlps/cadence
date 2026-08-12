@@ -25,15 +25,75 @@
   padding: var(--space-4);
 }
 
-.cardTitle {
-  font-size: 0.95rem;
-  margin-bottom: var(--space-3);
-}
-
 .composer {
   background:
     linear-gradient(135deg, var(--accent-wash), transparent 58%),
     var(--surface);
+}
+
+.card.composer {
+  overflow: hidden;
+  padding: 0;
+}
+
+.composerPanel > button {
+  width: 100%;
+  min-height: 4.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.98rem;
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-4);
+  text-align: left;
+}
+
+.composerPanel > button:hover,
+.composerPanel > button[aria-expanded="true"] {
+  background: var(--brand-soft);
+}
+
+.composerLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.composerMarker {
+  width: 0.6rem;
+  height: 0.6rem;
+  flex: none;
+  background: var(--brand);
+}
+
+.composerToggle {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: grid;
+  flex: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--brand-strong);
+  place-items: center;
+}
+
+.composerToggle::before {
+  content: "+";
+}
+
+.composerPanel > button[aria-expanded="true"] .composerToggle::before {
+  content: "−";
+}
+
+.composerPanel > div {
+  border-top: 1px solid var(--border);
+  padding: var(--space-4);
 }
 
 .summary {
@@ -192,6 +252,15 @@
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
+  .transactionRow h3 {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
   .rowActions {
     grid-column: 1 / -1;
     justify-content: flex-end;
@@ -203,11 +272,31 @@
     padding: var(--space-3);
   }
 
+  .card.composer {
+    padding: 0;
+  }
+
+  .composerPanel > button,
+  .composerPanel > div {
+    padding: var(--space-3);
+  }
+
   .transactionRow {
     align-items: start;
   }
 
   .amount {
     font-size: 0.9rem;
+  }
+
+  .sectionHeader {
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .sectionHeader span {
+    flex: none;
+    max-width: 5.5rem;
+    text-align: right;
   }
 }

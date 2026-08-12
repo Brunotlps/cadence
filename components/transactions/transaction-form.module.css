@@ -84,3 +84,9 @@
     grid-column: 1;
   }
 }
+
+@media (max-width: 619px) {
+  .compactForm .primaryFields > :last-child {
+    grid-column: 1 / -1;
+  }
+}

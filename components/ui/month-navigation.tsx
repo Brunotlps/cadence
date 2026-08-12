@@ -14,9 +14,13 @@ export function MonthNavigation({
 }: MonthNavigationProps) {
   return (
     <nav className={styles.monthNavigation} aria-label="Navegação por mês">
-      <Link href={previousHref}>Mês anterior</Link>
+      <Link href={previousHref} aria-label="Mês anterior">
+        Anterior
+      </Link>
       <h2>{label}</h2>
-      <Link href={nextHref}>Próximo mês</Link>
+      <Link href={nextHref} aria-label="Próximo mês">
+        Próximo
+      </Link>
     </nav>
   );
 }

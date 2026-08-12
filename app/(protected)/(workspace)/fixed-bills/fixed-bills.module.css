@@ -231,4 +231,43 @@
   .badges {
     justify-content: flex-start;
   }
+
+  .filterNav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  .filterNav a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .actions {
+    width: 100%;
+    display: grid;
+    align-items: stretch;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1);
+  }
+
+  .actions a,
+  .actions button {
+    width: 100%;
+    justify-content: center;
+    padding-inline: var(--space-1);
+    text-align: center;
+  }
+
+  .paymentForm > button {
+    width: 100%;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: var(--brand-soft);
+    padding-inline: var(--space-2);
+  }
+
+  .paymentRow {
+    width: 100%;
+  }
 }

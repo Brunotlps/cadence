@@ -51,10 +51,12 @@ exceção for aceita, resolvida ou expirar.
   princípio de minimização/necessidade (LGPD art. 6º). Não é uma vulnerabilidade de
   segurança — é uma lacuna de storage limitation, registrada aqui pelo mesmo padrão
   usado para riscos aceitos conscientemente.
-- **Gatilho para reavaliar:** antes de abrir cadastro público (hoje fora de escopo do
-  MVP, ver `CLAUDE.md`), ou se o volume de contas não confirmadas crescer a ponto de
-  ser operacionalmente relevante. Follow-up rastreado na issue do GitHub referenciada
-  em `docs/planning/etapa-05-autenticacao.md`.
+- **Gatilho para reavaliar:** o cadastro público por e-mail/senha faz parte do produto
+  desde a Etapa 05, portanto o primeiro gatilho documental já foi atingido. A exceção
+  permanece ativa até uma decisão específica sobre a rotina de limpeza; também deve
+  ser reavaliada se o volume de contas não confirmadas se tornar operacionalmente
+  relevante. Follow-up rastreado na issue do GitHub referenciada em
+  `docs/planning/etapa-05-autenticacao.md`.
 
 ## postcss e sharp (via next) — resolvidos via override, não são mais exceções ativas
 

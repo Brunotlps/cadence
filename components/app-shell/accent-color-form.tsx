@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useId, useState } from "react";
+import { useActionState, useEffect, useId, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   updateAccentColorAction,
   type AccentColorActionState,
@@ -22,12 +23,16 @@ export function AccentColorForm({
 }: {
   initialAccent: AccentColor;
 }) {
-  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const [openPathname, setOpenPathname] = useState<string | null>(null);
   const [selectedAccent, setSelectedAccent] = useState(initialAccent);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const open = openPathname === pathname;
   const [state, formAction, pending] = useActionState(
     async (previousState: AccentColorActionState, formData: FormData) => {
       const result = await updateAccentColorAction(previousState, formData);
-      if (result.success) setOpen(false);
+      if (result.success) setOpenPathname(null);
       else setSelectedAccent(initialAccent);
       return result;
     },
@@ -38,22 +43,49 @@ export function AccentColorForm({
     ACCENT_COLORS.find((option) => option.value === selectedAccent)?.label ??
     "Verde";
 
+  useEffect(() => {
+    if (!open) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setOpenPathname(null);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      setOpenPathname(null);
+      triggerRef.current?.focus();
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
   return (
-    <div className={styles.accentPicker}>
+    <div className={styles.accentPicker} ref={containerRef}>
       <button
         className={styles.appearanceTrigger}
         type="button"
+        ref={triggerRef}
+        aria-label={`Aparência: ${selectedLabel}`}
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen((current) => !current)}
+        onClick={() =>
+          setOpenPathname((current) => (current === pathname ? null : pathname))
+        }
       >
         <span
           className={styles.currentAccent}
           data-color={selectedAccent}
           aria-hidden="true"
         />
-        <span>Aparência</span>
-        <span className={styles.accentLabel}>: {selectedLabel}</span>
+        <span className={styles.appearanceLabel}>Aparência</span>
       </button>
 
       <div className={styles.accentPanel} id={panelId} hidden={!open}>

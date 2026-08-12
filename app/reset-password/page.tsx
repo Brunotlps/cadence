@@ -1,10 +1,14 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { PasswordField } from "@/components/auth/password-field";
 import {
   updatePasswordAction,
   type UpdatePasswordState,
 } from "@/lib/actions/auth";
+import styles from "@/components/auth/auth-shell.module.css";
 
 const initialState: UpdatePasswordState = { error: null };
 
@@ -15,24 +19,27 @@ export default function ResetPasswordPage() {
   );
 
   return (
-    <main>
-      <h1>Redefinir senha</h1>
-      <form action={formAction}>
-        <div>
-          <label htmlFor="password">Nova senha</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            autoComplete="new-password"
-          />
-        </div>
-        {state.error && <p role="alert">{state.error}</p>}
-        <button type="submit" disabled={pending}>
-          Redefinir senha
+    <AuthShell
+      eyebrow="Segurança"
+      title="Redefinir senha"
+      description="Escolha uma nova senha para voltar ao seu espaço com segurança."
+      footer={<Link href="/login">Voltar para entrar</Link>}
+    >
+      <form className={styles.form} action={formAction} aria-busy={pending}>
+        <PasswordField
+          id="password"
+          label="Nova senha"
+          autoComplete="new-password"
+        />
+        {state.error && (
+          <p className={styles.error} role="alert">
+            {state.error}
+          </p>
+        )}
+        <button className={styles.submit} type="submit" disabled={pending}>
+          {pending ? "Redefinindo…" : "Redefinir senha"}
         </button>
       </form>
-    </main>
+    </AuthShell>
   );
 }

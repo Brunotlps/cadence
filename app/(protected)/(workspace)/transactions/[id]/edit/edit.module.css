@@ -64,4 +64,11 @@
     align-items: stretch;
     flex-direction: column;
   }
+
+  .footer a,
+  .footer button {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
 }

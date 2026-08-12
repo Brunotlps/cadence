@@ -91,6 +91,14 @@ test.describe("polimento visual por tela", () => {
           "Registre o que entrou e saiu e acompanhe o resultado do mês.",
         ),
       ).toBeVisible();
+      const newTransaction = page.getByRole("button", {
+        name: "Novo lançamento",
+      });
+      await expect(newTransaction).toHaveAttribute("aria-expanded", "false");
+      await expect(
+        page.getByRole("button", { name: "Registrar lançamento" }),
+      ).toBeHidden();
+      await newTransaction.click();
       await expect(
         page.getByRole("button", { name: "Registrar lançamento" }),
       ).toBeVisible();
