@@ -262,6 +262,40 @@ export default async function DashboardPage({
               })}
             </ul>
           )}
+
+          {data.pendingFixedBills.length > 0 && (
+            <section
+              className={styles.pendingBills}
+              aria-label="Contas fixas pendentes"
+            >
+              <div className={styles.sectionHeader}>
+                <h3>Contas fixas pendentes</h3>
+                <span>{data.pendingFixedBills.length}</span>
+              </div>
+              <ul className={styles.pendingBillList}>
+                {data.pendingFixedBills.map((bill) => (
+                  <li key={bill.id}>
+                    <span className={styles.pendingBillName}>{bill.name}</span>
+                    <span
+                      className={styles.pendingBillStatus}
+                      data-status={bill.status}
+                    >
+                      {bill.status === "overdue"
+                        ? "Em atraso"
+                        : `Vence dia ${Number(bill.dueOn.slice(8, 10))}`}
+                    </span>
+                    <span className={styles.pendingBillAmount}>
+                      {bill.variableAmount ? "≈ " : ""}
+                      {formatCurrencyBRL(bill.estimatedCents)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <Link className={styles.pendingBillsLink} href="/fixed-bills">
+                Ver contas fixas
+              </Link>
+            </section>
+          )}
         </section>
 
         <ExpenseDonut data={data.summary.expensesByCategory} />

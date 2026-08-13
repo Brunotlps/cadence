@@ -75,6 +75,80 @@ async function seedTransaction(
   return data.id as string;
 }
 
+function lastDayOfCurrentMonth() {
+  const [year, month] = todayInSaoPaulo().split("-").map(Number);
+  return new Date(Date.UTC(year, month, 0)).getUTCDate();
+}
+
+// Ver mesmo comentário em fixed-bills.spec.ts: um vencimento entre hoje e
+// hoje+2 cai sempre dentro da janela de aviso de 5 dias, em qualquer dia do
+// mês. Os demais estados (pending/overdue) já têm cobertura determinística
+// nos testes unitários de load-dashboard.ts, onde a data de referência é
+// parâmetro.
+function dueSoonDay() {
+  const day = Number(todayInSaoPaulo().slice(8, 10));
+  return Math.min(day + 2, lastDayOfCurrentMonth());
+}
+
+async function seedFixedBill(
+  client: SupabaseClient,
+  input: {
+    workspaceId: string;
+    name: string;
+    dueDay: number;
+    category?: string;
+    estimatedAmount?: string;
+    variableAmount?: boolean;
+  },
+) {
+  const { data, error } = await retryAfterJwtClockSkew(() =>
+    client
+      .from("fixed_bills")
+      .insert({
+        workspace_id: input.workspaceId,
+        name: input.name,
+        due_day: input.dueDay,
+        category: input.category ?? "luz",
+        estimated_amount: input.estimatedAmount ?? "180.00",
+        variable_amount: input.variableAmount ?? false,
+      })
+      .select("id")
+      .single(),
+  );
+  if (error) throw error;
+  return data.id as string;
+}
+
+async function seedBillPayment(
+  client: SupabaseClient,
+  input: {
+    workspaceId: string;
+    userId: string;
+    fixedBillId: string;
+    amount: string;
+    category?: string;
+    occurredOn?: string;
+  },
+) {
+  const { data, error } = await retryAfterJwtClockSkew(() =>
+    client
+      .from("transactions")
+      .insert({
+        workspace_id: input.workspaceId,
+        created_by: input.userId,
+        kind: "expense",
+        amount: input.amount,
+        category: input.category ?? "luz",
+        fixed_bill_id: input.fixedBillId,
+        occurred_on: input.occurredOn ?? todayInSaoPaulo(),
+      })
+      .select("id")
+      .single(),
+  );
+  if (error) throw error;
+  return data.id as string;
+}
+
 async function seedGoal(client: SupabaseClient, workspaceId: string) {
   const { data, error } = await retryAfterJwtClockSkew(() =>
     client
@@ -246,6 +320,55 @@ test.describe("lançamentos e Dashboard", () => {
       await expect(page.getByLabel("Valor")).toHaveValue("");
       await expect(page.getByLabel("Categoria")).toHaveValue("");
       await expect(page.getByLabel("Data")).toHaveValue(todayInSaoPaulo());
+    } finally {
+      await deleteTestAccount(fixture.id);
+    }
+  });
+
+  test("mostra contas fixas pendentes numa subseção discreta, separada dos lançamentos", async ({
+    page,
+  }) => {
+    const fixture = await createDashboardTestUser(
+      "dashboard-pending-bills",
+      "Casa contas",
+    );
+    const today = todayInSaoPaulo();
+
+    try {
+      await seedFixedBill(fixture.client, {
+        workspaceId: fixture.workspaceId,
+        name: "Internet",
+        dueDay: dueSoonDay(),
+        estimatedAmount: "99.90",
+        variableAmount: true,
+      });
+      const paidBillId = await seedFixedBill(fixture.client, {
+        workspaceId: fixture.workspaceId,
+        name: "Luz",
+        dueDay: dueSoonDay(),
+      });
+      await seedBillPayment(fixture.client, {
+        workspaceId: fixture.workspaceId,
+        userId: fixture.id,
+        fixedBillId: paidBillId,
+        amount: "180.00",
+        occurredOn: today,
+      });
+
+      await login(page, fixture.email, fixture.password);
+
+      const pendingSection = page.getByRole("region", {
+        name: "Contas fixas pendentes",
+      });
+      await expect(pendingSection).toBeVisible();
+      await expect(pendingSection).toContainText("Internet");
+      await expect(pendingSection).toContainText("R$ 99,90");
+      await expect(pendingSection).not.toContainText("Luz");
+
+      // A conta paga aparece na lista normal de lançamentos, não na subseção.
+      const paidRow = page.getByRole("listitem").filter({ hasText: "Luz" });
+      await expect(paidRow).toBeVisible();
+      await expect(paidRow).toContainText("Conta fixa");
     } finally {
       await deleteTestAccount(fixture.id);
     }

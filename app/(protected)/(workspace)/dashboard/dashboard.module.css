@@ -226,6 +226,79 @@
   padding-inline: var(--space-2);
 }
 
+.pendingBills {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--border);
+}
+
+.pendingBills h3 {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-bold);
+}
+
+.pendingBills .sectionHeader span {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.pendingBillList {
+  display: grid;
+  gap: 0.2rem;
+  list-style: none;
+  margin-bottom: var(--space-2);
+}
+
+.pendingBillList li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.15rem var(--space-2);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding-block: 0.3rem;
+}
+
+.pendingBillName {
+  flex: 1 1 auto;
+  min-width: 8rem;
+  overflow: hidden;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pendingBillStatus {
+  flex: none;
+  white-space: nowrap;
+}
+
+.pendingBillStatus[data-status="overdue"] {
+  color: var(--danger);
+  font-weight: var(--font-weight-semibold);
+}
+
+.pendingBillStatus[data-status="due_soon"] {
+  color: var(--warning);
+}
+
+.pendingBillAmount {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.pendingBillsLink {
+  display: inline-flex;
+  min-height: var(--control-min-height);
+  align-items: center;
+  color: var(--brand-strong);
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-semibold);
+}
+
 .errorPage {
   display: grid;
   width: min(100% - 2rem, 38rem);
