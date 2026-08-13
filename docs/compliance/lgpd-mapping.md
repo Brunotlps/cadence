@@ -9,12 +9,15 @@ concreta de produto. `[REVISAR JURÍDICO]` marca pontos que precisam de validaç
 - Operadores (terceiros que processam dados em nosso nome):
   - Vercel (hospedagem) — verificar DPA e localização de dados
   - Supabase (banco + auth) — verificar DPA, região do projeto e transferência internacional
+  - Google (provedor de identidade OAuth, desde a Etapa 16) — verificar DPA e
+    transferência internacional [REVISAR JURÍDICO]; Cadence recebe só e-mail e nome
+    do Google, nunca a senha da conta Google
 
 ## Base legal por finalidade (art. 7º)
 
 | Finalidade                              | Dado                       | Base legal sugerida                                  |
 | --------------------------------------- | -------------------------- | ---------------------------------------------------- |
-| Autenticar o usuário                    | e-mail, senha              | Execução de contrato (art. 7º, V) [REVISAR JURÍDICO] |
+| Autenticar o usuário                    | e-mail, nome (via Google)  | Execução de contrato (art. 7º, V) [REVISAR JURÍDICO] |
 | Prover o serviço de controle financeiro | lançamentos, metas, contas | Execução de contrato [REVISAR JURÍDICO]              |
 | Personalizar a interface                | cor de destaque do perfil  | Execução de contrato [REVISAR JURÍDICO]              |
 | Segurança da conta                      | tokens de sessão           | Legítimo interesse [REVISAR JURÍDICO]                |
@@ -38,8 +41,10 @@ concreta de produto. `[REVISAR JURÍDICO]` marca pontos que precisam de validaç
 
 ## Transferência internacional [REVISAR JURÍDICO]
 
-Se Vercel/Supabase armazenarem fora do Brasil, verificar adequação (art. 33). Preferir
-região de dados mais próxima e documentar a decisão.
+Se Vercel/Supabase/Google armazenarem ou processarem fora do Brasil, verificar
+adequação (art. 33). Preferir região de dados mais próxima e documentar a decisão.
+Google, como provedor de identidade OAuth desde a Etapa 16, processa e-mail e nome
+no momento do login — mesmo tratamento de verificação exigido dos demais operadores.
 
 ## Incidentes de segurança
 

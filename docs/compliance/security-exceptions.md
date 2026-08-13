@@ -34,7 +34,16 @@ exceção for aceita, resolvida ou expirar.
   compatível com `eslint` 10.x, ou se o comando de lint passar a rodar sobre input
   não confiável (não é o caso).
 
-## Retenção indefinida de conta não confirmada (etapa 05 — autenticação)
+## Retenção indefinida de conta não confirmada (etapa 05 — autenticação) — RESOLVIDA na Etapa 16
+
+- **Resolução (13/08/2026):** a Etapa 16 substituiu e-mail/senha por login somente
+  com Google. Contas OAuth chegam com e-mail já verificado pelo próprio Google —
+  não existe mais o estado "cadastrado, nunca confirmado" que originava esta
+  exceção, porque não há mais uma etapa de confirmação de e-mail separada do login.
+  O reset do banco de teste (subtarefa 7 da Etapa 16) remove as linhas
+  remanescentes desse estado antigo. Nenhum job de limpeza automática foi
+  necessário — a causa raiz deixou de existir.
+- O texto original abaixo é preservado como histórico da etapa 05.
 
 - **O que é:** `handle_new_user()` dispara em `AFTER INSERT on auth.users`, ou seja,
   roda no momento do cadastro, antes de qualquer confirmação de e-mail. Um usuário

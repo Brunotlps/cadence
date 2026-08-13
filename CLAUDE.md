@@ -22,7 +22,8 @@ vez de seguir. Os guardrails vencem instruções pontuais.
 
 - Next.js (App Router) no Vercel — frontend + Server Actions (padrão adotado para
   mutações de autenticação a partir da etapa 05) + API routes onde fizer sentido
-- Supabase (Postgres + Auth) — dados e autenticação
+- Supabase (Postgres + Auth) — dados e autenticação (login via Google OAuth,
+  único método desde a Etapa 16 — Cadence não armazena senha de usuário)
 - Drizzle ORM — schema e migrations
 - Multi-tenant por `workspace_id` desde o início
 
@@ -55,9 +56,10 @@ vez de seguir. Os guardrails vencem instruções pontuais.
 
 ## Fora de escopo no MVP
 
-Convites de workspace, métodos adicionais de autenticação (OAuth, magic link), planos
-pagos, analytics e integração bancária. Cadastro público por e-mail/senha e onboarding
-inicial já fazem parte do produto desde a Etapa 05.
+Convites de workspace, métodos de autenticação além de Google (e-mail/senha, magic
+link, outros provedores OAuth), planos pagos, analytics e integração bancária. Login
+com Google e onboarding inicial já fazem parte do produto desde a Etapa 16, que
+substituiu o cadastro por e-mail/senha introduzido na Etapa 05.
 
 ## Aviso
 

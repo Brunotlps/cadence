@@ -16,12 +16,17 @@ desenvolvedor deve tratar estas regras como restrições rígidas, não sugestõ
 
 ## 2. Dados coletados (mínimo necessário)
 
-- E-mail e senha (senha nunca em texto puro — gerida pelo Supabase Auth).
-- Perfil pessoal mínimo: nome de exibição (opcional) e preferência funcional de cor
-  de destaque, restrita a Preto, Rosa ou Verde. Esses campos pertencem à própria
-  pessoa e são isolados por `profiles.id = auth.uid()`, não por workspace.
+- Identidade do Google, via login OAuth (desde a Etapa 16): e-mail e nome. Cadence
+  não recebe, não pede e não armazena senha — a senha da conta é gerida inteiramente
+  pelo Google, fora do nosso controle e da nossa responsabilidade.
+- Perfil pessoal mínimo: nome de exibição (preenchido a partir do nome da conta
+  Google no primeiro login, editável depois) e preferência funcional de cor de
+  destaque, restrita a Preto, Rosa ou Verde. Esses campos pertencem à própria pessoa
+  e são isolados por `profiles.id = auth.uid()`, não por workspace.
 - Dados financeiros inseridos pelo próprio usuário (lançamentos, metas, contas).
 - Dados financeiros são sempre vinculados a um `workspace_id`.
+- Não importamos foto de perfil (avatar) nem qualquer outro dado do Google além de
+  e-mail e nome — minimização deliberada, não uma limitação técnica.
 
 ## 3. Cookies
 
