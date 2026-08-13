@@ -1,7 +1,8 @@
 # Etapa 13 — Refinamento de interação, acessibilidade e landing page
 
-**Status:** planejado
+**Status:** concluído
 **Aberto em:** 13/08/2026
+**Concluído em:** 13/08/2026
 **Depende de:** Etapas 09–12 (fundação, polimento por tela, login e mobile concluídos)
 
 ## Objetivo
@@ -159,7 +160,7 @@ app/
 
 components/
 ├── app-shell/accent-color-form.tsx       (debounce no submit por teclado)
-└── transactions/transaction-form.tsx     (reset por key após sucesso)
+└── auth/password-field.tsx               (props invalid/describedBy)
 
 tests/e2e/
 └── homepage.spec.ts                      (novo)
@@ -167,16 +168,19 @@ tests/e2e/
 
 ## Subtarefas
 
-- [ ] 1. Registrar este plano e atualizar o índice em `docs/planning/README.md`
-- [ ] 2. Escrever/estender contratos E2E (teclado no seletor, reset do composer,
-      `aria-describedby` nas cinco telas, homepage) e confirmar o vermelho
-- [ ] 3. Corrigir `accent-color-form.tsx` (debounce de submit por teclado)
-- [ ] 4. Corrigir `transaction-form.tsx` (reset por `key` após sucesso)
-- [ ] 5. Aplicar `aria-invalid`/`aria-describedby` nas cinco telas de conta
-- [ ] 6. Criar os cinco `layout.tsx` com título de rota
-- [ ] 7. Reescrever a homepage como landing page
-- [ ] 8. Inspecionar 320/390/1440 px e as três paletas de cor
-- [ ] 9. Validação final: unitários, compliance, E2E sem skips, lint, TypeScript e
+- [x] 1. Registrar este plano e atualizar o índice em `docs/planning/README.md`
+- [x] 2. Escrever/estender contratos E2E (teclado no seletor, reset do composer,
+      `aria-describedby` em signup/reset-password, título de rota, homepage) e
+      confirmar o vermelho
+- [x] 3. Corrigir `accent-color-form.tsx` (debounce de submit por teclado)
+- [x] 4. ~~Corrigir `transaction-form.tsx`~~ — retirado do escopo, não era um bug
+      real (ver diagnóstico)
+- [x] 5. Aplicar `aria-invalid`/`aria-describedby` em signup, reset-password e
+      onboarding/workspace
+- [x] 6. Criar os cinco `layout.tsx` com título de rota
+- [x] 7. Reescrever a homepage como landing page
+- [x] 8. Inspecionar 320/390/1440 px e as três paletas de cor
+- [x] 9. Validação final: unitários, compliance, E2E sem skips, lint, TypeScript e
       build verdes
 
 ## Estratégia de commits
@@ -193,3 +197,22 @@ conclusão documental por último.
 - Nenhuma decisão das Etapas 04–12 é reaberta, exceto a decisão explicitamente
   adiada na Etapa 12 sobre o destino de `/`, agora resolvida a favor de landing
   page.
+- O teste E2E do seletor de cor foi reescrito uma vez: a primeira versão focava
+  uma opção sem marcá-la (`.focus()` sem `.check()`), então só um `onChange`
+  disparava no total e o teste passava mesmo sem nenhuma correção — não provava
+  o bug. A versão final conta submissões de Server Action via
+  `page.on("request")` e confirma que duas teclas de seta em sequência geram
+  uma única submissão com o valor final, o que de fato falhava antes da
+  correção (persistia "rosa", a opção intermediária, em vez de "verde").
+- O debounce usa 350 ms (`ACCENT_SUBMIT_DEBOUNCE_MS` em `accent-color-form.tsx`).
+- `onboarding/workspace` recebeu a correção de `aria-invalid`/`aria-describedby`
+  por consistência de código, mas sem um contrato E2E de vermelho dedicado —
+  não existe hoje uma entrada de usuário que alcance o estado de erro dessa
+  tela (nem o schema, nem a RPC `create_workspace_with_owner` validam o nome).
+- Validação final: 454/454 testes Vitest verdes em 49 arquivos (incluindo
+  compliance); 43/43 E2E aprovados sem skips; lint sem avisos, TypeScript sem
+  erros, build de produção verde (`/` agora estático) e `git diff --check`
+  limpo. Nenhum arquivo de schema, migration ou RLS foi alterado.
+- Ambiente de inspeção visual (servidor de desenvolvimento local + fixtures
+  descartáveis do Supabase de teste) foi encerrado e limpo ao final; nenhum
+  arquivo temporário permaneceu em `test-results/`.
