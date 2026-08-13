@@ -19,7 +19,11 @@ test.describe("fluxo de autenticação", () => {
     await expect(
       page.getByRole("button", { name: "Continuar com Google" }),
     ).toBeVisible();
-    await expect(page.locator("input")).toHaveCount(0);
+    // `input[type=hidden]` existe — é o próprio React 19 serializando a
+    // referência da Server Action pra progressive enhancement, não um campo
+    // de formulário nosso. O que importa é não ter nenhum campo visível de
+    // e-mail/senha.
+    await expect(page.locator('input:not([type="hidden"])')).toHaveCount(0);
   });
 
   test("as rotas antigas de e-mail/senha não existem mais", async ({ page }) => {
