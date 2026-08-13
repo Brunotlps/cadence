@@ -34,15 +34,19 @@ registro.
   (fora de escopo nesta etapa, mas sem custo manter)"*. O callback que recebe
   a volta do Google já existe e já funciona — não é preciso criar rota nova
   para isso.
-- A maior parte da suíte E2E (`goals.spec.ts`, `fixed-bills.spec.ts`,
-  `transactions-dashboard.spec.ts`, `visual-*.spec.ts`, `mobile-experience.spec.ts`)
-  usa `createDashboardTestUser`/`createConfirmedTestUser`
-  (`tests/e2e/support.ts`), que autentica via
-  `client.auth.signInWithPassword` chamando a API diretamente — não passa
-  pelo formulário HTML de `/login`. Essa infraestrutura de fixtures continua
-  funcionando independente de a UI oferecer senha ou não; só os specs que
-  exercitam a UI de e-mail/senha em si (`auth-flow.spec.ts`, parte de
-  `login-polish.spec.ts`) precisam mudar.
+- **Correção (13/08/2026, durante a implementação):** o diagnóstico original
+  desta linha estava errado. `createDashboardTestUser`/`createConfirmedTestUser`
+  autenticam um *cliente Node* via `signInWithPassword` — isso só afeta as
+  escritas de seed feitas por esse cliente, não a sessão do navegador. Todo
+  spec E2E (8 arquivos: `goals`, `fixed-bills`, `transactions-dashboard`,
+  `visual-foundation`, `visual-polish`, `mobile-experience`, `login-polish`,
+  `auth-flow`) tem um helper local `login(page, email, password)` que
+  autentica o **navegador** preenchendo de verdade o formulário HTML de
+  `/login` (`page.getByLabel("E-mail")`/`"Senha"` + clique em "Entrar").
+  Remover o formulário quebra esse helper em todos os oito arquivos, não só
+  nos que testam a UI de senha diretamente. Resolvido com uma rota de bypass
+  de sessão só para teste (`app/auth/test-session/route.ts`, subtarefa 6) —
+  ver decisão 6 revisada abaixo.
 - `docs/compliance/security-exceptions.md` tem uma exceção ativa: contas não
   confirmadas ficam retidas indefinidamente porque `handle_new_user` roda em
   `AFTER INSERT on auth.users`, antes da confirmação de e-mail. Login só-Google
@@ -113,23 +117,38 @@ Google, usando a redirect URI que o próprio Supabase informa nessa tela. Nada
 disso mora neste repositório — é a parte do usuário, orientada por mim quando
 ele estiver pronto para fazer.
 
-### 6. Testes — limite reconhecido
+### 6. Testes — limite reconhecido, mais bypass de sessão para o navegador
 
 O consentimento do Google não é automatizável em E2E de forma confiável (não
 é prática recomendada nem estável simular o login do Google via Playwright).
 Cobertura prevista:
 - Unitário: `signInWithGoogleAction` monta a URL certa e chama `redirect`.
-- Unitário: `handle_new_user()` (via teste de integração/compliance já
-  existente, se houver) passa a validar o mapeamento `full_name` →
-  `display_name`.
+- Unitário/compliance: `handle_new_user()` valida o mapeamento `full_name`/
+  `name` → `display_name` (`tests/compliance/profile-creation.test.ts`).
 - `app/auth/callback/route.ts` mantém sua cobertura atual (branch
   `exchangeCodeForSession` já existe, não é tocado nesta etapa).
 - `auth-flow.spec.ts`: os testes que exercitam formulário de e-mail/senha são
   removidos; um teste novo confirma que `/login` mostra só o botão do Google
   e que as rotas removidas (`/signup`, `/forgot-password`, `/reset-password`,
-  `/confirm-email`) não existem mais (404 ou redirect para `/login`).
-- Resto da suíte E2E: sem mudança esperada, valida-se rodando a suíte inteira
-  ao final.
+  `/confirm-email`) não existem mais.
+- **Nova rota `app/auth/test-session/route.ts`** (só para teste): recebe
+  `accessToken`/`refreshToken` de uma sessão já emitida (o harness de teste
+  continua autenticando via `signInWithPassword` — a API do Supabase, não a
+  nossa UI, continua aceitando senha; só paramos de expor isso na interface)
+  e escreve os cookies de sessão reais via `supabase.auth.setSession(...)`,
+  reaproveitando a serialização de cookie do próprio SDK em vez de montá-los
+  à mão. Bloqueada por `NODE_ENV === "production"` — `next dev` (usado tanto
+  localmente quanto pelo `webServer` do Playwright em CI) sempre resolve para
+  `"development"`; qualquer deploy real usa `next build`/`next start`
+  (`"production"`) e recebe 404. Sem segredo adicional: o token só é útil
+  para quem já tem uma sessão válida emitida pelo próprio Supabase, então o
+  bypass não abre um caminho de autenticação novo, só evita repetir a UI.
+- `tests/e2e/support.ts` ganha `authenticateBrowser(page, email, password)`,
+  que assina a sessão via `signInWithPassword` e chama a rota acima. Os oito
+  specs afetados trocam o corpo do `login()` local (preencher formulário) por
+  essa chamada — assinatura e todos os call sites ficam iguais.
+- Resto da suíte E2E: sem mudança de comportamento esperada além da troca de
+  mecanismo de login, valida-se rodando a suíte inteira ao final.
 - O fluxo real de consentimento do Google fica fora da cobertura automatizada
   — validação final é manual, feita por mim junto com o usuário depois que
   as credenciais do Google/Supabase estiverem configuradas.
@@ -175,8 +194,14 @@ components/auth/
 db/migrations/
 └── (nova) — ajusta handle_new_user() para ler full_name/name
 
+app/auth/test-session/route.ts             (novo — bypass de sessão só para E2E, bloqueado fora de dev)
+
 tests/e2e/
-└── auth-flow.spec.ts                      (reduzido: sem formulário de senha, com checagem de rotas removidas)
+├── support.ts                             (novo authenticateBrowser())
+├── auth-flow.spec.ts                      (reduzido: sem formulário de senha, com checagem de rotas removidas)
+├── homepage.spec.ts                       (sem link "Criar conta")
+└── (goals|fixed-bills|transactions-dashboard|visual-foundation|visual-polish|
+    mobile-experience|login-polish).spec.ts (login() local troca formulário por authenticateBrowser())
 ```
 
 ## Subtarefas
@@ -189,8 +214,10 @@ tests/e2e/
 - [ ] 4. `signInWithGoogleAction` + teste unitário (vermelho antes)
 - [ ] 5. Reescrever `/login`; remover `/signup`, `/confirm-email`,
       `/forgot-password`, `/reset-password` e código associado
-- [ ] 6. Atualizar `auth-flow.spec.ts` e `login-polish.spec.ts` (vermelho
-      antes das mudanças de UI, verde depois)
+- [ ] 6. Criar `app/auth/test-session/route.ts` e `authenticateBrowser()` em
+      `tests/e2e/support.ts`; atualizar o `login()` local dos oito specs
+      afetados; reescrever `auth-flow.spec.ts`; ajustar `homepage.spec.ts`
+      (sem link "Criar conta")
 - [ ] 7. Reset do banco de teste (combinado com o usuário)
 - [ ] 8. Validação final: unitários, compliance, E2E sem skips, lint,
       TypeScript, build — mais verificação manual do consentimento real do
