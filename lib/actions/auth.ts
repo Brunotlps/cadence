@@ -38,6 +38,8 @@ export async function signInWithGoogleAction(
   _prevState: SignInWithGoogleState,
   _formData: FormData,
 ): Promise<SignInWithGoogleState> {
+  void _prevState;
+  void _formData;
   const supabase = await createClient();
   const origin = await requestOrigin();
 

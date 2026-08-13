@@ -1,5 +1,6 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
 import {
+  authenticateBrowser,
   createDashboardTestUser,
   deleteTestAccount,
   hasSupabaseTestEnv,
@@ -12,10 +13,8 @@ type StorageState = Awaited<
 >;
 
 async function login(page: Page, email: string, password: string) {
-  await page.goto("/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Senha").fill(password);
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await authenticateBrowser(page, email, password);
+  await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/dashboard/);
 }
 
