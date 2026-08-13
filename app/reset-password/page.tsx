@@ -17,6 +17,7 @@ export default function ResetPasswordPage() {
     updatePasswordAction,
     initialState,
   );
+  const errorId = state.error ? "reset-password-error" : undefined;
 
   return (
     <AuthShell
@@ -30,9 +31,11 @@ export default function ResetPasswordPage() {
           id="password"
           label="Nova senha"
           autoComplete="new-password"
+          invalid={Boolean(state.error)}
+          describedBy={errorId}
         />
         {state.error && (
-          <p className={styles.error} role="alert">
+          <p className={styles.error} id={errorId} role="alert">
             {state.error}
           </p>
         )}
