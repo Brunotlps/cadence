@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signUp } from "@/lib/auth/sign-up";
 import { signIn } from "@/lib/auth/sign-in";
+import { signInWithGoogle } from "@/lib/auth/sign-in-with-google";
 import { signOut } from "@/lib/auth/sign-out";
 import { requestPasswordReset } from "@/lib/auth/request-password-reset";
 import { updatePassword } from "@/lib/auth/update-password";
@@ -79,6 +80,26 @@ export async function signInAction(
   }
 
   redirect("/dashboard");
+}
+
+export type SignInWithGoogleState = { error: string | null };
+
+export async function signInWithGoogleAction(
+  _prevState: SignInWithGoogleState,
+  _formData: FormData,
+): Promise<SignInWithGoogleState> {
+  const supabase = await createClient();
+  const origin = await requestOrigin();
+
+  const result = await signInWithGoogle(supabase, {
+    redirectTo: `${origin}/auth/callback?next=/dashboard`,
+  });
+
+  if (result.error || !result.url) {
+    return { error: result.error };
+  }
+
+  redirect(result.url);
 }
 
 export async function signOutAction() {
