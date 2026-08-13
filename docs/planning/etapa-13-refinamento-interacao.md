@@ -36,7 +36,16 @@ inspeção direta de código:
   `app/confirm-email/page.tsx`, `app/(protected)/onboarding/workspace/page.tsx` — a
   mensagem de erro/status tem `role="alert"`/`role="status"` mas nenhum `id`; nenhum
   input usa `aria-invalid`/`aria-describedby`. `app/login/page.tsx:65-66,79-80`
-  já faz isso corretamente e é o padrão a replicar.
+  já faz isso corretamente e é o padrão a replicar. Nem todas as cinco telas têm de
+  fato um estado de erro por campo hoje: `RequestPasswordResetState` e
+  `ResendConfirmationState` (`lib/actions/auth.ts:90,122`) só têm `message`, nunca
+  `error` — decisão deliberada de anti-enumeração (Etapa 05). Só `SignUpState`,
+  `UpdatePasswordState` (`lib/actions/auth.ts:42,105`) e `CreateWorkspaceState`
+  (`lib/actions/workspace.ts:7`) têm `error`. E, de fato, `create_workspace_with_owner`
+  (`db/migrations/0001_rls-and-security-definer-functions.sql:123-141`) e a tabela
+  `workspaces` não têm nenhuma validação de nome hoje — o caminho de erro do
+  onboarding só é alcançável por falha de infraestrutura, não por entrada de
+  usuário, então não há um cenário de "vermelho" reproduzível via UI para ele.
 - Nenhuma dessas cinco rotas, nem a homepage, tem `layout.tsx` próprio — todas
   herdam o `<title>` genérico `"Cadence"` do `app/layout.tsx`. Só `/login` tem
   `layout.tsx` com metadata própria.
@@ -79,11 +88,14 @@ rota já redireciona antes de o usuário ver qualquer diferença.
 
 ### 4. Paridade de acessibilidade nas telas de conta
 
-`signup`, `confirm-email`, `forgot-password`, `reset-password` e
-`onboarding/workspace` passam a associar cada mensagem de erro por `id` ao input
+As três telas com estado de erro real (`signup`, `reset-password`,
+`onboarding/workspace`) passam a associar a mensagem de erro por `id` ao input
 correspondente via `aria-describedby`, e a marcar `aria-invalid` quando há erro —
 replicando exatamente o padrão de `login/page.tsx`, sem herdar sua composição de
 duas colunas (elas usam `AuthShell`, que não muda de estrutura).
+`confirm-email` e `forgot-password` não têm campo em estado de erro hoje (só
+`message`/`status`, por desenho anti-enumeração), então não recebem essa
+mudança — só a de título (item 5).
 
 ### 5. Título de rota nas cinco telas de conta e na homepage
 
@@ -115,7 +127,11 @@ Estende os specs existentes em vez de criar arquivos novos onde fizer sentido:
 - `tests/e2e/transactions-dashboard.spec.ts` recebe o caso de reset do composer:
   enviar um lançamento e confirmar que o campo Valor volta a vazio.
 - `tests/e2e/auth-flow.spec.ts` recebe a asserção de `aria-describedby` resolvendo
-  para um elemento presente em cada uma das cinco telas, em erro.
+  para um elemento presente em erro real de `signup` (senha curta) e
+  `reset-password` (senha curta) — os dois únicos casos de erro por campo
+  reproduzíveis via UI. `onboarding/workspace` recebe a mesma correção de código,
+  por consistência, sem um contrato de vermelho dedicado (nenhuma entrada de
+  usuário alcança hoje o estado de erro dessa tela).
 - Novo `tests/e2e/homepage.spec.ts`: título, link acessível para `/login`, sem
   coleta de dado, sem overflow em 320/1440 px.
 
