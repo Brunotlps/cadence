@@ -1,7 +1,8 @@
 # Etapa 14 — Contas fixas pendentes no Dashboard e grid contido em Metas/Fixas
 
-**Status:** planejado
+**Status:** concluído
 **Aberto em:** 13/08/2026
+**Concluído em:** 13/08/2026
 **Depende de:** Etapas 09–13 (fundação, polimento, login, mobile e refinamento de
 interação concluídos)
 
@@ -94,14 +95,14 @@ cobre `fixed_bills`/`transactions`), nenhuma mudança de schema ou policy.
 
 ## Subtarefas
 
-- [ ] 1. Registrar este plano e atualizar o índice em `docs/planning/README.md`
-- [ ] 2. Estender `loadTransactionDashboard` com `pendingFixedBills`, com teste
+- [x] 1. Registrar este plano e atualizar o índice em `docs/planning/README.md`
+- [x] 2. Estender `loadTransactionDashboard` com `pendingFixedBills`, com teste
       unitário em vermelho antes
-- [ ] 3. Renderizar a subseção no Dashboard, com teste E2E em vermelho antes
-- [ ] 4. Ajustar o grid de Metas e Contas fixas (CSS)
-- [ ] 5. Inspecionar 1024/1440 px com 1 e 2 itens, e o Dashboard com contas
+- [x] 3. Renderizar a subseção no Dashboard, com teste E2E em vermelho antes
+- [x] 4. Ajustar o grid de Metas e Contas fixas (CSS)
+- [x] 5. Inspecionar 1024/1440 px com 1 e 2 itens, e o Dashboard com contas
       pendentes/pagas
-- [ ] 6. Validação final: unitários, compliance, E2E sem skips, lint, TypeScript e
+- [x] 6. Validação final: unitários, compliance, E2E sem skips, lint, TypeScript e
       build verdes
 
 ## Estratégia de commits
@@ -114,3 +115,15 @@ Metas/Fixas em commit próprio; conclusão documental por último.
 
 - Decisão de posicionamento (subseção discreta separada, em vez de intercalar na
   mesma lista por data) confirmada com o usuário em 13/08/2026.
+- Grid: a troca de `auto-fit` para `auto-fill` sem `1fr` foi confirmada por
+  inspeção visual (1 meta em 1024/1440 px, 2 contas fixas em 1024/1440 px) — o
+  card isolado mantém uma largura confortável (~26rem) em vez de esticar até
+  preencher os 76rem do container, sem regressão nos testes de overflow em
+  320/390 px já existentes.
+- Validação final: 458/458 testes Vitest verdes em 49 arquivos (incluindo
+  compliance); 44/44 E2E aprovados sem skips; lint sem avisos, TypeScript sem
+  erros, build de produção verde. Nenhum arquivo de schema, migration ou RLS
+  foi alterado.
+- Inspeção visual usou fixtures descartáveis do Supabase de teste contra o
+  servidor de desenvolvimento local; todos os usuários temporários foram
+  apagados ao final e o servidor foi encerrado.
