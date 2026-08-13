@@ -15,6 +15,7 @@
 }
 
 .create {
+  max-width: 26rem;
   margin-bottom: var(--space-3);
 }
 

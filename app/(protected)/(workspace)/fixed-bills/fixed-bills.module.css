@@ -49,6 +49,7 @@
 }
 
 .create {
+  max-width: 22rem;
   margin-bottom: var(--space-3);
 }
 
