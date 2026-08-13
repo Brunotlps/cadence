@@ -226,19 +226,21 @@
   padding-inline: var(--space-2);
 }
 
-.pendingBills {
+.fixedBillsPreview {
+  display: grid;
+  gap: var(--space-2);
   margin-top: var(--space-3);
   padding-top: var(--space-3);
   border-top: 1px dashed var(--border);
 }
 
-.pendingBills h3 {
+.fixedBillsPreview h3 {
   color: var(--text-muted);
   font-size: 0.85rem;
   font-weight: var(--font-weight-bold);
 }
 
-.pendingBills .sectionHeader span {
+.fixedBillsPreview .sectionHeader span {
   color: var(--text-muted);
   font-size: 0.8rem;
 }
@@ -247,7 +249,6 @@
   display: grid;
   gap: 0.2rem;
   list-style: none;
-  margin-bottom: var(--space-2);
 }
 
 .pendingBillList li {
@@ -282,12 +283,6 @@
 
 .pendingBillStatus[data-status="due_soon"] {
   color: var(--warning);
-}
-
-.pendingBillAmount {
-  flex: none;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
 }
 
 .pendingBillsLink {

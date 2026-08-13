@@ -362,13 +362,29 @@ test.describe("lançamentos e Dashboard", () => {
       });
       await expect(pendingSection).toBeVisible();
       await expect(pendingSection).toContainText("Internet");
-      await expect(pendingSection).toContainText("R$ 99,90");
+      await expect(pendingSection).not.toContainText("R$");
       await expect(pendingSection).not.toContainText("Luz");
 
-      // A conta paga aparece na lista normal de lançamentos, não na subseção.
-      const paidRow = page.getByRole("listitem").filter({ hasText: "Luz" });
+      const paidSection = page.getByRole("region", {
+        name: "Contas fixas pagas",
+      });
+      await expect(paidSection).toBeVisible();
+      await expect(paidSection).toContainText("Luz");
+      await expect(paidSection).toContainText(`dia ${Number(today.slice(8, 10))}`);
+      await expect(paidSection).not.toContainText("R$");
+      await expect(paidSection).not.toContainText("Internet");
+
+      // A conta paga continua com o valor visível na lista normal de
+      // lançamentos — só as subseções ficam sem valor. Filtra por "R$" para
+      // não colidir com a linha homônima da subseção "Contas fixas pagas",
+      // que não mostra valor.
+      const paidRow = page
+        .getByRole("listitem")
+        .filter({ hasText: "Luz" })
+        .filter({ hasText: "R$" });
       await expect(paidRow).toBeVisible();
       await expect(paidRow).toContainText("Conta fixa");
+      await expect(paidRow).toContainText("R$ 180,00");
     } finally {
       await deleteTestAccount(fixture.id);
     }
