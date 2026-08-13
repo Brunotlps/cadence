@@ -24,14 +24,15 @@ inspeção direta de código:
   chama `event.currentTarget.form?.requestSubmit()`; o sucesso fecha o painel
   (`:35`). Confirmado ao vivo: a primeira tecla de seta já fecha o painel antes de o
   usuário alcançar a opção pretendida.
-- `components/transactions/transaction-form.tsx` — todos os campos usam
-  `defaultValue` (não controlados: `:71,90,119,156,181`) e nada remonta os inputs
-  quando `state.success` fica verdadeiro (`:212-216`). Confirmado ao vivo: o campo
-  Valor manteve o número digitado após um envio bem-sucedido. Aplica-se de fato só
-  ao composer do Dashboard (`createTransactionAction` não redireciona, só chama
-  `revalidatePath`) — a edição (`updateTransactionAction`) já redireciona após
-  sucesso (`lib/actions/transactions.ts:119-120`), então lá o componente é
-  desmontado e o problema não é observável.
+- **Investigado e descartado:** a auditoria original relatou que
+  `components/transactions/transaction-form.tsx` não limpava os campos após um
+  envio bem-sucedido do composer, com reprodução ao vivo citada como evidência. O
+  contrato E2E escrito em vermelho para esse caso (subtarefa 2) passou de
+  primeira: o React 19 já executa reset nativo dos campos não controlados de um
+  `<form action={...}>` após a Server Action ter sucesso, sem código adicional. A
+  reprodução ao vivo da auditoria não se sustentou sob teste automatizado — fica
+  registrado aqui como correção do achado original, não como item de escopo desta
+  etapa.
 - `app/signup/page.tsx`, `app/forgot-password/page.tsx`, `app/reset-password/page.tsx`,
   `app/confirm-email/page.tsx`, `app/(protected)/onboarding/workspace/page.tsx` — a
   mensagem de erro/status tem `role="alert"`/`role="status"` mas nenhum `id`; nenhum
@@ -78,13 +79,11 @@ debounce não é perceptível nesse caso porque não há mudanças subsequentes.
 Fechamento por sucesso, clique externo, `Escape` e mudança de rota continuam como
 estão.
 
-### 3. Composer de lançamento — reset após sucesso
+### 3. Composer de lançamento — sem mudança
 
-`TransactionForm` remonta os campos não controlados (via `key` ligada a um
-contador de envios bem-sucedidos) quando `state.success` passa a verdadeiro. Para
-o composer do Dashboard, isso limpa os campos para os valores iniciais vazios
-enviados pelo componente pai. Para a edição, o mesmo mecanismo é inofensivo — a
-rota já redireciona antes de o usuário ver qualquer diferença.
+Retirado do escopo. O contrato E2E escrito para provar o achado original passou
+sem nenhuma alteração de código — ver "Investigado e descartado" no diagnóstico.
+`transaction-form.tsx` não é tocado nesta etapa.
 
 ### 4. Paridade de acessibilidade nas telas de conta
 

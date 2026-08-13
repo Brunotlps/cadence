@@ -228,6 +228,29 @@ test.describe("lançamentos e Dashboard", () => {
     }
   });
 
+  test("limpa o composer após registrar um lançamento", async ({ page }) => {
+    const fixture = await createDashboardTestUser(
+      "dashboard-reset",
+      "Casa reset",
+    );
+
+    try {
+      await login(page, fixture.email, fixture.password);
+
+      await page.getByRole("button", { name: "Novo lançamento" }).click();
+      await page.getByLabel("Valor").fill("42,00");
+      await page.getByLabel("Categoria").selectOption({ label: "Lazer" });
+      await page.getByRole("button", { name: "Registrar lançamento" }).click();
+
+      await expect(page.getByText("Lançamento salvo.")).toBeVisible();
+      await expect(page.getByLabel("Valor")).toHaveValue("");
+      await expect(page.getByLabel("Categoria")).toHaveValue("");
+      await expect(page.getByLabel("Data")).toHaveValue(todayInSaoPaulo());
+    } finally {
+      await deleteTestAccount(fixture.id);
+    }
+  });
+
   test("resume o mês, exclui aportes do donut e navega entre meses", async ({
     page,
   }) => {

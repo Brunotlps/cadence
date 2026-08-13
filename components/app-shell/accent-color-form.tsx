@@ -18,6 +18,10 @@ const initialState: AccentColorActionState = {
   success: false,
 };
 
+// Sem isso, cada passo de navegação por seta no radiogroup nativo submete e
+// fecha o painel antes do usuário alcançar a opção pretendida (etapa 13).
+const ACCENT_SUBMIT_DEBOUNCE_MS = 350;
+
 export function AccentColorForm({
   initialAccent,
 }: {
@@ -28,6 +32,7 @@ export function AccentColorForm({
   const [selectedAccent, setSelectedAccent] = useState(initialAccent);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const submitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const open = openPathname === pathname;
   const [state, formAction, pending] = useActionState(
     async (previousState: AccentColorActionState, formData: FormData) => {
@@ -67,6 +72,12 @@ export function AccentColorForm({
     };
   }, [open]);
 
+  useEffect(() => {
+    return () => {
+      if (submitTimeoutRef.current) clearTimeout(submitTimeoutRef.current);
+    };
+  }, []);
+
   return (
     <div className={styles.accentPicker} ref={containerRef}>
       <button
@@ -102,7 +113,13 @@ export function AccentColorForm({
                     value={option.value}
                     onChange={(event) => {
                       setSelectedAccent(option.value);
-                      event.currentTarget.form?.requestSubmit();
+                      const form = event.currentTarget.form;
+                      if (submitTimeoutRef.current) {
+                        clearTimeout(submitTimeoutRef.current);
+                      }
+                      submitTimeoutRef.current = setTimeout(() => {
+                        form?.requestSubmit();
+                      }, ACCENT_SUBMIT_DEBOUNCE_MS);
                     }}
                   />
                   <span
