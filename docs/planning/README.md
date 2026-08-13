@@ -27,4 +27,4 @@ como histórico depois.
 | [13](./etapa-13-refinamento-interacao.md) | Refinamento de interação, a11y e landing page               | concluído    |
 | [14](./etapa-14-dashboard-contas-fixas-grid.md) | Contas fixas pendentes no Dashboard + grid contido    | concluído    |
 | [15](./etapa-15-ajustes-finos-dashboard-metas-fixas.md) | Botões de criação contidos + contas fixas pagas | concluído |
-| [16](./etapa-16-login-somente-google.md) | Login somente com Google, remoção de e-mail/senha | planejado |
+| [16](./etapa-16-login-somente-google.md) | Login somente com Google, remoção de e-mail/senha | em andamento |

@@ -1,7 +1,8 @@
 # Etapa 16 — Login somente com Google, remoção de e-mail/senha
 
-**Status:** planejado
+**Status:** em andamento (implementação concluída; subtarefa 7 depende do usuário)
 **Aberto em:** 13/08/2026
+**Implementação concluída em:** 13/08/2026
 **Depende de:** Etapa 05 (autenticação e-mail/senha, decisão revisada por esta
 etapa), Etapas 09–15 (fundação visual e refinamentos, preservados)
 
@@ -206,22 +207,28 @@ tests/e2e/
 
 ## Subtarefas
 
-- [ ] 1. Atualizar `CLAUDE.md`, `data-handling.md`, `lgpd-mapping.md`,
+- [x] 1. Atualizar `CLAUDE.md`, `data-handling.md`, `lgpd-mapping.md`,
       `security-exceptions.md` e a nota de decisão da Etapa 05
-- [ ] 2. Confirmar credenciais Google/Supabase configuradas pelo usuário
+- [x] 2. Confirmar credenciais Google/Supabase configuradas pelo usuário
       (pré-requisito bloqueante para os próximos passos)
-- [ ] 3. Migration ajustando `handle_new_user()` para `full_name`/`name`
-- [ ] 4. `signInWithGoogleAction` + teste unitário (vermelho antes)
-- [ ] 5. Reescrever `/login`; remover `/signup`, `/confirm-email`,
+- [x] 3. Migration ajustando `handle_new_user()` para `full_name`/`name`
+- [x] 4. `signInWithGoogleAction` + teste unitário (vermelho antes)
+- [x] 5. Reescrever `/login`; remover `/signup`, `/confirm-email`,
       `/forgot-password`, `/reset-password` e código associado
-- [ ] 6. Criar `app/auth/test-session/route.ts` e `authenticateBrowser()` em
+- [x] 6. Criar `app/auth/test-session/route.ts` e `authenticateBrowser()` em
       `tests/e2e/support.ts`; atualizar o `login()` local dos oito specs
       afetados; reescrever `auth-flow.spec.ts`; ajustar `homepage.spec.ts`
       (sem link "Criar conta")
-- [ ] 7. Reset do banco de teste (combinado com o usuário)
-- [ ] 8. Validação final: unitários, compliance, E2E sem skips, lint,
-      TypeScript, build — mais verificação manual do consentimento real do
-      Google
+- [ ] 7. Reset do banco de teste — **fica com o usuário**, ele quer fazer
+      isso no momento de começar o uso real com a esposa, não como parte
+      automática desta etapa
+- [x] 8. Validação final: unitários, compliance, E2E sem skips, lint,
+      TypeScript, build verdes. Verificação manual extra: `/auth/test-session`
+      confirmado 404 sob `next start` (produção) e `/login` 200 no mesmo
+      build. Consentimento real do Google verificado ponta a ponta pelo teste
+      E2E "o botão do Google inicia o redirect real até o Google" (chega em
+      `accounts.google.com`, não completa o login) — clique manual completo
+      com uma conta Google real fica para o usuário experimentar.
 
 ## Estratégia de commits
 
@@ -240,3 +247,11 @@ mudança que os motiva; conclusão documental por último.
   aceitar a lacuna de cobertura E2E do consentimento do Google, e puxar
   `full_name` do Google para `display_name`) foram aceitas implicitamente ao
   autorizar o registro deste plano — sem objeção do usuário a nenhuma delas.
+- Validação final: 459/459 testes Vitest verdes em 47 arquivos (incluindo
+  compliance); 40/40 E2E aprovados sem skips; lint sem avisos, TypeScript sem
+  erros, build de produção verde. Rota table do build confirma `/signup`,
+  `/confirm-email`, `/forgot-password`, `/reset-password` ausentes e
+  `/auth/test-session` presente como rota dinâmica.
+- Único item em aberto: subtarefa 7 (reset do banco de teste) fica por conta
+  do usuário, no momento em que ele decidir começar o uso real — não faz
+  parte do "pronto" desta etapa por decisão dele, registrada na conversa.
