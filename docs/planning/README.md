@@ -24,3 +24,4 @@ como histórico depois.
 | [10](./etapa-10-polimento-por-tela.md)   | Polimento visual por tela                                   | concluído    |
 | [11](./etapa-11-experiencia-login.md)    | Experiência visual e acessível de login                     | concluído    |
 | [12](./etapa-12-experiencia-mobile.md)   | Experiência mobile completa                                 | concluído    |
+| [13](./etapa-13-refinamento-interacao.md) | Refinamento de interação, a11y e landing page               | planejado    |
