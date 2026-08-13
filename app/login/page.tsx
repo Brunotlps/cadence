@@ -1,16 +1,19 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import Link from "next/link";
-import { signInAction, type SignInState } from "@/lib/actions/auth";
+import { useActionState } from "react";
+import {
+  signInWithGoogleAction,
+  type SignInWithGoogleState,
+} from "@/lib/actions/auth";
 import styles from "./login.module.css";
 
-const initialState: SignInState = { error: null };
+const initialState: SignInWithGoogleState = { error: null };
 
 export default function LoginPage() {
-  const [state, formAction, pending] = useActionState(signInAction, initialState);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const errorId = state.error ? "login-error" : undefined;
+  const [state, formAction, pending] = useActionState(
+    signInWithGoogleAction,
+    initialState,
+  );
 
   return (
     <main className={styles.page}>
@@ -46,7 +49,8 @@ export default function LoginPage() {
             <p className={styles.eyebrow}>Acesso</p>
             <h1 id="login-title">Que bom ter você de volta.</h1>
             <p className={styles.introduction}>
-              Entre para continuar acompanhando seu espaço.
+              Entre com sua conta Google para continuar acompanhando seu
+              espaço.
             </p>
 
             <form
@@ -54,47 +58,6 @@ export default function LoginPage() {
               className={styles.form}
               aria-busy={pending}
             >
-              <div className={styles.field}>
-                <label htmlFor="email">E-mail</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  aria-invalid={Boolean(state.error)}
-                  aria-describedby={errorId}
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="password">Senha</label>
-                <div className={styles.passwordControl}>
-                  <input
-                    id="password"
-                    name="password"
-                    type={passwordVisible ? "text" : "password"}
-                    required
-                    autoComplete="current-password"
-                    aria-invalid={Boolean(state.error)}
-                    aria-describedby={errorId}
-                  />
-                  <button
-                    className={styles.passwordToggle}
-                    type="button"
-                    aria-controls="password"
-                    aria-pressed={passwordVisible}
-                    onClick={() => setPasswordVisible((visible) => !visible)}
-                  >
-                    {passwordVisible ? "Ocultar senha" : "Mostrar senha"}
-                  </button>
-                </div>
-              </div>
-
-              <Link className={styles.forgotLink} href="/forgot-password">
-                Esqueci minha senha
-              </Link>
-
               {state.error && (
                 <p className={styles.error} id="login-error" role="alert">
                   {state.error}
@@ -106,13 +69,9 @@ export default function LoginPage() {
                 type="submit"
                 disabled={pending}
               >
-                {pending ? "Entrando…" : "Entrar"}
+                {pending ? "Redirecionando…" : "Continuar com Google"}
               </button>
             </form>
-
-            <p className={styles.signupPrompt}>
-              Não tem conta? <Link href="/signup">Criar conta</Link>
-            </p>
           </div>
         </section>
       </div>

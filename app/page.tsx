@@ -20,10 +20,7 @@ export default function Home() {
 
         <div className={styles.actions}>
           <Link className={styles.primary} href="/login">
-            Entrar
-          </Link>
-          <Link className={styles.secondary} href="/signup">
-            Criar conta
+            Entrar com Google
           </Link>
         </div>
 
