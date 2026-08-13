@@ -49,6 +49,7 @@
 }
 
 .create {
+  max-width: 22rem;
   margin-bottom: var(--space-3);
 }
 
@@ -72,7 +73,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 22rem));
   gap: var(--space-3);
 }
 

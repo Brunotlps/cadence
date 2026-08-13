@@ -164,6 +164,52 @@ test.describe("fundação visual compartilhada", () => {
     }
   });
 
+  test("navega o seletor de cor por teclado sem fechar o painel a cada passo", async ({
+    page,
+  }) => {
+    const fixture = await createDashboardTestUser("accent-keyboard", "Casa teclado");
+
+    try {
+      await login(page, fixture.email, fixture.password);
+      await chooseAccent(page, "Preto");
+
+      const trigger = page.getByRole("button", { name: /Aparência/ });
+      await trigger.click();
+      const group = page.getByRole("group", { name: "Cor de destaque" });
+
+      // Conta quantas Server Actions o formulário dispara. Duas teclas de
+      // seta em sequência rápida (preto -> rosa -> verde) devem gerar uma
+      // única submissão, com o valor final — não uma submissão por passo.
+      let submissionCount = 0;
+      page.on("request", (request) => {
+        if (
+          request.method() === "POST" &&
+          request.headers()["next-action"] !== undefined
+        ) {
+          submissionCount += 1;
+        }
+      });
+
+      await group.getByLabel("Preto").focus();
+      await page.keyboard.press("ArrowDown"); // -> Rosa
+      await page.keyboard.press("ArrowDown"); // -> Verde, logo em seguida
+
+      await expect(trigger).toHaveAttribute("aria-expanded", "false", {
+        timeout: 5_000,
+      });
+      expect(submissionCount).toBe(1);
+
+      const persisted = await fixture.client
+        .from("profiles")
+        .select("accent_color")
+        .eq("id", fixture.id)
+        .single();
+      expect(persisted.data?.accent_color).toBe("verde");
+    } finally {
+      await deleteTestAccount(fixture.id);
+    }
+  });
+
   test("mantém o shell utilizável sem overflow no viewport móvel", async ({ page }) => {
     const fixture = await createDashboardTestUser("shell-mobile", "Casa móvel");
 

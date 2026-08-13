@@ -11,6 +11,7 @@ const initialState: SignUpState = { error: null };
 
 export default function SignUpPage() {
   const [state, formAction, pending] = useActionState(signUpAction, initialState);
+  const errorId = state.error ? "signup-error" : undefined;
 
   return (
     <AuthShell
@@ -26,15 +27,25 @@ export default function SignUpPage() {
       <form className={styles.form} action={formAction} aria-busy={pending}>
         <div className={styles.field}>
           <label htmlFor="email">E-mail</label>
-          <input id="email" name="email" type="email" required autoComplete="email" />
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            aria-invalid={Boolean(state.error)}
+            aria-describedby={errorId}
+          />
         </div>
         <PasswordField
           id="password"
           label="Senha"
           autoComplete="new-password"
+          invalid={Boolean(state.error)}
+          describedBy={errorId}
         />
         {state.error && (
-          <p className={styles.error} role="alert">
+          <p className={styles.error} id={errorId} role="alert">
             {state.error}
           </p>
         )}

@@ -15,6 +15,7 @@ export default function CreateWorkspacePage() {
     createWorkspaceAction,
     initialState,
   );
+  const errorId = state.error ? "create-workspace-error" : undefined;
 
   return (
     <AuthShell
@@ -25,10 +26,17 @@ export default function CreateWorkspacePage() {
       <form className={styles.form} action={formAction} aria-busy={pending}>
         <div className={styles.field}>
           <label htmlFor="name">Nome do espaço</label>
-          <input id="name" name="name" type="text" required />
+          <input
+            id="name"
+            name="name"
+            type="text"
+            required
+            aria-invalid={Boolean(state.error)}
+            aria-describedby={errorId}
+          />
         </div>
         {state.error && (
-          <p className={styles.error} role="alert">
+          <p className={styles.error} id={errorId} role="alert">
             {state.error}
           </p>
         )}

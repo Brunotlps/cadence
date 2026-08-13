@@ -38,7 +38,7 @@ test.describe.serial("fluxo de autenticação", () => {
       // Tela de espera — sem login automático antes da confirmação.
       await expect(page).toHaveURL(/\/confirm-email/);
       await expect(
-        page.getByText(/confirme seu e-mail/i),
+        page.locator("main").getByText(/confirme seu e-mail/i),
       ).toBeVisible();
 
       // Login antes de confirmar não deve funcionar — erro genérico, igual
@@ -104,11 +104,28 @@ test.describe.serial("fluxo de autenticação", () => {
       await expect(page).toHaveURL(/\/confirm-email/);
       await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
       await expect(
-        page.getByText(/confirme seu e-mail/i),
+        page.locator("main").getByText(/confirme seu e-mail/i),
       ).toBeVisible();
     } finally {
       await deleteTestAccount(existing.id);
     }
+  });
+
+  test("erro de senha fraca no cadastro é associado ao campo por aria-describedby", async ({
+    page,
+  }) => {
+    await page.goto("/signup");
+    await page.getByLabel("E-mail").fill(`weak-${crypto.randomUUID()}@example.com`);
+    const password = page.getByLabel("Senha");
+    await password.fill("123");
+    await page.getByRole("button", { name: "Criar conta" }).click();
+
+    const alert = page.locator("main").getByRole("alert");
+    await expect(alert).toBeVisible();
+    await expect(alert).toHaveAttribute("id");
+    const alertId = await alert.getAttribute("id");
+    await expect(password).toHaveAttribute("aria-invalid", "true");
+    await expect(password).toHaveAttribute("aria-describedby", alertId!);
   });
 
   test("recuperação de senha mostra a mesma mensagem para e-mail cadastrado ou não", async ({
@@ -163,6 +180,59 @@ test.describe.serial("fluxo de autenticação", () => {
       // teste prova; o destino correto pra alguém sem workspace é a tela de
       // criação, não o dashboard (decisão 4).
       await expect(page).toHaveURL(/\/onboarding\/workspace/);
+    } finally {
+      await deleteTestAccount(user.id);
+    }
+  });
+
+  test("cada tela de conta tem um título de rota próprio, distinto da homepage", async ({
+    page,
+  }) => {
+    const publicRoutes: Array<{ path: string; pattern: RegExp }> = [
+      { path: "/signup", pattern: /Criar conta.*Cadence/i },
+      { path: "/confirm-email", pattern: /Confirme seu e-mail.*Cadence/i },
+      { path: "/forgot-password", pattern: /Recuperar senha.*Cadence/i },
+      { path: "/reset-password", pattern: /Redefinir senha.*Cadence/i },
+    ];
+
+    for (const route of publicRoutes) {
+      await page.goto(route.path);
+      await expect(page).toHaveTitle(route.pattern);
+    }
+
+    const user = await createConfirmedTestUser("titles-onboarding");
+    try {
+      await page.goto("/login");
+      await page.getByLabel("E-mail").fill(user.email);
+      await page.getByLabel("Senha").fill(user.password);
+      await page.getByRole("button", { name: "Entrar" }).click();
+      await expect(page).toHaveURL(/\/onboarding\/workspace/);
+      await expect(page).toHaveTitle(/Crie seu espaço.*Cadence/i);
+    } finally {
+      await deleteTestAccount(user.id);
+    }
+  });
+
+  test("erro de senha fraca na redefinição é associado ao campo por aria-describedby", async ({
+    page,
+  }) => {
+    const user = await createConfirmedTestUser("reset-weak-password");
+
+    try {
+      const recoveryLink = await generateRecoveryLink(user.email);
+      await page.goto(recoveryLink);
+      await expect(page).toHaveURL(/\/reset-password/);
+
+      const password = page.getByLabel("Nova senha");
+      await password.fill("123");
+      await page.getByRole("button", { name: "Redefinir senha" }).click();
+
+      const alert = page.locator("main").getByRole("alert");
+      await expect(alert).toBeVisible();
+      await expect(alert).toHaveAttribute("id");
+      const alertId = await alert.getAttribute("id");
+      await expect(password).toHaveAttribute("aria-invalid", "true");
+      await expect(password).toHaveAttribute("aria-describedby", alertId!);
     } finally {
       await deleteTestAccount(user.id);
     }
