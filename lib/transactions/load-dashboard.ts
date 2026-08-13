@@ -14,23 +14,23 @@ import {
   type BillMonthStatus,
 } from "@/lib/fixed-bills/derive-bill-status";
 import { resolveDueDate } from "@/lib/fixed-bills/due-date";
-import {
-  listBillPayments,
-  listFixedBills,
-  type FixedBillRecord,
-} from "@/lib/fixed-bills/repository";
+import { listBillPayments, listFixedBills } from "@/lib/fixed-bills/repository";
 import {
   summarizeTransactions,
   type TransactionSummary,
 } from "./summarize-transactions";
 
-export type PendingFixedBill = Pick<
-  FixedBillRecord,
-  "id" | "name" | "category" | "autopay" | "variableAmount"
-> & {
+export type PendingFixedBill = {
+  id: string;
+  name: string;
   dueOn: string;
   status: Extract<BillMonthStatus, "pending" | "due_soon" | "overdue">;
-  estimatedCents: number;
+};
+
+export type PaidFixedBill = {
+  id: string;
+  name: string;
+  paidOn: string;
 };
 
 export type TransactionDashboardData = {
@@ -39,6 +39,7 @@ export type TransactionDashboardData = {
   transactions: TransactionRecord[];
   isWorkspaceEmpty: boolean;
   pendingFixedBills: PendingFixedBill[];
+  paidFixedBills: PaidFixedBill[];
   summary: TransactionSummary;
 };
 
@@ -96,20 +97,29 @@ export async function loadTransactionDashboard(
       { month, today },
     );
     const pendingStatuses = new Set(["pending", "due_soon", "overdue"]);
-    const pendingFixedBills: PendingFixedBill[] = fixedBillsResult.data
-      .map((bill, index) => ({ bill, status: derived[index] }))
+    const billsWithStatus = fixedBillsResult.data.map((bill, index) => ({
+      bill,
+      status: derived[index],
+    }));
+
+    const pendingFixedBills: PendingFixedBill[] = billsWithStatus
       .filter(({ status }) => pendingStatuses.has(status.status))
       .map(({ bill, status }) => ({
         id: bill.id,
         name: bill.name,
-        category: bill.category,
-        autopay: bill.autopay,
-        variableAmount: bill.variableAmount,
         dueOn: status.dueOn,
         status: status.status as PendingFixedBill["status"],
-        estimatedCents: status.estimatedCents,
       }))
       .sort((a, b) => a.dueOn.localeCompare(b.dueOn));
+
+    const paidFixedBills: PaidFixedBill[] = billsWithStatus
+      .filter(({ status }) => status.status === "paid")
+      .map(({ bill, status }) => ({
+        id: bill.id,
+        name: bill.name,
+        paidOn: status.payments[0].occurredOn,
+      }))
+      .sort((a, b) => a.paidOn.localeCompare(b.paidOn));
 
     return {
       status: "ready",
@@ -119,6 +129,7 @@ export async function loadTransactionDashboard(
         transactions: transactionsResult.data,
         isWorkspaceEmpty,
         pendingFixedBills,
+        paidFixedBills,
         summary: summarizeTransactions(transactionsResult.data),
       },
     };

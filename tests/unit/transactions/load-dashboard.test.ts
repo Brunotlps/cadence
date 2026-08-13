@@ -75,6 +75,7 @@ describe("loadTransactionDashboard", () => {
         transactions: [transaction],
         isWorkspaceEmpty: false,
         pendingFixedBills: [],
+        paidFixedBills: [],
         summary: {
           incomeCents: 0,
           expenseCents: 12345,
@@ -245,9 +246,16 @@ describe("loadTransactionDashboard — contas fixas pendentes", () => {
         ],
       },
     });
+    if (result.status === "ready") {
+      for (const item of result.data.pendingFixedBills) {
+        expect(item).not.toHaveProperty("estimatedCents");
+        expect(item).not.toHaveProperty("category");
+        expect(item).not.toHaveProperty("variableAmount");
+      }
+    }
   });
 
-  it("exclui contas já pagas no mês", async () => {
+  it("exclui contas já pagas no mês da lista de pendentes e inclui na de pagas", async () => {
     mocks.listFixedBills.mockResolvedValue({
       data: [bill({ id: "paid", name: "Luz", dueDay: 10 })],
       error: null,
@@ -276,7 +284,106 @@ describe("loadTransactionDashboard — contas fixas pendentes", () => {
 
     expect(result).toMatchObject({
       status: "ready",
-      data: { pendingFixedBills: [] },
+      data: {
+        pendingFixedBills: [],
+        paidFixedBills: [{ id: "paid", name: "Luz", paidOn: "2026-08-05" }],
+      },
+    });
+  });
+
+  it("usa o pagamento mais recente quando a conta foi paga mais de uma vez no mês", async () => {
+    mocks.listFixedBills.mockResolvedValue({
+      data: [bill({ id: "paid-twice", name: "Internet", dueDay: 10 })],
+      error: null,
+    });
+    mocks.listBillPayments.mockResolvedValue({
+      data: [
+        {
+          id: "payment-2",
+          fixedBillId: "paid-twice",
+          createdBy: "user-id",
+          amount: "50.00",
+          paymentMethod: null,
+          occurredOn: "2026-08-20",
+          createdAt: "2026-08-20T00:00:00.000Z",
+        },
+        {
+          id: "payment-1",
+          fixedBillId: "paid-twice",
+          createdBy: "user-id",
+          amount: "50.00",
+          paymentMethod: null,
+          occurredOn: "2026-08-05",
+          createdAt: "2026-08-05T00:00:00.000Z",
+        },
+      ],
+      error: null,
+    });
+
+    const result = await loadTransactionDashboard(
+      client,
+      "user-id",
+      "2026-08",
+      now,
+    );
+
+    expect(result).toMatchObject({
+      status: "ready",
+      data: {
+        paidFixedBills: [
+          { id: "paid-twice", name: "Internet", paidOn: "2026-08-20" },
+        ],
+      },
+    });
+  });
+
+  it("ordena contas pagas por data de pagamento", async () => {
+    mocks.listFixedBills.mockResolvedValue({
+      data: [
+        bill({ id: "paid-later", name: "Internet", dueDay: 20 }),
+        bill({ id: "paid-earlier", name: "Água", dueDay: 5 }),
+      ],
+      error: null,
+    });
+    mocks.listBillPayments.mockResolvedValue({
+      data: [
+        {
+          id: "payment-later",
+          fixedBillId: "paid-later",
+          createdBy: "user-id",
+          amount: "50.00",
+          paymentMethod: null,
+          occurredOn: "2026-08-20",
+          createdAt: "2026-08-20T00:00:00.000Z",
+        },
+        {
+          id: "payment-earlier",
+          fixedBillId: "paid-earlier",
+          createdBy: "user-id",
+          amount: "50.00",
+          paymentMethod: null,
+          occurredOn: "2026-08-05",
+          createdAt: "2026-08-05T00:00:00.000Z",
+        },
+      ],
+      error: null,
+    });
+
+    const result = await loadTransactionDashboard(
+      client,
+      "user-id",
+      "2026-08",
+      now,
+    );
+
+    expect(result).toMatchObject({
+      status: "ready",
+      data: {
+        paidFixedBills: [
+          { id: "paid-earlier", name: "Água", paidOn: "2026-08-05" },
+          { id: "paid-later", name: "Internet", paidOn: "2026-08-20" },
+        ],
+      },
     });
   });
 
