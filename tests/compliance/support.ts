@@ -37,7 +37,10 @@ export function hasSupabaseTestEnv(): boolean {
   );
 }
 
-export async function createConfirmedTestUser(prefix: string) {
+export async function createConfirmedTestUser(
+  prefix: string,
+  userMetadata?: Record<string, string>,
+) {
   const admin = createTestAdminClient();
   const password = crypto.randomUUID();
   const email = `${prefix}-${crypto.randomUUID()}@example.com`;
@@ -46,6 +49,7 @@ export async function createConfirmedTestUser(prefix: string) {
     email,
     password,
     email_confirm: true,
+    user_metadata: userMetadata,
   });
   if (error) throw error;
 
