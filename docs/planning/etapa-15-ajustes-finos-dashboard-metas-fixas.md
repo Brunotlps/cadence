@@ -1,7 +1,8 @@
 # Etapa 15 — Ajustes finos: botões de criação e contas fixas no Dashboard
 
-**Status:** planejado
+**Status:** concluído
 **Aberto em:** 13/08/2026
+**Concluído em:** 13/08/2026
 **Depende de:** Etapa 14 (contas fixas pendentes no Dashboard e grid contido)
 
 ## Objetivo
@@ -85,14 +86,14 @@ Nenhum dado novo, nenhuma query adicional, nenhuma mudança de schema/RLS.
 
 ## Subtarefas
 
-- [ ] 1. Registrar este plano e atualizar o índice em `docs/planning/README.md`
-- [ ] 2. Atualizar testes unitários de `load-dashboard.ts` (vermelho) e ajustar
+- [x] 1. Registrar este plano e atualizar o índice em `docs/planning/README.md`
+- [x] 2. Atualizar testes unitários de `load-dashboard.ts` (vermelho) e ajustar
       o loader (`pendingFixedBills` reduzido + `paidFixedBills` novo)
-- [ ] 3. Atualizar o teste E2E do Dashboard (vermelho) e renderizar as duas
+- [x] 3. Atualizar o teste E2E do Dashboard (vermelho) e renderizar as duas
       subseções sem valor
-- [ ] 4. Conter a largura de `.create` em Metas e Contas fixas
-- [ ] 5. Inspecionar visualmente os dois ajustes
-- [ ] 6. Validação final: unitários, compliance, E2E sem skips, lint,
+- [x] 4. Conter a largura de `.create` em Metas e Contas fixas
+- [x] 5. Inspecionar visualmente os dois ajustes
+- [x] 6. Validação final: unitários, compliance, E2E sem skips, lint,
       TypeScript e build verdes
 
 ## Estratégia de commits
@@ -101,3 +102,21 @@ Conventional Commits em inglês, imperativo, sem referência a IA. Plano
 primeiro; loader e contrato de vermelho depois; UI do Dashboard em commit
 próprio; largura dos botões de criação em commit próprio; conclusão
 documental por último.
+
+## Notas
+
+- O texto de status pendente ficou unificado em "Vence dia D" para todos os
+  três estados (pendente/a vencer/em atraso), com a cor (âmbar para "a vencer",
+  vermelha para "em atraso") como único sinal extra — sem um rótulo textual
+  "Em atraso" separado, para manter a subseção enxuta como pedido.
+- As duas subseções ("pendentes" e "pagas") e o link "Ver contas fixas"
+  passaram a viver dentro de um único container (`.fixedBillsPreview`) para
+  compartilhar a borda tracejada e o espaçamento sem repeti-los por seção.
+- Validação final: 460/460 testes Vitest verdes em 49 arquivos (incluindo
+  compliance); 44/44 E2E aprovados sem skips; lint sem avisos, TypeScript sem
+  erros, build de produção verde. Nenhum arquivo de schema, migration ou RLS
+  foi alterado.
+- Inspeção visual (painéis de criação abertos em 1440 px; Dashboard com uma
+  conta pendente e uma paga em 390/1440 px) usou fixtures descartáveis do
+  Supabase de teste; todos os usuários temporários foram apagados ao final e
+  o servidor de desenvolvimento foi encerrado.
