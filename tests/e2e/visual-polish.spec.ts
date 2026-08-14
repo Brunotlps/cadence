@@ -1,5 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import {
+  authenticateBrowser,
   createDashboardTestUser,
   deleteTestAccount,
   hasSupabaseTestEnv,
@@ -20,16 +21,8 @@ function todayInSaoPaulo() {
 }
 
 async function login(page: Page, email: string, password: string) {
-  await page.goto("/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Senha").fill(password);
-  const submit = page.getByRole("button", { name: "Entrar" });
-  await submit.click();
-  try {
-    await expect(page).toHaveURL(/\/dashboard/, { timeout: 5_000 });
-  } catch {
-    await submit.click();
-  }
+  await authenticateBrowser(page, email, password);
+  await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/dashboard/);
 }
 

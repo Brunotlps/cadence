@@ -301,3 +301,13 @@ e-mail de novo em vez de tentar pré-preencher.
 - Valores de rate limit da subtarefa 1 são propostos por este plano; ficam pendentes
   de aplicação manual no dashboard (sem acesso de dashboard neste ambiente) e
   confirmação dos números reais configurados.
+
+## Decisão revisada (13/08/2026 — ver Etapa 16)
+
+A decisão 1 desta etapa ("e-mail/senha, sem magic link, sem OAuth social, no MVP")
+foi revertida pela Etapa 16: Cadence passou a autenticar somente via Google,
+removendo cadastro, login e recuperação por senha. O texto da decisão 1 acima é
+preservado como histórico — não foi reescrito, por convenção do índice de
+planejamento (`docs/planning/README.md`). A issue de limpeza de contas não
+confirmadas (acima) ficou sem objeto: a Etapa 16 elimina a causa raiz (ver
+`docs/compliance/security-exceptions.md`), não implementa o job.

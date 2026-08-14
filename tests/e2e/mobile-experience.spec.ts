@@ -1,5 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import {
+  authenticateBrowser,
   createConfirmedTestUser,
   createDashboardTestUser,
   deleteTestAccount,
@@ -23,16 +24,9 @@ function todayInSaoPaulo() {
 }
 
 async function login(page: Page, email: string, password: string) {
-  await page.goto("/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Senha").fill(password);
-  const submit = page.getByRole("button", { name: "Entrar" });
-  await submit.click();
-  try {
-    await expect(page).not.toHaveURL(/\/login$/, { timeout: 5_000 });
-  } catch {
-    await submit.click();
-  }
+  await authenticateBrowser(page, email, password);
+  await page.goto("/dashboard");
+  await expect(page).toHaveURL(/\/dashboard/);
 }
 
 async function expectMinimumTarget(locator: Locator) {
@@ -273,36 +267,8 @@ test.describe("experiência mobile completa", () => {
     await expectNoHorizontalOverflow(page);
   });
 
-  test("uniformiza páginas de conta e onboarding em 320 px", async ({ page }) => {
+  test("uniformiza onboarding em 320 px", async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 720 });
-    const routes = [
-      { path: "/signup", field: "E-mail", action: "Criar conta" },
-      { path: "/forgot-password", field: "E-mail", action: "Enviar" },
-      {
-        path: "/confirm-email",
-        field: "E-mail",
-        action: "Reenviar e-mail",
-      },
-      {
-        path: "/reset-password",
-        field: "Nova senha",
-        action: "Redefinir senha",
-      },
-    ];
-
-    for (const route of routes) {
-      await page.goto(route.path);
-      await expect(
-        page.getByRole("main").getByText("Cadence", { exact: true }),
-      ).toBeVisible();
-      const field = page.locator("form").getByLabel(route.field);
-      const action = page.getByRole("button", { name: route.action });
-      await expectMinimumTarget(field);
-      await expectMinimumTarget(action);
-      const controlBox = await field.locator("..").boundingBox();
-      expect(controlBox!.width).toBeGreaterThanOrEqual(250);
-      await expectNoHorizontalOverflow(page);
-    }
 
     const onboardingUser = await createConfirmedTestUser("mobile-onboarding");
     try {

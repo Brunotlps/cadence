@@ -78,6 +78,13 @@
       "when": 1786401320135,
       "tag": "0010_old_random",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1786651434481,
+      "tag": "0011_google_only_handle_new_user",
+      "breakpoints": true
     }
   ]
 }

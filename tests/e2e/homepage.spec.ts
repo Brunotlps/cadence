@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 // levar para o fluxo de acesso. Sem fixture de Supabase — rota pública, sem
 // autenticação e sem dado nenhum envolvido.
 test.describe("landing page", () => {
-  test("leva ao login e ao cadastro sem coletar dado nenhum", async ({ page }) => {
+  test("leva ao login sem coletar dado nenhum", async ({ page }) => {
     await page.goto("/");
 
     await expect(page).toHaveTitle(/Cadence/);
@@ -15,9 +15,6 @@ test.describe("landing page", () => {
       "href",
       "/login",
     );
-    await expect(
-      page.getByRole("link", { name: /Criar conta/ }),
-    ).toHaveAttribute("href", "/signup");
     await expect(page.locator("form")).toHaveCount(0);
     await expect(page.locator("input")).toHaveCount(0);
   });
