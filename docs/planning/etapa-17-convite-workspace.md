@@ -1,7 +1,8 @@
 # Etapa 17 — Convite de workspace
 
-**Status:** em andamento
+**Status:** concluído
 **Aberto em:** 14/08/2026
+**Implementação concluída em:** 14/08/2026
 **Depende de:** Etapa 04 (schema + RLS), Etapa 05 (`create_workspace_with_owner`,
 `/onboarding/workspace`), Etapa 16 (login só Google, base para o convite ser
 resgatado por uma segunda conta Google)
@@ -156,15 +157,20 @@ tests/
 
 ## Subtarefas
 
-- [ ] 1. Schema (`workspaceInvites`) + migration custom SQL (RLS, as duas
+- [x] 1. Schema (`workspaceInvites`) + migration custom SQL (RLS, as duas
       funções, grants)
-- [ ] 2. `lib/workspace/{create-invite,redeem-invite}.ts` + Server Actions em
+- [x] 2. `lib/workspace/{create-invite,redeem-invite}.ts` + Server Actions em
       `lib/actions/workspace.ts`
-- [ ] 3. `next` opcional em `/login` e `signInWithGoogleAction`
-- [ ] 4. UI: tela de gerar link + `app/(protected)/join/[token]/page.tsx`
-- [ ] 5. Testes: compliance, unit, E2E
-- [ ] 6. Atualizar `CLAUDE.md` e `docs/specs/data-model-and-deletion.md`
-- [ ] 7. Validação final: unitários, compliance, E2E sem skips, lint,
+- [x] 3. `next` opcional em `/login` e `signInWithGoogleAction` — incluiu
+      extrair `safeNextPath` para `lib/navigation/safe-next-path.ts` e
+      corrigir `lib/supabase/middleware.ts` (proxy) para preservar `next` no
+      redirect de rota protegida sem sessão, não só o `/login`/callback
+      (achado durante a implementação: sem isso, o próprio middleware perdia
+      o destino antes da página de convite sequer rodar)
+- [x] 4. UI: tela de gerar link + `app/(protected)/join/[token]/page.tsx`
+- [x] 5. Testes: compliance, unit, E2E
+- [x] 6. Atualizar `CLAUDE.md` e `docs/specs/data-model-and-deletion.md`
+- [x] 7. Validação final: unitários, compliance, E2E sem skips, lint,
       TypeScript, build verdes
 
 ## Estratégia de commits
@@ -178,3 +184,25 @@ motiva; documentação e fechamento por último.
 
 - Plano registrado a pedido do usuário após análise da codebase (chain of
   thought apresentado antes deste registro).
+- Durante a subtarefa 3, achei que `lib/supabase/middleware.ts` (rodado pelo
+  `proxy.ts`) é o primeiro ponto que intercepta uma visita não autenticada a
+  `/join/[token]` ou `/workspace/invite` — e seu redirect pra `/login` não
+  preservava o destino. Corrigido junto: `PROTECTED_PATHS` ganhou `/join` e
+  `/workspace`, e o redirect passou a anexar `?next=<pathname+search>`. Isso
+  também melhorou o comportamento pré-existente de `/dashboard`/`/onboarding`
+  sem sessão (antes sempre voltava pro dashboard depois do login, agora volta
+  pro destino original) — mudança pequena e no mesmo arquivo que eu já
+  precisava tocar, não uma etapa separada.
+- Validação final: 492/492 testes Vitest verdes em 52 arquivos (unit +
+  compliance, incluindo os 11 novos casos de `workspace-invites.test.ts`);
+  42/42 E2E aprovados sem skips (incluindo os 2 novos casos de
+  `workspace-invite.spec.ts`); lint sem avisos, TypeScript sem erros, build
+  de produção verde com `/join/[token]` e `/workspace/invite` na rota table.
+- Achado incidental durante a escrita do E2E: navegar de `/dashboard`
+  (hidratado) direto para `/join/[token]` na mesma `page` do Playwright
+  produzia `net::ERR_ABORTED` de forma consistente — confirmado via curl e
+  via script Playwright avulso que o servidor sempre respondia 200
+  corretamente, então é uma particularidade do test runner nesse cenário
+  específico de dev server, não um bug do app. O teste em questão não
+  precisava mesmo passar por `/dashboard` antes, então a causa raiz não
+  importa para o produto — só documentando caso reapareça em outro spec.

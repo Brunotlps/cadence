@@ -56,10 +56,12 @@ vez de seguir. Os guardrails vencem instruções pontuais.
 
 ## Fora de escopo no MVP
 
-Convites de workspace, métodos de autenticação além de Google (e-mail/senha, magic
-link, outros provedores OAuth), planos pagos, analytics e integração bancária. Login
-com Google e onboarding inicial já fazem parte do produto desde a Etapa 16, que
-substituiu o cadastro por e-mail/senha introduzido na Etapa 05.
+Métodos de autenticação além de Google (e-mail/senha, magic link, outros provedores
+OAuth), planos pagos, analytics e integração bancária. Login com Google e onboarding
+inicial já fazem parte do produto desde a Etapa 16, que substituiu o cadastro por
+e-mail/senha introduzido na Etapa 05. Convidar alguém para um workspace existente já
+faz parte do produto desde a Etapa 17, via link de token opaco de uso único — sem
+convite por e-mail nem múltiplos workspaces por pessoa.
 
 ## Aviso
 

@@ -28,4 +28,4 @@ como histórico depois.
 | [14](./etapa-14-dashboard-contas-fixas-grid.md) | Contas fixas pendentes no Dashboard + grid contido    | concluído    |
 | [15](./etapa-15-ajustes-finos-dashboard-metas-fixas.md) | Botões de criação contidos + contas fixas pagas | concluído |
 | [16](./etapa-16-login-somente-google.md) | Login somente com Google, remoção de e-mail/senha | concluído |
-| [17](./etapa-17-convite-workspace.md)    | Convite de workspace                                         | em andamento |
+| [17](./etapa-17-convite-workspace.md)    | Convite de workspace                                         | concluído |
