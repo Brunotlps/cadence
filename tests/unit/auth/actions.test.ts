@@ -47,7 +47,47 @@ describe("signInWithGoogleAction", () => {
     expect(mocks.signInWithGoogle).toHaveBeenCalledWith(
       {},
       {
-        redirectTo: "http://localhost:3000/auth/callback?next=/dashboard",
+        redirectTo: "http://localhost:3000/auth/callback?next=%2Fdashboard",
+      },
+    );
+  });
+
+  it("propaga um next relativo seguro recebido no form", async () => {
+    mocks.signInWithGoogle.mockResolvedValue({
+      url: "https://accounts.google.com/o/oauth2/v2/auth?client_id=abc",
+      error: null,
+    });
+    const formData = new FormData();
+    formData.set("next", "/join/token-1");
+
+    await expect(
+      signInWithGoogleAction({ error: null }, formData),
+    ).rejects.toThrow("redirect:");
+
+    expect(mocks.signInWithGoogle).toHaveBeenCalledWith(
+      {},
+      {
+        redirectTo: "http://localhost:3000/auth/callback?next=%2Fjoin%2Ftoken-1",
+      },
+    );
+  });
+
+  it("ignora next inseguro (open redirect) e usa /dashboard", async () => {
+    mocks.signInWithGoogle.mockResolvedValue({
+      url: "https://accounts.google.com/o/oauth2/v2/auth?client_id=abc",
+      error: null,
+    });
+    const formData = new FormData();
+    formData.set("next", "https://evil.com");
+
+    await expect(
+      signInWithGoogleAction({ error: null }, formData),
+    ).rejects.toThrow("redirect:");
+
+    expect(mocks.signInWithGoogle).toHaveBeenCalledWith(
+      {},
+      {
+        redirectTo: "http://localhost:3000/auth/callback?next=%2Fdashboard",
       },
     );
   });

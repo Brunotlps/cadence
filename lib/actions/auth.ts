@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signInWithGoogle } from "@/lib/auth/sign-in-with-google";
 import { signOut } from "@/lib/auth/sign-out";
+import { safeNextPath } from "@/lib/navigation/safe-next-path";
 
 // Cascas finas sobre lib/auth/* (decisão 13, etapa 05): só leem FormData,
 // resolvem a origin da requisição e traduzem o resultado em redirect ou erro
@@ -36,15 +37,15 @@ export type SignInWithGoogleState = { error: string | null };
 
 export async function signInWithGoogleAction(
   _prevState: SignInWithGoogleState,
-  _formData: FormData,
+  formData: FormData,
 ): Promise<SignInWithGoogleState> {
   void _prevState;
-  void _formData;
   const supabase = await createClient();
   const origin = await requestOrigin();
+  const next = safeNextPath(formData.get("next")?.toString() ?? null, "/dashboard");
 
   const result = await signInWithGoogle(supabase, {
-    redirectTo: `${origin}/auth/callback?next=/dashboard`,
+    redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
   });
 
   if (result.error || !result.url) {

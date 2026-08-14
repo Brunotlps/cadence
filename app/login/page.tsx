@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   signInWithGoogleAction,
   type SignInWithGoogleState,
@@ -32,12 +33,53 @@ function GoogleIcon() {
   );
 }
 
-export default function LoginPage() {
+// Separado do resto da página porque useSearchParams() precisa de um
+// Suspense boundary — sem isso, Next.js tira a rota inteira de renderização
+// estática. `next` chega de /join/[token], para a esposa continuar o resgate
+// do convite depois de logar pela primeira vez.
+function AccessPanel() {
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next");
   const [state, formAction, pending] = useActionState(
     signInWithGoogleAction,
     initialState,
   );
 
+  return (
+    <section className={styles.accessPanel} aria-labelledby="login-title">
+      <div className={styles.accessContent}>
+        <p className={styles.eyebrow}>Acesso</p>
+        <h1 id="login-title">Que bom ter você de volta.</h1>
+        <p className={styles.introduction}>
+          Entre com sua conta Google para continuar acompanhando seu espaço.
+        </p>
+
+        <form action={formAction} className={styles.form} aria-busy={pending}>
+          {next && <input type="hidden" name="next" value={next} />}
+
+          {state.error && (
+            <p className={styles.error} id="login-error" role="alert">
+              {state.error}
+            </p>
+          )}
+
+          <button
+            className={styles.submit}
+            type="submit"
+            disabled={pending}
+            aria-label={
+              pending ? "Redirecionando para o Google…" : "Continuar com Google"
+            }
+          >
+            <GoogleIcon />
+          </button>
+        </form>
+      </div>
+    </section>
+  );
+}
+
+export default function LoginPage() {
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
@@ -67,39 +109,9 @@ export default function LoginPage() {
           </p>
         </aside>
 
-        <section className={styles.accessPanel} aria-labelledby="login-title">
-          <div className={styles.accessContent}>
-            <p className={styles.eyebrow}>Acesso</p>
-            <h1 id="login-title">Que bom ter você de volta.</h1>
-            <p className={styles.introduction}>
-              Entre com sua conta Google para continuar acompanhando seu
-              espaço.
-            </p>
-
-            <form
-              action={formAction}
-              className={styles.form}
-              aria-busy={pending}
-            >
-              {state.error && (
-                <p className={styles.error} id="login-error" role="alert">
-                  {state.error}
-                </p>
-              )}
-
-              <button
-                className={styles.submit}
-                type="submit"
-                disabled={pending}
-                aria-label={
-                  pending ? "Redirecionando para o Google…" : "Continuar com Google"
-                }
-              >
-                <GoogleIcon />
-              </button>
-            </form>
-          </div>
-        </section>
+        <Suspense fallback={null}>
+          <AccessPanel />
+        </Suspense>
       </div>
     </main>
   );
