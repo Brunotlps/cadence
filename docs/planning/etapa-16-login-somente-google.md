@@ -1,8 +1,9 @@
 # Etapa 16 — Login somente com Google, remoção de e-mail/senha
 
-**Status:** em andamento (implementação concluída; subtarefa 7 depende do usuário)
+**Status:** concluído
 **Aberto em:** 13/08/2026
 **Implementação concluída em:** 13/08/2026
+**Banco de teste zerado em:** 14/08/2026
 **Depende de:** Etapa 05 (autenticação e-mail/senha, decisão revisada por esta
 etapa), Etapas 09–15 (fundação visual e refinamentos, preservados)
 
@@ -219,9 +220,11 @@ tests/e2e/
       `tests/e2e/support.ts`; atualizar o `login()` local dos oito specs
       afetados; reescrever `auth-flow.spec.ts`; ajustar `homepage.spec.ts`
       (sem link "Criar conta")
-- [ ] 7. Reset do banco de teste — **fica com o usuário**, ele quer fazer
-      isso no momento de começar o uso real com a esposa, não como parte
-      automática desta etapa
+- [x] 7. Reset do banco de teste — feito em 14/08/2026 a pedido do usuário: 26
+      contas apagadas pela rotina auditada (`handle_account_deletion` +
+      `auth.admin.deleteUser`), incluindo 1 linha órfã em `profiles` sem
+      `auth.users` correspondente (resíduo anterior à existência dessa
+      rotina)
 - [x] 8. Validação final: unitários, compliance, E2E sem skips, lint,
       TypeScript, build verdes. Verificação manual extra: `/auth/test-session`
       confirmado 404 sob `next start` (produção) e `/login` 200 no mesmo
