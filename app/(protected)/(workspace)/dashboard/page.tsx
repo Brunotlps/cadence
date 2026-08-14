@@ -100,7 +100,11 @@ export default async function DashboardPage({
         eyebrow={data.workspace.name}
         title="Dashboard"
         description="Registre o que entrou e saiu e acompanhe o resultado do mês."
-      />
+      >
+        <Link className={styles.inviteLink} href="/workspace/invite">
+          Convidar alguém
+        </Link>
+      </PageHeader>
 
       <MonthNavigation
         label={formatMonthPtBR(data.month)}
