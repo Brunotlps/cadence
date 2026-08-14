@@ -1,17 +1,7 @@
 import { NextResponse } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-
-// Só aceita caminho relativo à própria origem — `next` vem direto da query
-// string, então é entrada não confiável. Sem essa checagem, um link como
-// /auth/callback?...&next=https://evil.com seria um open redirect usando
-// nosso domínio pra dar credibilidade a um destino malicioso.
-function safeNextPath(next: string | null): string {
-  if (!next || !next.startsWith("/") || next.startsWith("//")) {
-    return "/dashboard";
-  }
-  return next;
-}
+import { safeNextPath } from "@/lib/navigation/safe-next-path";
 
 // Alvo dos links de confirmação/recuperação enviados por e-mail. Os
 // templates padrão do Supabase (decisão 8, emenda registrada na nota de
@@ -29,7 +19,7 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const next = safeNextPath(searchParams.get("next"));
+  const next = safeNextPath(searchParams.get("next"), "/dashboard");
 
   const supabase = await createClient();
 

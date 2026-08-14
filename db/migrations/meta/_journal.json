@@ -85,6 +85,20 @@
       "when": 1786651434481,
       "tag": "0011_google_only_handle_new_user",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1786712202413,
+      "tag": "0012_workspace_invites",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1786712212779,
+      "tag": "0013_workspace_invites_rls_and_functions",
+      "breakpoints": true
     }
   ]
 }

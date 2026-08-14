@@ -1,0 +1,12 @@
+.page {
+  width: min(100% - 2rem, var(--content-width));
+  margin-inline: auto;
+  padding-block: var(--space-6) var(--space-8);
+}
+
+@media (max-width: 580px) {
+  .page {
+    width: min(100% - 1rem, var(--content-width));
+    padding-top: var(--space-4);
+  }
+}

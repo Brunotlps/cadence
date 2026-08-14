@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Rotas que exigem sessão. Comparado por prefixo contra o pathname.
-const PROTECTED_PATHS = ["/dashboard", "/onboarding"];
+const PROTECTED_PATHS = ["/dashboard", "/onboarding", "/join", "/workspace"];
 
 function isProtectedPath(pathname: string) {
   return PROTECTED_PATHS.some(
@@ -45,6 +45,13 @@ export async function updateSession(request: NextRequest) {
 
   if (!user && isProtectedPath(request.nextUrl.pathname)) {
     const redirectUrl = new URL("/login", request.url);
+    // pathname+search vêm da própria requisição, não de entrada do cliente
+    // reaproveitada como URL — sem risco de open redirect, ao contrário de
+    // um `next` vindo de query string (ver lib/navigation/safe-next-path.ts).
+    redirectUrl.searchParams.set(
+      "next",
+      request.nextUrl.pathname + request.nextUrl.search,
+    );
     return NextResponse.redirect(redirectUrl);
   }
 

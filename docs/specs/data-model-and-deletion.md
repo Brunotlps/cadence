@@ -14,13 +14,18 @@ quando um workspace fica sem membros, ele é removido (ver rotina abaixo).
   preferência funcional de cor de destaque.
 - **workspaces** — o espaço financeiro compartilhado.
 - **workspace_members** — vínculo N:N entre usuários e workspaces, com papel.
+- **workspace_invites** — convite de uso único e token opaco para entrar num
+  workspace existente (etapa 17). Não guarda dado da pessoa convidada — ela só
+  passa a existir no vínculo depois de resgatar o convite com a própria conta
+  Google.
 - **transactions** — lançamentos (despesa/receita/aporte).
 - **fixed_bills** — contas fixas recorrentes.
 - **goals** — metas financeiras.
 
 ## Regras de cascata
 
-- Apagar `workspaces` → apaga `workspace_members`, `transactions`, `fixed_bills`, `goals`.
+- Apagar `workspaces` → apaga `workspace_members`, `workspace_invites`,
+  `transactions`, `fixed_bills`, `goals`.
 - Apagar usuário (`auth.users`) → apaga `profiles` e `workspace_members` daquele usuário.
 - Workspace sem membros → apagado por rotina transacional (trigger ou função no
   apagamento de conta).
@@ -251,6 +256,29 @@ Encerrar uma recorrência é hard-delete. Os pagamentos permanecem como despesas
 completas, recebem `fixed_bill_id=NULL` e voltam ao editor genérico; não existe
 tombstone nem cópia do nome apagado. Excluir um pagamento individual também é
 hard-delete imediato.
+
+## Convite de workspace
+
+- `token` é um `uuid` gerado pelo banco (`default gen_random_uuid()`), nunca
+  recebido do cliente — evita token previsível.
+- `expires_at` é fixado em `now() + interval '7 days'` no momento da criação,
+  dentro da função `create_workspace_invite`; a aplicação não pode estender a
+  validade de um convite existente.
+- Um convite só pode ser resgatado uma vez: `redeem_workspace_invite` exige
+  `used_at is null and expires_at > now()` e marca `used_at`/`used_by` na
+  mesma transação que insere o novo membro.
+- Resgate é recusado se quem chama já participa de qualquer workspace — o
+  produto assume um workspace por pessoa (`getCurrentWorkspace` busca a
+  membership mais antiga); não há fluxo de múltiplos workspaces nem de trocar
+  de workspace.
+- Sem policy de `insert`/`update`/`delete` para usuário comum: criação e
+  resgate passam só pelas funções `SECURITY DEFINER` acima, mesmo padrão de
+  `create_workspace_with_owner` (etapa 05).
+- Convites vencidos ou já usados não são limpos automaticamente — ficam na
+  tabela até o workspace ser apagado (cascata) ou até uma rotina de limpeza
+  ser implementada, se algum dia fizer sentido. Não guardam dado pessoal da
+  pessoa convidada, só `created_by`/`used_by` (uuid solto, mesmo padrão de
+  `workspace_members.user_id`).
 
 ## Row-Level Security (SQL)
 
