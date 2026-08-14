@@ -53,6 +53,29 @@ export const workspaceMembers = pgTable(
   (table) => [primaryKey({ columns: [table.workspaceId, table.userId] })],
 );
 
+// Convite de workspace: token opaco, uso único, sem dado da pessoa
+// convidada — ela só existe aqui depois de resgatar com a própria conta
+// Google (etapa 17). created_by/used_by seguem o mesmo padrão de
+// workspace_members.user_id: uuid solto, sem FK para auth.users.
+export const workspaceInvites = pgTable(
+  "workspace_invites",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    workspaceId: uuid("workspace_id")
+      .notNull()
+      .references(() => workspaces.id, { onDelete: "cascade" }),
+    token: uuid("token").notNull().defaultRandom().unique(),
+    createdBy: uuid("created_by").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    usedAt: timestamp("used_at"),
+    usedBy: uuid("used_by"),
+  },
+  (table) => [
+    index("workspace_invites_workspace_idx").on(table.workspaceId),
+  ],
+);
+
 // Definida antes de transactions porque transactions.goalId a referencia.
 export const goals = pgTable(
   "goals",
