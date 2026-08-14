@@ -122,7 +122,8 @@ describe.skipIf(!hasSupabaseTestEnv())("Apagamento em cascata", () => {
       );
       if (workspaceError) throw workspaceError;
 
-      // Adiciona o segundo membro via service-role (não há fluxo de convite no MVP).
+      // Adiciona o segundo membro via service-role — mais direto que passar
+      // pelo fluxo de convite (etapa 17) só pra montar o fixture deste teste.
       const { error: memberInsertError } = await admin.from("workspace_members").insert({
         workspace_id: workspaceId,
         user_id: member.id,
