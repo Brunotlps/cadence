@@ -10,8 +10,8 @@ import {
 
 config({ path: ".env.local", quiet: true });
 
-// Roda só quando as credenciais Supabase estão em .env.local. No CI, sem os
-// secrets configurados, os testes são pulados em vez de falhar.
+// Localmente, roda só quando as credenciais Supabase estão disponíveis. No CI,
+// credenciais ausentes falham antes do skip para não mascarar cobertura crítica.
 describe.skipIf(!hasSupabaseTestEnv())("Isolamento por workspace (RLS)", () => {
   let clientA: SupabaseClient; // membro do workspace A
   let clientB: SupabaseClient; // membro de um workspace separado

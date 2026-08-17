@@ -1,6 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Page } from "@playwright/test";
 
+const REQUIRED_SUPABASE_TEST_ENV = [
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+  "SUPABASE_SERVICE_ROLE_KEY",
+] as const;
+
 // Espelha tests/compliance/support.ts — mantido separado porque testes E2E
 // (Playwright) e testes de compliance (Vitest) rodam em runners diferentes e
 // não compartilham setup.
@@ -27,11 +33,15 @@ export async function retryAfterJwtClockSkew<
 }
 
 export function hasSupabaseTestEnv(): boolean {
-  return (
-    !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-    !!process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
+  const missing = REQUIRED_SUPABASE_TEST_ENV.filter((name) => !process.env[name]);
+
+  if (missing.length > 0 && process.env.CI === "true") {
+    throw new Error(
+      `Missing required Supabase test environment variables: ${missing.join(", ")}`,
+    );
+  }
+
+  return missing.length === 0;
 }
 
 export async function deleteTestAccount(userId: string) {
