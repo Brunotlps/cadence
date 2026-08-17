@@ -10,8 +10,8 @@ import {
 
 config({ path: ".env.local", quiet: true });
 
-// Roda só quando as credenciais Supabase estão em .env.local. No CI, sem os
-// secrets configurados, os testes são pulados em vez de falhar.
+// Localmente, roda só quando as credenciais Supabase estão disponíveis. No CI,
+// credenciais ausentes falham antes do skip para não mascarar cobertura crítica.
 describe.skipIf(!hasSupabaseTestEnv())("Apagamento em cascata", () => {
   it(
     "apagar conta remove participações e workspaces órfãos, e o cascade de workspaces limpa transações, contas fixas e metas",

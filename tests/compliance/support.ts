@@ -1,5 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 
+const REQUIRED_SUPABASE_TEST_ENV = [
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+  "SUPABASE_SERVICE_ROLE_KEY",
+] as const;
+
 // Duplica lib/supabase/admin.ts sem o guard `import "server-only"` — esse
 // pacote lança erro fora do bundler do Next.js (só resolve para um módulo
 // vazio sob a condição `react-server`), o que quebraria a importação direta
@@ -30,11 +36,15 @@ export async function deleteTestAccount(userId: string) {
 }
 
 export function hasSupabaseTestEnv(): boolean {
-  return (
-    !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-    !!process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
+  const missing = REQUIRED_SUPABASE_TEST_ENV.filter((name) => !process.env[name]);
+
+  if (missing.length > 0 && process.env.CI === "true") {
+    throw new Error(
+      `Missing required Supabase test environment variables: ${missing.join(", ")}`,
+    );
+  }
+
+  return missing.length === 0;
 }
 
 export async function createConfirmedTestUser(
