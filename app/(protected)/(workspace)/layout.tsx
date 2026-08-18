@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { AccentColorForm } from "@/components/app-shell/accent-color-form";
 import { AppNavigation } from "@/components/app-shell/app-navigation";
 import styles from "@/components/app-shell/app-shell.module.css";
@@ -18,6 +19,9 @@ export default async function WorkspaceLayout({
         <AppNavigation className={styles.desktopNavigation} />
         <div className={styles.utilities}>
           <AccentColorForm initialAccent={profile.accentColor} />
+          <Link className={styles.accountLink} href="/account">
+            Conta
+          </Link>
           <form className={styles.logoutForm} action={signOutAction}>
             <button className={styles.logout} type="submit">
               Sair
