@@ -163,6 +163,8 @@ export async function updateTransaction(
     .update(editablePayload(input.transaction))
     .eq("id", input.transactionId)
     .eq("workspace_id", input.workspaceId)
+    .is("fixed_bill_id", null)
+    .is("goal_id", null)
     .select(TRANSACTION_COLUMNS)
     .maybeSingle();
 

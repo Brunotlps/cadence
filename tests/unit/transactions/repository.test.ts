@@ -15,6 +15,7 @@ type QueryResult = { data: unknown; error: unknown };
 class QueryDouble implements PromiseLike<QueryResult> {
   select = vi.fn(() => this);
   eq = vi.fn(() => this);
+  is = vi.fn(() => this);
   gte = vi.fn(() => this);
   lt = vi.fn(() => this);
   order = vi.fn(() => this);
@@ -174,7 +175,7 @@ describe("repositório de lançamentos", () => {
     expect(query.single).toHaveBeenCalledOnce();
   });
 
-  it("atualiza somente campos editáveis e reforça id mais workspace", async () => {
+  it("atualiza somente standalone transactions por id e workspace", async () => {
     const { client, query } = fakeClient({
       data: databaseTransaction,
       error: null,
@@ -196,6 +197,8 @@ describe("repositório de lançamentos", () => {
     });
     expect(query.eq).toHaveBeenNthCalledWith(1, "id", databaseTransaction.id);
     expect(query.eq).toHaveBeenNthCalledWith(2, "workspace_id", "workspace-id");
+    expect(query.is).toHaveBeenNthCalledWith(1, "fixed_bill_id", null);
+    expect(query.is).toHaveBeenNthCalledWith(2, "goal_id", null);
     expect(query.maybeSingle).toHaveBeenCalledOnce();
   });
 

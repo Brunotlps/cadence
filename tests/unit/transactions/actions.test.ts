@@ -228,6 +228,24 @@ describe("Server Actions de lançamentos", () => {
     expect(mocks.redirect).not.toHaveBeenCalled();
   });
 
+  it("falha genericamente quando o update direto não encontra linha standalone", async () => {
+    mocks.updateTransaction.mockResolvedValueOnce({ data: null, error: null });
+
+    const result = await updateTransactionAction(
+      "linked-payment-id",
+      initialState,
+      transactionForm(),
+    );
+
+    expect(result).toEqual({
+      error: "Não foi possível salvar o lançamento.",
+      fieldErrors: {},
+      success: false,
+    });
+    expect(mocks.revalidatePath).not.toHaveBeenCalled();
+    expect(mocks.redirect).not.toHaveBeenCalled();
+  });
+
   it("faz hard-delete e revalida sem aceitar um workspace do formulário", async () => {
     const formData = new FormData();
     formData.set("workspaceId", "foreign-workspace-id");
