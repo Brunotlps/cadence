@@ -69,7 +69,10 @@ export default async function EditBillPaymentPage({
           }}
         />
         <footer className={styles.footer}>
-          <DeleteBillPayment transactionId={payment.id} />
+          <DeleteBillPayment
+            transactionId={payment.id}
+            redirectOnSuccess="/fixed-bills"
+          />
           <Link href="/fixed-bills">Cancelar</Link>
         </footer>
       </section>
