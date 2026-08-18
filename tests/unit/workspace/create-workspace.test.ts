@@ -44,5 +44,23 @@ describe("createWorkspace", () => {
 
     expect(result.error).toBeTruthy();
     expect(result.error).not.toContain("permission denied");
+    expect(result).toMatchObject({ code: "create_failed" });
+  });
+
+  it("retorna erro tipado quando o usuário já tem workspace", async () => {
+    const client = fakeClient(() =>
+      Promise.resolve({
+        data: null,
+        error: { message: 'ERROR: "already_has_workspace"' },
+      }),
+    );
+
+    const result = await createWorkspace(client, "Outro espaço");
+
+    expect(result).toEqual({
+      error: "Você já participa de um espaço no Cadence.",
+      code: "already_has_workspace",
+    });
+    expect(result.error).not.toContain("ERROR");
   });
 });

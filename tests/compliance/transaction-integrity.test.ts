@@ -29,7 +29,7 @@ describe.skipIf(!hasSupabaseTestEnv())(
     let userAId: string;
     let userBId: string;
     let workspaceAId: string;
-    let secondWorkspaceAId: string;
+    let workspaceBId: string;
 
     beforeAll(async () => {
       const userA = await createConfirmedTestUser("transactions-integrity-a");
@@ -59,18 +59,12 @@ describe.skipIf(!hasSupabaseTestEnv())(
       if (workspaceAError) throw workspaceAError;
       workspaceAId = workspaceA as string;
 
-      const { data: secondWorkspaceA, error: secondWorkspaceAError } =
-        await clientA.rpc("create_workspace_with_owner", {
-          workspace_name: "Transaction integrity A second",
-        });
-      if (secondWorkspaceAError) throw secondWorkspaceAError;
-      secondWorkspaceAId = secondWorkspaceA as string;
-
-      const { error: workspaceBError } = await clientB.rpc(
+      const { data: workspaceB, error: workspaceBError } = await clientB.rpc(
         "create_workspace_with_owner",
         { workspace_name: "Transaction integrity B" },
       );
       if (workspaceBError) throw workspaceBError;
+      workspaceBId = workspaceB as string;
     }, 30000);
 
     afterAll(async () => {
@@ -171,12 +165,12 @@ describe.skipIf(!hasSupabaseTestEnv())(
       expect(data).toEqual({ description: "depois", amount: 20 });
     });
 
-    it("impede mover um lançamento entre workspaces do mesmo membro", async () => {
+    it("impede mover um lançamento para outro workspace", async () => {
       const transaction = await insertTransaction();
 
       const { error } = await clientA
         .from("transactions")
-        .update({ workspace_id: secondWorkspaceAId })
+        .update({ workspace_id: workspaceBId })
         .eq("id", transaction.id);
 
       expect(error).not.toBeNull();
