@@ -34,10 +34,9 @@ describe.skipIf(!hasSupabaseTestEnv())(
     let userAId: string;
     let userBId: string;
     let workspaceAId: string;
-    let secondWorkspaceAId: string;
     let workspaceBId: string;
     let goalAId: string;
-    let goalSecondWorkspaceAId: string;
+    let foreignGoalId: string;
 
     beforeAll(async () => {
       admin = createTestAdminClient();
@@ -68,13 +67,6 @@ describe.skipIf(!hasSupabaseTestEnv())(
       if (workspaceAError) throw workspaceAError;
       workspaceAId = workspaceA as string;
 
-      const { data: secondWorkspaceA, error: secondWorkspaceAError } =
-        await clientA.rpc("create_workspace_with_owner", {
-          workspace_name: "Goal integrity A second",
-        });
-      if (secondWorkspaceAError) throw secondWorkspaceAError;
-      secondWorkspaceAId = secondWorkspaceA as string;
-
       const { data: workspaceB, error: workspaceBError } = await clientB.rpc(
         "create_workspace_with_owner",
         { workspace_name: "Goal integrity B" },
@@ -83,9 +75,17 @@ describe.skipIf(!hasSupabaseTestEnv())(
       workspaceBId = workspaceB as string;
 
       goalAId = await insertGoal(workspaceAId, { name: "Meta principal" });
-      goalSecondWorkspaceAId = await insertGoal(secondWorkspaceAId, {
-        name: "Meta de outro workspace do mesmo membro",
-      });
+      const { data: foreignGoal, error: foreignGoalError } = await clientB
+        .from("goals")
+        .insert({
+          ...BASE_GOAL,
+          workspace_id: workspaceBId,
+          name: "Meta de outro workspace",
+        })
+        .select("id")
+        .single();
+      if (foreignGoalError) throw foreignGoalError;
+      foreignGoalId = foreignGoal.id as string;
     }, 30000);
 
     afterAll(async () => {
@@ -236,8 +236,25 @@ describe.skipIf(!hasSupabaseTestEnv())(
       expect(data?.started_on).toBe(getTodayInSaoPaulo());
     });
 
+    it("impede mover meta para outro workspace", async () => {
+      const goalId = await insertGoal(workspaceAId);
+      const { error } = await clientA
+        .from("goals")
+        .update({ workspace_id: workspaceBId })
+        .eq("id", goalId);
+
+      expect(error).not.toBeNull();
+
+      const { data: preserved, error: preservedError } = await clientA
+        .from("goals")
+        .select("workspace_id")
+        .eq("id", goalId)
+        .single();
+      expect(preservedError).toBeNull();
+      expect(preserved?.workspace_id).toBe(workspaceAId);
+    });
+
     it.each([
-      ["workspace_id", () => secondWorkspaceAId],
       ["created_at", () => "2000-01-01T00:00:00.000Z"],
       ["started_on", () => "2000-01-01"],
     ])("impede alterar o campo imutável %s da meta", async (field, value) => {
@@ -272,7 +289,7 @@ describe.skipIf(!hasSupabaseTestEnv())(
           ...BASE_CONTRIBUTION,
           workspace_id: workspaceAId,
           created_by: userAId,
-          goal_id: goalSecondWorkspaceAId,
+          goal_id: foreignGoalId,
         })
         .select("id");
 
@@ -320,7 +337,7 @@ describe.skipIf(!hasSupabaseTestEnv())(
 
       const { data, error } = await clientA
         .from("transactions")
-        .update({ goal_id: goalSecondWorkspaceAId })
+        .update({ goal_id: foreignGoalId })
         .eq("id", contributionId)
         .eq("workspace_id", workspaceAId)
         .select("id");

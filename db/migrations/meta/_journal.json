@@ -99,6 +99,13 @@
       "when": 1786712212779,
       "tag": "0013_workspace_invites_rls_and_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1787040000000,
+      "tag": "0014_workspace_members_singleton",
+      "breakpoints": true
     }
   ]
 }

@@ -37,7 +37,6 @@ describe.skipIf(!hasSupabaseTestEnv())(
     let userAId: string;
     let userBId: string;
     let workspaceAId: string;
-    let secondWorkspaceAId: string;
     let workspaceBId: string;
 
     beforeAll(async () => {
@@ -69,13 +68,6 @@ describe.skipIf(!hasSupabaseTestEnv())(
       if (workspaceAError) throw workspaceAError;
       workspaceAId = workspaceA as string;
 
-      const { data: secondWorkspaceA, error: secondWorkspaceAError } =
-        await clientA.rpc("create_workspace_with_owner", {
-          workspace_name: "Bill integrity A second",
-        });
-      if (secondWorkspaceAError) throw secondWorkspaceAError;
-      secondWorkspaceAId = secondWorkspaceA as string;
-
       const { data: workspaceB, error: workspaceBError } = await clientB.rpc(
         "create_workspace_with_owner",
         { workspace_name: "Bill integrity B" },
@@ -93,7 +85,15 @@ describe.skipIf(!hasSupabaseTestEnv())(
       workspaceId: string,
       overrides: Record<string, unknown> = {},
     ): Promise<string> {
-      const { data, error } = await clientA
+      return insertFixedBillFor(clientA, workspaceId, overrides);
+    }
+
+    async function insertFixedBillFor(
+      client: SupabaseClient,
+      workspaceId: string,
+      overrides: Record<string, unknown> = {},
+    ): Promise<string> {
+      const { data, error } = await client
         .from("fixed_bills")
         .insert({
           ...BASE_FIXED_BILL,
@@ -267,8 +267,25 @@ describe.skipIf(!hasSupabaseTestEnv())(
       expect(data?.started_on).toBe(getTodayInSaoPaulo());
     });
 
+    it("impede mover conta fixa para outro workspace", async () => {
+      const billId = await insertFixedBill(workspaceAId);
+      const { error } = await clientA
+        .from("fixed_bills")
+        .update({ workspace_id: workspaceBId })
+        .eq("id", billId);
+
+      expect(error).not.toBeNull();
+
+      const { data: preserved, error: preservedError } = await clientA
+        .from("fixed_bills")
+        .select("workspace_id")
+        .eq("id", billId)
+        .single();
+      expect(preservedError).toBeNull();
+      expect(preserved?.workspace_id).toBe(workspaceAId);
+    });
+
     it.each([
-      ["workspace_id", () => secondWorkspaceAId],
       ["created_at", () => "2000-01-01T00:00:00.000Z"],
       ["started_on", () => "2000-01-01"],
     ])(
@@ -366,7 +383,7 @@ describe.skipIf(!hasSupabaseTestEnv())(
     });
 
     it("bloqueia insert de pagamento ligado a conta fixa de outro workspace", async () => {
-      const foreignBillId = await insertFixedBill(secondWorkspaceAId);
+      const foreignBillId = await insertFixedBillFor(clientB, workspaceBId);
 
       const { data, error } = await clientA
         .from("transactions")
@@ -384,7 +401,7 @@ describe.skipIf(!hasSupabaseTestEnv())(
 
     it("bloqueia reatribuição por UPDATE para conta fixa de outro workspace", async () => {
       const billId = await insertFixedBill(workspaceAId);
-      const foreignBillId = await insertFixedBill(secondWorkspaceAId);
+      const foreignBillId = await insertFixedBillFor(clientB, workspaceBId);
       const paymentId = await insertPayment(billId);
 
       const { data, error } = await clientA

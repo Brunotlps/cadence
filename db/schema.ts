@@ -10,6 +10,7 @@ import {
   primaryKey,
   check,
   index,
+  unique,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -50,7 +51,10 @@ export const workspaceMembers = pgTable(
     role: text("role").notNull().default("member"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (table) => [primaryKey({ columns: [table.workspaceId, table.userId] })],
+  (table) => [
+    primaryKey({ columns: [table.workspaceId, table.userId] }),
+    unique("workspace_members_user_id_unique").on(table.userId),
+  ],
 );
 
 // Convite de workspace: token opaco, uso único, sem dado da pessoa
