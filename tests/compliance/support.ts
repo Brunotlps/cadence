@@ -47,6 +47,21 @@ export function hasSupabaseTestEnv(): boolean {
   return missing.length === 0;
 }
 
+export async function retryAfterJwtClockSkew<
+  TResult extends { error: { code?: string; message?: string } | null },
+>(operation: () => PromiseLike<TResult>): Promise<TResult> {
+  const firstResult = await operation();
+  if (
+    firstResult.error?.code !== "PGRST303" &&
+    !firstResult.error?.message?.includes("JWT issued at future")
+  ) {
+    return firstResult;
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  return operation();
+}
+
 export async function createConfirmedTestUser(
   prefix: string,
   userMetadata?: Record<string, string>,
@@ -71,4 +86,27 @@ export function createAnonTestClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
+}
+
+export async function createAuthenticatedTestClient(user: { email: string }) {
+  const admin = createTestAdminClient();
+  const { data, error } = await admin.auth.admin.generateLink({
+    type: "magiclink",
+    email: user.email,
+  });
+  if (error) throw error;
+
+  const tokenHash = data.properties?.hashed_token;
+  if (!tokenHash) {
+    throw new Error("test auth: generateLink did not return a token hash");
+  }
+
+  const client = createAnonTestClient();
+  const { error: verifyError } = await client.auth.verifyOtp({
+    token_hash: tokenHash,
+    type: "magiclink",
+  });
+  if (verifyError) throw verifyError;
+
+  return client;
 }

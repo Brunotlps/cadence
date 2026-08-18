@@ -134,6 +134,8 @@ describe("GET /account", () => {
   it("renderiza confirmação sem inputs de alvo ou usuário", () => {
     const html = renderToStaticMarkup(createElement(AccountPage));
 
+    expect(html).toContain('href="/account/export"');
+    expect(html).toContain("Baixar meus dados");
     expect(html).toContain("Excluir minha conta");
     expect(html).toContain('name="confirmation"');
     expect(html).not.toContain('name="target"');
