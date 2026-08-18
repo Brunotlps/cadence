@@ -39,6 +39,10 @@ test.describe("convite de workspace", () => {
       const inviteePage = await inviteeContext.newPage();
       await authenticateBrowser(inviteePage, invitee.email, invitee.password);
       await inviteePage.goto(`/join/${token}`);
+      await expect(
+        inviteePage.getByRole("heading", { name: "Confirmar convite" }),
+      ).toBeVisible();
+      await inviteePage.getByRole("button", { name: "Confirmar convite" }).click();
 
       await expect(inviteePage).toHaveURL(/\/dashboard/);
       await expect(inviteePage.getByText("Bruno & Alyne")).toBeVisible();
@@ -65,7 +69,11 @@ test.describe("convite de workspace", () => {
       await page.goto("/join/00000000-0000-0000-0000-000000000000");
 
       await expect(
-        page.getByRole("heading", { name: "Convite inválido ou expirado" }),
+        page.getByRole("heading", { name: "Confirmar convite" }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "Confirmar convite" }).click();
+      await expect(
+        page.getByText("Convite inválido ou expirado.", { exact: false }),
       ).toBeVisible();
       await page.getByRole("link", { name: "Ir para o Dashboard" }).click();
       await expect(page).toHaveURL(/\/onboarding\/workspace/);
