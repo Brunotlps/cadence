@@ -1,0 +1,79 @@
+.page {
+  width: min(100% - 2rem, 48rem);
+  margin-inline: auto;
+  padding-block: var(--space-6) var(--space-8);
+}
+
+.dangerZone {
+  display: grid;
+  gap: var(--space-4);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: var(--space-4);
+}
+
+.dangerCopy {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.sectionLabel {
+  color: var(--danger);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dangerCopy h2 {
+  font-size: var(--font-size-lg);
+}
+
+.dangerCopy p:not(.sectionLabel) {
+  max-width: 38rem;
+  color: var(--text-muted);
+}
+
+.deleteForm {
+  max-width: 28rem;
+}
+
+.dangerButton {
+  min-height: var(--control-min-height);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--danger);
+  color: var(--on-accent);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-3) var(--space-4);
+}
+
+.dangerButton:hover:not(:disabled) {
+  background: #8f1d1d;
+}
+
+.dangerButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+@media (max-width: 580px) {
+  .page {
+    width: min(100% - 1rem, 48rem);
+    padding-top: var(--space-4);
+  }
+
+  .dangerZone {
+    padding: var(--space-4);
+  }
+
+  .deleteForm {
+    max-width: none;
+  }
+
+  .dangerButton {
+    width: 100%;
+  }
+}

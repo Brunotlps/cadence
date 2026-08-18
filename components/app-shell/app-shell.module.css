@@ -235,6 +235,7 @@
   white-space: nowrap;
 }
 
+.accountLink,
 .logout {
   min-height: var(--control-min-height);
   border: 1px solid var(--border-strong);
@@ -246,6 +247,14 @@
   padding-inline: var(--space-3);
 }
 
+.accountLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.accountLink:hover,
 .logout:hover {
   border-color: var(--brand);
   background: var(--brand-soft);
@@ -295,7 +304,7 @@
     min-height: auto;
     inset: 0 0 auto;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
     align-items: center;
     gap: var(--space-2);
     border-right: 0;
@@ -342,8 +351,13 @@
     inset: calc(100% + var(--space-2)) 0 auto auto;
   }
 
-  .logoutForm {
+  .accountLink {
     grid-column: 3;
+    grid-row: 1;
+  }
+
+  .logoutForm {
+    grid-column: 4;
     grid-row: 1;
   }
 
