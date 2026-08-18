@@ -62,14 +62,24 @@ export async function createWorkspaceInviteAction(
 }
 
 export type RedeemWorkspaceInviteActionResult =
-  | { status: "ok" }
+  | { status: "idle" }
   | { status: "already_has_workspace" }
   | { status: "invalid_or_expired" }
   | { status: "error" };
 
+const INVITE_TOKEN_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function redeemWorkspaceInviteAction(
-  token: string,
+  _prevState: RedeemWorkspaceInviteActionResult,
+  formData: FormData,
 ): Promise<RedeemWorkspaceInviteActionResult> {
+  const rawToken = formData.get("token");
+  const token = typeof rawToken === "string" ? rawToken.trim() : "";
+  if (!INVITE_TOKEN_PATTERN.test(token)) {
+    return { status: "invalid_or_expired" };
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -81,7 +91,7 @@ export async function redeemWorkspaceInviteAction(
 
   const result = await redeemWorkspaceInvite(supabase, token);
   if (result.status === "ok") {
-    return { status: "ok" };
+    redirect("/dashboard");
   }
 
   return { status: result.status };
