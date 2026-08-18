@@ -69,7 +69,10 @@ export default async function EditContributionPage({
           }}
         />
         <footer className={styles.footer}>
-          <DeleteContribution transactionId={result.data.contribution.id} />
+          <DeleteContribution
+            transactionId={result.data.contribution.id}
+            redirectOnSuccess="/goals"
+          />
           <Link href="/goals">Cancelar</Link>
         </footer>
       </section>

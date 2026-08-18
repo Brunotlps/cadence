@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   deleteContributionAction,
@@ -16,14 +17,22 @@ const initialState: GoalActionState = {
 export function DeleteContribution({
   transactionId,
   dashboardLabel = false,
+  redirectOnSuccess,
 }: {
   transactionId: string;
   dashboardLabel?: boolean;
+  redirectOnSuccess?: string;
 }) {
   const [state, formAction, pending] = useActionState(
     deleteContributionAction.bind(null, transactionId),
     initialState,
   );
+  const router = useRouter();
+  const redirecting = Boolean(state.success && redirectOnSuccess);
+
+  useEffect(() => {
+    if (state.success && redirectOnSuccess) router.replace(redirectOnSuccess);
+  }, [redirectOnSuccess, router, state.success]);
 
   return (
     <ConfirmDialog
@@ -32,7 +41,7 @@ export function DeleteContribution({
       description="Esta ação não pode ser desfeita."
       confirmLabel="Excluir definitivamente"
       pendingLabel="Excluindo…"
-      pending={pending}
+      pending={pending || redirecting}
       error={state.error}
       formAction={formAction}
     />
