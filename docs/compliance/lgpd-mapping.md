@@ -29,7 +29,8 @@ concreta de produto. `[REVISAR JURÍDICO]` marca pontos que precisam de validaç
   apenas um de três códigos fixos, sem histórico de alterações ou dado comportamental.
 - Livre acesso → usuário pode ver e exportar seus dados (ver spec de portabilidade).
 - Transparência → política de privacidade clara e acessível.
-- Segurança → RLS, senha gerida pelo Auth, TLS, sem PII em log.
+- Segurança → RLS, login sem senha própria (identidade delegada ao Google), TLS,
+  sem PII em log.
 
 ## Direitos do titular (art. 18) → como atendemos
 
