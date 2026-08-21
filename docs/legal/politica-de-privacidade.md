@@ -13,8 +13,9 @@ responsável]. Para questões sobre seus dados, contate: [PREENCHER e-mail de co
 
 Coletamos o mínimo necessário para o serviço funcionar:
 
-- **Dados de cadastro:** e-mail e senha. A senha é armazenada de forma cifrada por
-  nosso provedor de autenticação; nós nunca temos acesso a ela em texto puro.
+- **Dados de cadastro:** e-mail e nome, obtidos do seu login com sua conta Google.
+  Não coletamos nem armazenamos senha — o Cadence não tem um método de cadastro por
+  e-mail e senha; a autenticação é feita inteiramente pelo Google.
 - **Nome de exibição:** opcional, para identificar quem lançou cada movimentação.
 - **Dados financeiros que você insere:** lançamentos, metas, contas fixas e valores
   associados. Esses dados são fornecidos por você e existem para prestar o serviço.

@@ -68,6 +68,7 @@ jobs:
   e2e:
     name: Testes E2E
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -75,7 +76,25 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "version=$(npm ls @playwright/test --json | jq -r '.dependencies["@playwright/test"].version')" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+      - name: Install Playwright Chromium and OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        timeout-minutes: 5
+        run: npx playwright install --with-deps chromium
+      # Cache hit já traz o browser; faltam só as bibliotecas de sistema do
+      # runner (não fazem parte do cache, pertencem à imagem do runner).
+      - name: Install Chromium OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        timeout-minutes: 5
+        run: npx playwright install-deps chromium
       - name: Check Supabase test secrets
         run: |
           missing=0
