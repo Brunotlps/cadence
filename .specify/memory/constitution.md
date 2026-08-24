@@ -1,50 +1,101 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: unratified template -> 1.0.0
+- Modified principles: none; initial ratification establishes Principles I-V.
+- Added sections: Scope of Authority; Compliance and Responsibility Boundaries; Governance.
+- Removed sections: unresolved template placeholders and examples.
+- Follow-up TODOs: none.
+-->
+
+# Cadence Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Database-Enforced Tenant Isolation
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+All workspace-scoped user data MUST have authorization enforcement at the database
+layer. Application-side filtering MUST NOT be considered a sufficient tenant-isolation
+boundary by itself. Changes introducing or modifying workspace-scoped data MUST preserve
+database-level isolation controls and MUST NOT weaken existing effective authorization
+guarantees.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+Rationale: Tenant isolation is a trust boundary; an application bug must not turn a
+missing filter into cross-workspace access.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Authenticated and Least-Privilege Data Access
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+Ordinary user-data access MUST preserve the authenticated user's authorization context
+and effective database access controls. Authorization bypasses or privileged access
+paths MUST be explicit, server-side, narrowly scoped, justified by a concrete
+administrative requirement, and independently auditable. Privileged credentials MUST
+NOT be exposed to client-side code.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Rationale: The invariant is preservation of authorization context and least privilege,
+independent of implementation technology.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. Privacy by Default and Data Minimization
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Cadence MUST minimize collection, processing, retention, and observability of personal,
+sensitive, behavioral, network-identifying, and financial data. Such data MUST NOT be
+newly collected, retained, exposed, or logged without a documented legitimate product
+purpose, an explicit update to the applicable durable privacy/security contract, and
+appropriate user controls or safeguards where that contract requires them. Logs and
+diagnostics MUST avoid personal and financial values unless an explicitly reviewed
+requirement establishes a safe exception.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+Rationale: Privacy constraints must survive product evolution while permitting a
+deliberate, reviewed introduction of additional collection when justified.
+
+### IV. Real and Explicit Data Lifecycle Guarantees
+
+Changes MUST preserve Cadence's documented guarantees for deletion, retention, and data
+portability. Deletion semantics MUST represent genuine removal or documented lifecycle
+behavior. Personal data MUST NOT be hidden behind indefinite soft-retention semantics
+unless an explicit durable contract and reviewed exception permits it.
+
+Rationale: The Constitution protects lifecycle guarantees; durable system contracts
+define their exact implementation semantics.
+
+### V. Regression Proof for Critical Invariants
+
+Changes affecting authentication or session boundaries, tenant isolation or
+authorization, privileged access, deletion or retention, data portability, or
+financial-domain integrity MUST include focused regression evidence. That evidence
+SHOULD be placed at the lowest reliable layer capable of proving the invariant. When the
+database is the final enforcement layer, application-only tests MUST NOT be treated as
+sufficient proof of database authorization or integrity. Existing hosted and compliance
+test safety constraints remain governed by the repository harness.
+
+Rationale: Critical guarantees require evidence that their effective enforcement still
+holds, not merely implementation that appears correct.
+
+## Scope of Authority
+
+This Constitution governs stable, cross-feature engineering invariants. The detailed,
+durable privacy and security contracts reside in `.cadence/policies/`; detailed domain
+and system contracts reside in `docs/specs/`. Feature specifications may introduce or
+change product behavior, but MUST NOT silently violate these principles.
+
+`AGENTS.md`, `CLAUDE.md`, and `.codex/` govern agent and developer operational behavior
+and are not replaced by this Constitution. `docs/planning/` is historical context.
+
+## Compliance and Responsibility Boundaries
+
+Constitution principles define global constraints; durable contracts define detailed
+system guarantees; feature specifications define bounded intended behavior; and
+runtime, tests, and database controls provide evidence of implemented behavior. These
+layers MUST NOT be used to create a second source of truth for detailed domain behavior.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Constitutional amendments require explicit rationale and semantic versioning. A MAJOR
+revision removes or incompatibly redefines an existing principle; a MINOR revision adds
+a principle or materially expands governance; a PATCH revision is a non-semantic
+clarification.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Spec Kit plans MUST evaluate every proposed change against all five principles. A known
+violation MUST be resolved explicitly rather than silently ignored. Necessary exceptions
+MUST be documented in the appropriate durable policy or system-contract layer and MUST
+NOT be invented ad hoc in a feature implementation.
+
+**Version**: 1.0.0 | **Ratified**: 2026-08-24 | **Last Amended**: 2026-08-24
