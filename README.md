@@ -140,10 +140,10 @@ ignorados ao mexer em dados de usuário.
 
 ## CI/CD
 
-Cada pull request roda a pipeline em `.github/workflows/ci.yml` com três verificações
-paralelas: lint, testes unitários e testes E2E. O merge só deve ocorrer com as três
-verdes. Push na `main` publica automaticamente em produção via Vercel; cada PR gera um
-preview deploy isolado.
+Cada pull request roda a pipeline em `.github/workflows/ci.yml` com quatro
+verificações paralelas: lint, testes unitários, build de produção e testes E2E.
+O merge só deve ocorrer com as quatro verdes. Push na `main` publica
+automaticamente em produção via Vercel; cada PR gera um preview deploy isolado.
 
 ## Próximos passos recomendados
 
