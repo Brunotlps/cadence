@@ -4,8 +4,12 @@ Atende ao direito de portabilidade (art. 18, V) e ao livre acesso (art. 6º, IV)
 
 ## Requisito
 
-O usuário pode exportar, a qualquer momento e sem custo, todos os dados do(s)
-workspace(s) de que participa, em formato aberto e legível por máquina.
+O usuário pode exportar, a qualquer momento e sem custo, todos os dados do
+workspace de que participa, em formato aberto e legível por máquina.
+
+O produto vigente assume um workspace por pessoa. Por isso, o pacote de
+exportação representa coleções por entidade, mas hoje contém no máximo um
+workspace por usuário.
 
 ## Formato
 
@@ -110,7 +114,7 @@ não é duplicado no lançamento nem mantido como tombstone.
 
 ## Escopo
 
-- Exporta apenas dados dos workspaces em que o solicitante é membro (respeita RLS).
+- Exporta apenas dados do workspace do qual o solicitante é membro (respeita RLS).
 - Não inclui hash de senha nem tokens (dados de autenticação não são exportáveis).
 
 ## Fluxo
