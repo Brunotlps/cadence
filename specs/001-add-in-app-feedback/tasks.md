@@ -1,5 +1,4 @@
 ---
-
 description: "Implementation tasks for authenticated in-app feedback"
 ---
 
@@ -154,6 +153,7 @@ release obligations from deterministic implementation work.
 - [ ] T032 Complete and record human privacy/security review in `docs/compliance/lgpd-mapping.md` for Resend and the administrative inbox: product/dashboard retention, DPA, subprocessors, usage/account data, deletion after account termination, international transfers, and inbox access/retention/deletion; retain unresolved legal-role decisions as `[REVISAR JURÍDICO]` until approved.
 - [ ] T033 Verify and record Resend sender-domain settings in `docs/operations/in-app-feedback-release.md`: open/click tracking disabled, DNS/sender verified, configured administrative recipient restricted, and plaintext-only delivery configuration.
 - [ ] T034 Verify and record Supabase Cron operation in `docs/operations/in-app-feedback-release.md`: hourly hard-delete job enabled after deployment, failed-run monitoring established, and `cron.job_run_details` inspection/pruning ownership assigned.
+- [ ] T035 Perform and record one manual authenticated end-to-end SC-001 acceptance run in `docs/operations/in-app-feedback-release.md` only after implementation, configured provider delivery, and the applicable privacy/security release gates are ready: start timing when the feedback flow opens; submit non-sensitive valid test feedback through the configured trusted administrative delivery mechanism; confirm UI success means provider acceptance, not final inbox delivery, human receipt, reading, or acknowledgement; compare the accepted request/evidence with the approved minimized payload boundary; confirm the user stays in Cadence; and complete the flow in under two minutes.
 
 ---
 
@@ -180,12 +180,15 @@ release obligations from deterministic implementation work.
   Action never retains a canonical payload snapshot or rotates a key.
 - **Phase 7** deterministic validation follows implementation. Hosted tests and
   release-only gates require their separately authorized environments and do not
-  authorize real Resend calls from automated tests.
+  authorize real Resend calls from automated tests. T035 is the final manual release
+  acceptance after T027–T034, the deployed configured delivery mechanism, and the
+  applicable human privacy/security review are complete.
 
 ### User-story delivery order
 
 `Foundation → US1 (bug MVP) → US2 (suggestion) and US3 (privacy controls) → US4
-(failure/retry) → cross-cutting verification → release-only gates`.
+(failure/retry) → cross-cutting verification → release-only gates → T035 manual
+SC-001 acceptance`.
 
 ## Parallel opportunities
 
@@ -195,8 +198,8 @@ release obligations from deterministic implementation work.
 - T013 can be prepared while the dialog implementation is underway; T018 and T020 can
   be prepared after their shared contracts stabilize.
 - T023 and T024 are independent server and client-state unit coverage tasks.
-- T028–T029 can run in parallel only in their approved hosted test environment; T032–
-  T034 are separate release-only human/operational tracks.
+- T028–T029 can run in parallel only in their approved hosted test environment; T032–T034 are separate release-only human/operational tracks.
+- T035 runs only after the implementation is complete and the approved Resend sender, recipient, privacy/security review, and release configuration required by T032–T034 are ready. It is a manual release acceptance check and must not be automated.
 
 ## Implementation strategy
 
@@ -210,7 +213,8 @@ release obligations from deterministic implementation work.
 
 1. Add US2 and US3 after the bug MVP, preserving the single dialog and payload contract.
 2. Add US4 to finalize safe failure, retry, and transient-state behavior.
-3. Complete automated evidence, then obtain the separate human release gates.
+3. Complete automated evidence, then obtain the separate human release gates and T035
+   manual SC-001 acceptance.
 
 ## Notes
 
