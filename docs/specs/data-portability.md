@@ -37,6 +37,35 @@ A preferência é exportada como código persistido, não como valor hexadecimal
 perfil de outro membro do workspace não entra no pacote: `profiles` é isolado por
 `id = auth.uid()`, independentemente da membership compartilhada.
 
+## Metadado de controle em nível de conta
+
+`feedback_submission_limits` é metadado temporário de segurança/controle de conta, não
+dado financeiro ou de domínio exportável. Ele contém somente `user_id`, início da
+janela ancorada, contador e expiração; não contém conteúdo de feedback, e-mail,
+pathname, IP, dados de workspace, dados financeiros ou analytics. O usuário pode
+receber informação sobre a existência, finalidade e retenção desse metadado pelos
+canais de acesso aplicáveis; a necessidade e forma de incluí-lo em portabilidade devem
+permanecer marcadas `[REVISAR JURÍDICO/PRIVACIDADE]` antes da release. A decisão não
+autoriza exportar conteúdo de feedback que Cadence não persiste. A janela é ancorada
+em 24 horas e limitada a três aquisições válidas por
+`public.consume_feedback_submission_limit()`, que deriva a identidade de `auth.uid()`;
+falhas de validação não consomem vaga, mas toda aquisição válida consome uma, inclusive
+retry ambíguo com a mesma chave, sem decremento compensatório. O metadado sofre
+hard-delete físico pelo job horário
+`public.cleanup_expired_feedback_submission_limits()` após expiração; quando o job
+está implantado e operando corretamente, isso ocorre em aproximadamente uma hora de
+`expires_at`. `public.handle_account_deletion(uuid)` é uma via independente de
+hard-delete na exclusão da conta.
+
+Cadence não retém conteúdo de feedback como conjunto de dados da aplicação nem como
+registro exportável. A retenção da Resend e da caixa administrativa é uma questão de
+ciclo de vida externa, separada e sujeita a `[REVISAR JURÍDICO/PRIVACIDADE]`. A entrega
+externa usa somente tipo, mensagem, pathname normalizado opcional e, com opt-in
+explícito, e-mail derivado no servidor. Não inclui URL completa, query, fragmento,
+dados financeiros, IDs internos de usuário/workspace, cookies, telemetria, logs ou
+estado de página. Aceitação pelo provedor não equivale a recebimento ou leitura pela
+caixa administrativa.
+
 ## Contrato de exportação de lançamentos
 
 Cada lançamento exportado inclui:

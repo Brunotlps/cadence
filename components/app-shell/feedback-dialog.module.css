@@ -1,0 +1,13 @@
+.launcher { position: fixed; z-index: 30; right: var(--space-5); bottom: var(--space-5); min-height: var(--control-min-height); border: 1px solid var(--brand); border-radius: var(--radius-pill); background: var(--brand); color: var(--on-accent); cursor: pointer; font-weight: var(--font-weight-semibold); padding: var(--space-2) var(--space-4); box-shadow: var(--shadow); }
+.dialog { width: min(calc(100% - 2rem), 36rem); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); color: var(--text); margin: auto; padding: var(--space-5); }
+.dialog::backdrop { background: rgb(32 30 29 / 48%); }
+.form { display: grid; gap: var(--space-3); }
+.warning { border-radius: var(--radius-sm); background: var(--warning-soft); color: var(--warning); padding: var(--space-3); }
+.types { display: flex; flex-wrap: wrap; gap: var(--space-3); border: 0; }
+.types label, .followUp { display: inline-flex; min-height: var(--control-min-height); align-items: center; gap: var(--space-2); cursor: pointer; }
+.types legend, .guidance { color: var(--text-muted); }
+.form textarea { min-height: 9rem; resize: vertical; border: 1px solid var(--border-strong); border-radius: var(--radius-md); padding: var(--space-3); }
+.followUp { font-size: var(--font-size-sm); }
+.error { color: var(--danger); } .success { color: var(--success); }
+.actions { display: flex; justify-content: flex-end; gap: var(--space-2); }.actions button { min-height: var(--control-min-height); border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface); color: var(--text); cursor: pointer; padding: var(--space-2) var(--space-3); }.actions button[type="submit"] { border-color: var(--brand); background: var(--brand); color: var(--on-accent); }
+@media (max-width: 800px) { .launcher { right: var(--space-3); bottom: calc(5rem + env(safe-area-inset-bottom)); } .dialog { width: min(calc(100% - 1rem), 36rem); max-height: calc(100dvh - 1rem); overflow-y: auto; padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom)); } }

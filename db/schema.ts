@@ -32,6 +32,31 @@ export const profiles = pgTable(
   ],
 );
 
+// Exceção estreita de metadado de controle por conta: limita abuso de feedback
+// autenticado e nunca contém texto, e-mail, pathname, workspace ou dado financeiro.
+// Não há FK para auth.users porque o schema público não pode referenciar auth;
+// a rotina explícita de exclusão de conta remove a linha (migration 0015).
+export const feedbackSubmissionLimits = pgTable(
+  "feedback_submission_limits",
+  {
+    userId: uuid("user_id").primaryKey(),
+    windowStartedAt: timestamp("window_started_at").notNull(),
+    submissionCount: integer("submission_count").notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+  },
+  (table) => [
+    check(
+      "feedback_submission_limits_count_check",
+      sql`${table.submissionCount} between 1 and 3`,
+    ),
+    check(
+      "feedback_submission_limits_expiry_check",
+      sql`${table.expiresAt} = ${table.windowStartedAt} + interval '24 hours'`,
+    ),
+    index("feedback_submission_limits_expires_at_idx").on(table.expiresAt),
+  ],
+);
+
 export const workspaces = pgTable("workspaces", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),

@@ -40,3 +40,7 @@ next-env.d.ts
 # Agents
 .agents/
 
+
+# Python bytecode
+__pycache__/
+*.py[cod]

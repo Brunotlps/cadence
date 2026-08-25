@@ -2,10 +2,17 @@
 
 ## Princípio
 
-Todo dado de usuário pertence a um `workspace`. O apagamento segue as chaves
-estrangeiras com `ON DELETE CASCADE`, de modo que remover um workspace remove
-automaticamente tudo que depende dele. Remover um usuário remove suas participações;
-quando um workspace fica sem membros, ele é removido (ver rotina abaixo).
+Todo dado de domínio ou financeiro vinculado a usuário pertence a um `workspace`. O
+apagamento segue as chaves estrangeiras com `ON DELETE CASCADE`, de modo que remover
+um workspace remove automaticamente tudo que depende dele. Remover um usuário remove
+suas participações; quando um workspace fica sem membros, ele é removido (ver rotina
+abaixo).
+
+Metadado de segurança/controle inerentemente de conta pode ser exceção somente quando
+não contiver dado de domínio, financeiro ou de workspace; tiver finalidade limitada,
+fronteiras explícitas de acesso com menor privilégio, retenção/hard-delete definidos e
+remoção na exclusão da conta. A exceção não autoriza armazenar dados de domínio fora de
+`workspace_id` nem reduz as garantias de RLS para dados de workspace.
 
 ## Entidades
 
@@ -27,6 +34,8 @@ quando um workspace fica sem membros, ele é removido (ver rotina abaixo).
 - Apagar `workspaces` → apaga `workspace_members`, `workspace_invites`,
   `transactions`, `fixed_bills`, `goals`.
 - Apagar usuário (`auth.users`) → apaga `profiles` e `workspace_members` daquele usuário.
+- Apagar usuário (`auth.users`) → apaga também qualquer metadado de controle em nível
+  de conta que tenha exceção documentada, incluindo `feedback_submission_limits`.
 - Workspace sem membros → apagado por rotina transacional (trigger ou função no
   apagamento de conta).
 
@@ -130,6 +139,36 @@ sanitizado `profile_missing` ou `query_failed`, sem UUID, e-mail, cor ou erro br
 
 Apagar a conta remove a linha inteira de `profiles` pela rotina já documentada; a
 preferência não deixa tombstone, histórico ou cópia separada.
+
+## Metadado de controle em nível de conta: limite de feedback
+
+`feedback_submission_limits` é uma exceção específica à regra de domínio por
+workspace. Sua única finalidade é limitar abuso de submissões autenticadas de feedback.
+Ela contém somente `user_id`, `window_started_at`, `submission_count` e `expires_at`:
+não guarda feedback, e-mail, pathname, IP, identificador de workspace, dado financeiro
+ou analytics. Cadence não persiste conteúdo de feedback, e-mail ou pathname no banco.
+O primeiro envio que passa na validação e adquire uma vaga inicia uma janela ancorada
+de 24 horas; no máximo três invocações válidas que adquiriram vaga consomem o contador.
+Falhas de validação não o consomem. Toda invocação que adquire vaga a consome,
+independentemente do resultado do provedor: inclusive um retry ambíguo que reutiliza a
+mesma chave de idempotência. Não há decremento compensatório.
+
+A tabela tem RLS habilitada e não concede acesso direto a usuários. Uma função atômica
+`public.consume_feedback_submission_limit()` com `search_path` fixo deriva
+`auth.uid()` e retorna somente permitir/rejeitar; a limpeza
+`public.cleanup_expired_feedback_submission_limits()` é restrita ao scheduler do
+banco. Linhas expiradas são sujeitas a hard-delete físico pelo job horário; quando ele
+está implantado e operando corretamente, a remoção ocorre em aproximadamente uma hora
+de `expires_at`. `public.handle_account_deletion(uuid)` as hard-deleta por uma via
+independente na exclusão da conta. Esta
+exceção não cria uma categoria geral de dados sem `workspace_id`.
+
+O limite e a entrega são fronteiras separadas: somente tipo, mensagem, pathname
+normalizado opcional e, com opt-in explícito, e-mail derivado no servidor podem sair
+para o provedor. URL completa, query, fragmento, dados financeiros, identificadores de
+usuário/workspace internos, cookies, telemetria, logs e estado de página não fazem parte do
+payload. Aceitação pelo provedor é o limite de sucesso; não é confirmação de
+recebimento, leitura ou resposta na caixa administrativa.
 
 ## Domínio e integridade de `transactions`
 
