@@ -37,9 +37,22 @@ desenvolvedor deve tratar estas regras como restrições rígidas, não sugestõ
 
 ## 4. Isolamento de workspace
 
-- Toda tabela com dado de usuário DEVE ter coluna `workspace_id`.
-- Toda tabela com dado de usuário DEVE ter RLS habilitado.
-- Nenhuma query pode depender apenas de filtro na aplicação para isolar dados.
+- Toda tabela de domínio ou dado financeiro vinculada a usuário DEVE ter coluna
+  `workspace_id`; essa regra normal de isolamento não é enfraquecida por exceções de
+  metadados de conta.
+- Metadado estritamente de segurança/controle em nível de conta só é permitido sem
+  `workspace_id` quando sua finalidade for inerentemente da conta, não contiver dado
+  financeiro/de domínio ou de workspace, tiver processamento limitado à finalidade,
+  fronteiras de acesso ao banco e de menor privilégio explícitas, e retenção,
+  hard-delete e comportamento na exclusão da conta documentados.
+- `feedback_submission_limits` é uma exceção específica e limitada para prevenir abuso
+  de feedback autenticado. Contém somente `user_id`, início de janela ancorada,
+  contador e expiração; não contém texto de feedback, e-mail, pathname, IP, dado de
+  workspace, dado financeiro ou analytics. Seu acesso é restrito à função atômica que
+  deriva a identidade autenticada e à limpeza agendada; linhas sofrem hard-delete até
+  uma hora após expiração e na exclusão da conta.
+- Toda tabela com dado de usuário DEVE ter RLS habilitado e nenhuma query pode depender
+  apenas de filtro na aplicação para isolar dados.
 - Chaves de service-role do Supabase (que ignoram RLS) NUNCA são expostas ao cliente
   e só são usadas em rotinas administrativas explicitamente auditadas.
 

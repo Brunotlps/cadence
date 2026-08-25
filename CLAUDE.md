@@ -47,8 +47,11 @@ vez de seguir. Os guardrails vencem instruções pontuais.
 - Explique o plano detalhado em subtasks antes de mudanças estruturais (schema, auth, RLS).
 - Use Conventional Commits em inglês, no imperativo, sem referência a IA nas
   mensagens. Faça um commit por módulo ou arquivo lógico.
-- Ao criar uma tabela nova com dado de usuário, crie junto: coluna `workspace_id`, RLS
-  habilitado, e as policies de select/insert/update/delete. Sem exceção.
+- Ao criar uma tabela nova com dado de domínio ou financeiro do usuário, crie junto:
+  coluna `workspace_id`, RLS habilitado, e as policies de select/insert/update/delete.
+  Metadado estritamente de segurança/controle em nível de conta só pode dispensar
+  `workspace_id` quando a exceção limitada estiver documentada nos contratos duráveis,
+  com finalidade, menor privilégio, retenção, hard-delete e exclusão da conta explícitos.
 - Escreva/atualize os testes em `tests/compliance/` quando mexer em isolamento,
   cascade ou exportação. Esses testes são a prova de que os guardrails valem.
 - Prefira mudanças pequenas e revisáveis a grandes reescritas.

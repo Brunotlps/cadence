@@ -210,9 +210,10 @@ report was sent, and can act on the stated next step where retry is allowed.
   flow—open it, select a type, enter a valid message, and submit it successfully—in
   under two minutes without leaving Cadence. No formal moderated usability study is
   required for this MVP.
-- **SC-002**: In acceptance testing, 100% of successfully submitted reports arrive at
-  the trusted administrative channel with the selected type and message, and with no
-  prohibited automatically collected context.
+- **SC-002**: In acceptance testing, 100% of successfully submitted reports are
+  accepted for delivery by the trusted administrative delivery mechanism with the
+  selected type and message, and with no prohibited automatically collected context.
+  Final inbox arrival, human receipt, reading, or acknowledgement is not required.
 - **SC-003**: In acceptance testing, 100% of reports submitted without follow-up
   permission omit identity and contact information; 100% submitted with permission
   include no contact information other than the authenticated email address.

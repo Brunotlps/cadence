@@ -87,8 +87,13 @@ The workspace shell alone excludes onboarding and join, so it would violate FR-0
 
 The launcher is a fixed protected-layout utility: desktop bottom-right and mobile
 above the workspace bottom navigation/safe area. It reuses the existing native-dialog,
-form-control, focus, status, error, and responsive CSS conventions. This deliberate
-placement deviation is necessary to satisfy complete protected-route coverage.
+form-control, focus, status, error, and responsive CSS conventions. The dialog must
+use correct native dialog/modal semantics; programmatically associate every control
+with its label; support keyboard operation and appropriate dismissal; place focus when
+opened; restore focus to the invoking control when closed; and announce field errors,
+pending/submission status, and success/failure outcomes accessibly. No status, error,
+or required context may rely on visual presentation alone. This deliberate placement
+deviation is necessary to satisfy complete protected-route coverage.
 
 ### Submission boundary and validation
 
@@ -170,6 +175,16 @@ unexpected internal failure return the same generic delivery-failure message wit
 provider detail, form content, or opted-in email in diagnostics. Only provider
 acceptance returns success.
 
+For every non-success outcome—validation failure, abuse-control rejection, definitive
+provider rejection, ambiguous transport failure, or unexpected internal failure—the
+entered type, message, pathname candidate, and follow-up choice remain only as
+transient client-side dialog state while the dialog stays open; Cadence never persists
+them as a draft. Closing or explicitly discarding the dialog removes that state, while
+success clears the form. Idempotency remains separate: an ambiguous transport failure
+may retain and reuse its key only with an unchanged canonical provider payload; a
+changed payload receives a new key; a later submission after definitive provider
+rejection receives a new key.
+
 ## Project Structure
 
 ```text
@@ -194,12 +209,17 @@ feedback API, external rate-limit provider, or parallel form abstraction is adde
   `FEEDBACK_RECIPIENT_EMAIL` to `.env.example` with no values. Verify sender-domain
   DNS, recipient access restriction, and disabled Resend open/click tracking before
   release.
-- Update `.cadence/policies/data-handling.md` with the exact external payload,
-  limiter lifecycle, no-log rule, and third-party processing boundary.
-- Update `docs/specs/data-model-and-deletion.md` with limiter RLS/functions,
-  anchored-window rule, hourly hard deletion, and account-deletion cleanup.
-- Update `docs/specs/data-portability.md` with the short-lived limiter's treatment
-  and the human review needed for access/portability rights.
+- Amend `.cadence/policies/data-handling.md` to preserve the workspace rule for
+  domain/financial data while authoritatively documenting the narrowly justified
+  account-level `feedback_submission_limits` exception: purpose-limited abuse control,
+  explicit database/least-privilege boundary, exact fields, no-log rule, and hard
+  deletion lifecycle.
+- Amend `docs/specs/data-model-and-deletion.md` with that same narrow exception,
+  limiter RLS/functions, anchored-window rule, hourly hard deletion, and
+  account-deletion cleanup; it must not create a general non-workspace-data category.
+- Amend `docs/specs/data-portability.md` with the short-lived limiter's access and
+  portability treatment, marking any legal/privacy determination requiring human
+  review without treating feedback content as exportable Cadence data.
 - Update `docs/compliance/lgpd-mapping.md` to describe Resend and the administrative
   inbox as third-party processing boundaries. Keep controller/operator/processor
   classification, legal basis, subprocessors, DPA, transfers, and retention marked
