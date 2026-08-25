@@ -1,10 +1,28 @@
 import { createClient } from "@supabase/supabase-js";
+import postgres from "postgres";
 
 const REQUIRED_SUPABASE_TEST_ENV = [
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
 ] as const;
+
+// Conexão administrativa exclusivamente para provas de invariantes no banco.
+// Não é importada por runtime, não usa service-role e só é aberta pelos testes de
+// compliance quando o ambiente hospedado autorizado fornece DIRECT_URL.
+export function hasDirectDatabaseTestEnv(): boolean {
+  if (process.env.DIRECT_URL) return true;
+  return false;
+}
+
+export function createDirectComplianceClient() {
+  const directUrl = process.env.DIRECT_URL;
+  if (!directUrl) {
+    throw new Error("DIRECT_URL is required for direct compliance evidence.");
+  }
+
+  return postgres(directUrl, { ssl: "require" });
+}
 
 // Duplica lib/supabase/admin.ts sem o guard `import "server-only"` — esse
 // pacote lança erro fora do bundler do Next.js (só resolve para um módulo

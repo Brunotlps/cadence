@@ -48,9 +48,17 @@ desenvolvedor deve tratar estas regras como restrições rígidas, não sugestõ
 - `feedback_submission_limits` é uma exceção específica e limitada para prevenir abuso
   de feedback autenticado. Contém somente `user_id`, início de janela ancorada,
   contador e expiração; não contém texto de feedback, e-mail, pathname, IP, dado de
-  workspace, dado financeiro ou analytics. Seu acesso é restrito à função atômica que
-  deriva a identidade autenticada e à limpeza agendada; linhas sofrem hard-delete até
-  uma hora após expiração e na exclusão da conta.
+  workspace, dado financeiro ou analytics. A função autenticada
+  `consume_feedback_submission_limit()` deriva a identidade exclusivamente de
+  `auth.uid()`: janela ancorada de 24 horas, no máximo três tentativas válidas que
+  adquiriram vaga, e toda aquisição consome uma vaga, inclusive retry ambíguo com a
+  mesma chave, sem decremento compensatório após falha do provedor. Falhas de
+  validação anteriores à aquisição não consomem vaga. A limpeza
+  `cleanup_expired_feedback_submission_limits()` é restrita ao scheduler do banco;
+  linhas expiradas são sujeitas a hard-delete físico pelo job horário. Quando esse job
+  está implantado e operando corretamente, a remoção ocorre em aproximadamente uma
+  hora de `expires_at`; `public.handle_account_deletion(uuid)` é uma via independente
+  de hard-delete desse metadado na exclusão da conta.
 - Toda tabela com dado de usuário DEVE ter RLS habilitado e nenhuma query pode depender
   apenas de filtro na aplicação para isolar dados.
 - Chaves de service-role do Supabase (que ignoram RLS) NUNCA são expostas ao cliente
@@ -70,3 +78,17 @@ desenvolvedor deve tratar estas regras como restrições rígidas, não sugestõ
 - Logs de aplicação não devem conter dados pessoais nem valores financeiros.
 - Proibido logar corpo de request/response que contenha dados do usuário.
 - Erros logam identificadores opacos (ex: `workspace_id`), nunca conteúdo.
+
+## 7. Feedback autenticado e entrega externa
+
+- Cadence não persiste conteúdo, e-mail, pathname ou chave de idempotência de
+  feedback no banco. O limiter armazena somente o metadado temporário descrito acima.
+- A entrega externa recebe texto simples com tipo, mensagem e pathname normalizado
+  opcional. E-mail de retorno só é incluído após opt-in explícito e é derivado no
+  servidor da sessão autenticada.
+- O payload externo nunca inclui URL completa, query, fragmento, dados financeiros,
+  IDs internos de usuário ou workspace, cookies, telemetria, logs ou estado de
+  página. Conteúdo e e-mail de feedback também não entram em logs ordinários.
+- Sucesso significa aceitação pelo provedor; não significa recebimento, leitura ou
+  resposta pela caixa administrativa. Papéis, base legal, retenção e eliminação da
+  Resend e da caixa administrativa permanecem `[REVISAR JURÍDICO]`.

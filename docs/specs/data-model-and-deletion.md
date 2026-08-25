@@ -146,14 +146,29 @@ preferência não deixa tombstone, histórico ou cópia separada.
 workspace. Sua única finalidade é limitar abuso de submissões autenticadas de feedback.
 Ela contém somente `user_id`, `window_started_at`, `submission_count` e `expires_at`:
 não guarda feedback, e-mail, pathname, IP, identificador de workspace, dado financeiro
-ou analytics. O primeiro envio válido inicia uma janela ancorada de 24 horas; até três
-tentativas válidas consomem o contador.
+ou analytics. Cadence não persiste conteúdo de feedback, e-mail ou pathname no banco.
+O primeiro envio que passa na validação e adquire uma vaga inicia uma janela ancorada
+de 24 horas; no máximo três invocações válidas que adquiriram vaga consomem o contador.
+Falhas de validação não o consomem. Toda invocação que adquire vaga a consome,
+independentemente do resultado do provedor: inclusive um retry ambíguo que reutiliza a
+mesma chave de idempotência. Não há decremento compensatório.
 
 A tabela tem RLS habilitada e não concede acesso direto a usuários. Uma função atômica
-com `search_path` fixo deriva `auth.uid()` e retorna somente permitir/rejeitar; a
-limpeza é restrita ao agendador do banco. Linhas expiram por hard-delete horário, no
-máximo uma hora após `expires_at`, e são hard-deletadas na exclusão da conta. Esta
+`public.consume_feedback_submission_limit()` com `search_path` fixo deriva
+`auth.uid()` e retorna somente permitir/rejeitar; a limpeza
+`public.cleanup_expired_feedback_submission_limits()` é restrita ao scheduler do
+banco. Linhas expiradas são sujeitas a hard-delete físico pelo job horário; quando ele
+está implantado e operando corretamente, a remoção ocorre em aproximadamente uma hora
+de `expires_at`. `public.handle_account_deletion(uuid)` as hard-deleta por uma via
+independente na exclusão da conta. Esta
 exceção não cria uma categoria geral de dados sem `workspace_id`.
+
+O limite e a entrega são fronteiras separadas: somente tipo, mensagem, pathname
+normalizado opcional e, com opt-in explícito, e-mail derivado no servidor podem sair
+para o provedor. URL completa, query, fragmento, dados financeiros, identificadores de
+usuário/workspace internos, cookies, telemetria, logs e estado de página não fazem parte do
+payload. Aceitação pelo provedor é o limite de sucesso; não é confirmação de
+recebimento, leitura ou resposta na caixa administrativa.
 
 ## Domínio e integridade de `transactions`
 
