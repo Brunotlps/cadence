@@ -16,36 +16,42 @@ describe.skipIf(!hasSupabaseTestEnv())("Singleton de workspace por usuário", ()
 
   beforeAll(async () => {
     const probeUser = await createConfirmedTestUser("workspace-singleton-probe");
-    const admin = createTestAdminClient();
+    const probeWorkspaceOwner = await createConfirmedTestUser(
+      "workspace-singleton-probe-owner",
+    );
 
     try {
-      const { data: workspaceA, error: workspaceAError } = await admin
-        .from("workspaces")
-        .insert({ name: "Workspace singleton probe A" })
-        .select("id")
-        .single();
+      const probeClient = createAnonTestClient();
+      const { error: probeSignInError } = await probeClient.auth.signInWithPassword({
+        email: probeUser.email,
+        password: probeUser.password,
+      });
+      if (probeSignInError) throw probeSignInError;
+
+      const ownerClient = createAnonTestClient();
+      const { error: ownerSignInError } = await ownerClient.auth.signInWithPassword({
+        email: probeWorkspaceOwner.email,
+        password: probeWorkspaceOwner.password,
+      });
+      if (ownerSignInError) throw ownerSignInError;
+
+      const { error: workspaceAError } = await probeClient.rpc(
+        "create_workspace_with_owner",
+        { workspace_name: "Workspace singleton probe A" },
+      );
       if (workspaceAError) throw workspaceAError;
 
-      const { data: workspaceB, error: workspaceBError } = await admin
-        .from("workspaces")
-        .insert({ name: "Workspace singleton probe B" })
-        .select("id")
-        .single();
+      const { data: workspaceBId, error: workspaceBError } = await ownerClient.rpc(
+        "create_workspace_with_owner",
+        { workspace_name: "Workspace singleton probe B" },
+      );
       if (workspaceBError) throw workspaceBError;
 
-      const { error: firstInsertError } = await admin
-        .from("workspace_members")
-        .insert({
-          workspace_id: workspaceA.id,
-          user_id: probeUser.id,
-          role: "owner",
-        });
-      if (firstInsertError) throw firstInsertError;
-
+      const admin = createTestAdminClient();
       const { error: secondInsertError } = await admin
         .from("workspace_members")
         .insert({
-          workspace_id: workspaceB.id,
+          workspace_id: workspaceBId,
           user_id: probeUser.id,
           role: "member",
         });
@@ -60,6 +66,7 @@ describe.skipIf(!hasSupabaseTestEnv())("Singleton de workspace por usuário", ()
       }
     } finally {
       await deleteTestAccount(probeUser.id);
+      await deleteTestAccount(probeWorkspaceOwner.id);
     }
   });
 
@@ -155,32 +162,44 @@ describe.skipIf(!hasSupabaseTestEnv())("Singleton de workspace por usuário", ()
     if (!singletonMigrationApplied) return;
 
     const user = await createConfirmedTestUser("workspace-singleton-constraint");
+    const workspaceOwner = await createConfirmedTestUser(
+      "workspace-singleton-constraint-owner",
+    );
     createdUserIds.add(user.id);
+    createdUserIds.add(workspaceOwner.id);
 
-    const admin = createTestAdminClient();
-    const { data: workspaceA, error: workspaceAError } = await admin
-      .from("workspaces")
-      .insert({ name: "Workspace A" })
-      .select("id")
-      .single();
+    const userClient = createAnonTestClient();
+    const { error: userSignInError } = await userClient.auth.signInWithPassword({
+      email: user.email,
+      password: user.password,
+    });
+    if (userSignInError) throw userSignInError;
+
+    const ownerClient = createAnonTestClient();
+    const { error: ownerSignInError } = await ownerClient.auth.signInWithPassword({
+      email: workspaceOwner.email,
+      password: workspaceOwner.password,
+    });
+    if (ownerSignInError) throw ownerSignInError;
+
+    // Cada workspace nasce já com um owner, dentro da transação da RPC. Isso
+    // impede que a limpeza concorrente de contas de outros jobs apague um
+    // fixture temporariamente órfão entre duas chamadas REST.
+    const { error: workspaceAError } = await userClient.rpc(
+      "create_workspace_with_owner",
+      { workspace_name: "Workspace constraint A" },
+    );
     if (workspaceAError) throw workspaceAError;
 
-    const { data: workspaceB, error: workspaceBError } = await admin
-      .from("workspaces")
-      .insert({ name: "Workspace B" })
-      .select("id")
-      .single();
+    const { data: workspaceBId, error: workspaceBError } = await ownerClient.rpc(
+      "create_workspace_with_owner",
+      { workspace_name: "Workspace constraint B" },
+    );
     if (workspaceBError) throw workspaceBError;
 
-    const { error: firstInsertError } = await admin.from("workspace_members").insert({
-      workspace_id: workspaceA.id,
-      user_id: user.id,
-      role: "owner",
-    });
-    expect(firstInsertError).toBeNull();
-
+    const admin = createTestAdminClient();
     const { error: secondInsertError } = await admin.from("workspace_members").insert({
-      workspace_id: workspaceB.id,
+      workspace_id: workspaceBId,
       user_id: user.id,
       role: "member",
     });
