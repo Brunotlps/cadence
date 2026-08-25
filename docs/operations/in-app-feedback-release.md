@@ -151,6 +151,15 @@ permanece a verificação operacional/release T034.
   Cadence é o responsável operacional: inspeciona falhas semanalmente e
   `cron.job_run_details` mensalmente; a retenção operacional aprovada é de 30 dias e
   a poda mensal usa somente evidência sanitizada.
+- **T035:** aceitação manual autenticada concluída em Production pelo alias público da
+  aplicação. A feature foi mergeada em `main` no commit
+  `df13c64238c9b66d3db1da7ac634db2ab3040844`; o deployment Production desse merge foi
+  validado, assim como o smoke público de login e proteção de rota. Autenticação,
+  navegação, launcher, diálogo e validação funcionaram; uma única submissão válida e
+  não sensível retornou sucesso na UI após aceitação pelo provedor. O usuário
+  permaneceu no Cadence e o fluxo terminou em menos de dois minutos. A evidência não
+  registra e-mail, identificadores, segredos ou conteúdo do payload; sucesso significa
+  aceitação pelo provedor, não entrega ou leitura na caixa.
 
 Essa evidência não comprova entrega real pela Resend, DNS/remetente de produção,
 operação do cron de produção, recebimento na caixa ou aprovação jurídica/privacidade.
@@ -239,9 +248,6 @@ operação do cron de produção, recebimento na caixa ou aprovação jurídica/
 
 ## 5. Gates humanos e de release pendentes
 
-Permanecem os seguintes gates externos/humanos:
-
-- **T032:** revisão de privacidade/segurança, inclusive os itens
-  `[REVISAR JURÍDICO]` de provedor e caixa administrativa.
-- **T035:** uma aceitação manual autenticada após os gates anteriores, lembrando que
-  sucesso da UI é aceitação do provedor, não entrega ou leitura na caixa.
+Os gates T032–T035 foram concluídos. Marcadores `[REVISAR JURÍDICO]` remanescentes
+continuam exigindo governança jurídica, mas não impedem esta release conforme o escopo
+das tarefas aprovadas.
