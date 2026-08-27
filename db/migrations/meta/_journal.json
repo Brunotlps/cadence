@@ -113,6 +113,13 @@
       "when": 1787669341674,
       "tag": "0015_feedback_submission_limits",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1787841271461,
+      "tag": "0016_profiles_workspace_visibility",
+      "breakpoints": true
     }
   ]
 }

@@ -63,6 +63,7 @@ transferências para Cadence.
 | Autenticar o usuário                    | e-mail, nome (via Google)  | Execução de contrato (art. 7º, V) [REVISAR JURÍDICO] |
 | Prover o serviço de controle financeiro | lançamentos, metas, contas | Execução de contrato [REVISAR JURÍDICO]              |
 | Personalizar a interface                | cor de destaque do perfil  | Execução de contrato [REVISAR JURÍDICO]              |
+| Identificar membros dentro do próprio workspace | nome de exibição (`display_name`) e cor de destaque de colegas do mesmo workspace | Execução de contrato [REVISAR JURÍDICO] |
 | Segurança da conta                      | tokens de sessão           | Legítimo interesse [REVISAR JURÍDICO]                |
 | Limitar abuso de feedback autenticado   | janela, contador e expiração por conta | Legítimo interesse [REVISAR JURÍDICO] |
 | Entregar feedback voluntário            | tipo, mensagem e contexto opcional; e-mail somente com opt-in | Execução de contrato ou legítimo interesse [REVISAR JURÍDICO] |

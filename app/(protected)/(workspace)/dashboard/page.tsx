@@ -17,6 +17,8 @@ import { FeedbackState } from "@/components/ui/feedback-state";
 import { MonthNavigation } from "@/components/ui/month-navigation";
 import { PageHeader } from "@/components/ui/page-header";
 import { RevealPanel } from "@/components/ui/reveal-panel";
+import { MemberBadges } from "@/components/workspace/member-badges";
+import { listWorkspaceMembers } from "@/lib/workspace/repository";
 import { TRANSACTION_CATEGORIES } from "@/lib/transactions/categories";
 import {
   getTodayInSaoPaulo,
@@ -94,6 +96,9 @@ export default async function DashboardPage({
 
   const { data } = result;
 
+  const membersResult = await listWorkspaceMembers(supabase, data.workspace.id);
+  const members = membersResult.error ? [] : membersResult.data;
+
   return (
     <main className={styles.page}>
       <PageHeader
@@ -101,6 +106,7 @@ export default async function DashboardPage({
         title="Dashboard"
         description="Registre o que entrou e saiu e acompanhe o resultado do mês."
       >
+        <MemberBadges members={members} />
         <Link className={styles.inviteLink} href="/workspace/invite">
           Convidar alguém
         </Link>

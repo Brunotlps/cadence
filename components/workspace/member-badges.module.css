@@ -1,0 +1,41 @@
+.list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list li {
+  margin-left: calc(var(--space-2) * -1);
+}
+
+.list li:first-child {
+  margin-left: 0;
+}
+
+.badge {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  color: #ffffff;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.02em;
+  cursor: default;
+}
+
+.badge[data-color="preto"] {
+  background: #201e1d;
+}
+
+.badge[data-color="rosa"] {
+  background: #c2386f;
+}
+
+.badge[data-color="verde"] {
+  background: #14624a;
+}
