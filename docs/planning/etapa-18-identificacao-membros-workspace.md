@@ -157,12 +157,20 @@ docs/specs/data-model-and-deletion.md    (+ nota)
 Aplicar a migration 0016 revelou três problemas pré-existentes e não
 relacionados ao código desta etapa, que valem registro para não se repetirem:
 
-1. **`DIRECT_URL` em `.env.local` apontava para um projeto Supabase errado**
-   (`wwkgnkowcymoypqgfdyl`), diferente do projeto real usado por
-   `NEXT_PUBLIC_SUPABASE_URL` (`wvylbahzgwflmgvhqqbc`). Isso já estava assim
-   antes desta etapa. Corrigido nesta etapa — `DIRECT_URL` agora aponta pro
-   projeto certo — mas vale confirmar que ninguém mais tem essa mesma
-   divergência num `.env.local` local desatualizado.
+1. **`DIRECT_URL` em `.env.local` não batia com `NEXT_PUBLIC_SUPABASE_URL`**
+   (`wwkgnkowcymoypqgfdyl` vs `wvylbahzgwflmgvhqqbc`). Isso já estava assim
+   antes desta etapa. Investigação de produção (confirmada via Vercel + tela
+   de login do Google + dados reais no painel do Supabase) esclareceu que
+   **`wwkgnkowcymoypqgfdyl` é a produção real** (usuários reais) e
+   **`wvylbahzgwflmgvhqqbc` é um projeto separado de dev/teste local**, que
+   é o que `NEXT_PUBLIC_SUPABASE_URL` do `.env.local` sempre usou — separação
+   intencional e correta. O bug real era só `DIRECT_URL` (usado só por
+   `db:migrate`/provas de compliance hospedadas) apontar pro projeto errado
+   *dentro do próprio `.env.local`*; corrigido para apontar pro mesmo projeto
+   de dev que `NEXT_PUBLIC_SUPABASE_URL` já usava. A policy desta etapa foi
+   confirmada presente e com a `qual` correta em **ambos** os projetos —
+   produção já tinha sido corrigida manualmente bem no início desta sessão,
+   antes da confusão sobre qual projeto era qual ter sido esclarecida.
 2. **`drizzle-kit migrate` (0.31.10) engole o erro real em caso de falha.**
    `MigrateProgress.render(status)`, em `node_modules/drizzle-kit/bin.cjs`,
    trata `"rejected"` igual a `"pending"` (mostra só o spinner), então uma
