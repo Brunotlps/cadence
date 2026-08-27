@@ -34,7 +34,10 @@
 }
 
 .headerActions {
+  display: flex;
   flex: none;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .monthNavigation {
