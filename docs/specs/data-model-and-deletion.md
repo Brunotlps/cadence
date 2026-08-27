@@ -125,8 +125,17 @@ export const goals = pgTable("goals", {
 ## Integridade do perfil e da preferência visual
 
 `profiles` é a entidade pessoal mínima do usuário e, por decisão da Etapa 04, não
-pertence a um workspace. A RLS permite `SELECT` e `UPDATE` somente quando
-`profiles.id = auth.uid()`; a aplicação repete o filtro explícito por esse mesmo id.
+pertence a um workspace. A RLS permite `UPDATE` somente quando `profiles.id =
+auth.uid()`; a aplicação repete o filtro explícito por esse mesmo id.
+
+Desde a Etapa 18, o `SELECT` tem duas policies aditivas (RLS combina com `OR`):
+`profiles_select_own` (`id = auth.uid()`, inalterada) e
+`profiles_select_workspace_members`, que permite a um membro ler `display_name` e
+`accent_color` de qualquer colega do mesmo workspace — reutiliza
+`is_workspace_member()` (mesma função `SECURITY DEFINER` das demais tabelas
+escopadas por workspace). Nenhuma outra coluna, e-mail ou avatar é exposta; a
+tabela continua sem `workspace_id` porque a visibilidade é derivada via
+`workspace_members`, não uma coluna própria.
 
 `accent_color` aceita somente os códigos persistidos `preto`, `rosa` e `verde`, com
 `verde` como default para perfis existentes e novos. É uma preferência editável, por
