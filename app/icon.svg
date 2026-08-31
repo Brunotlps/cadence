@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Cadence</title>
+  <rect width="64" height="64" rx="18" fill="#14624a"/>
+  <path fill="#fff" d="M43.6 20.5a16.8 16.8 0 1 0 0 23l-5-4.8a10 10 0 1 1 0-13.4l5-4.8Z"/>
+  <circle cx="44.5" cy="32" r="4.25" fill="#f2b7ce"/>
+</svg>
