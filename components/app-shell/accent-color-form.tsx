@@ -1,6 +1,13 @@
 "use client";
 
-import { useActionState, useEffect, useId, useRef, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { usePathname } from "next/navigation";
 import {
   updateAccentColorAction,
@@ -32,6 +39,7 @@ export function AccentColorForm({
   const [selectedAccent, setSelectedAccent] = useState(initialAccent);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const openRef = useRef(false);
   const submitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const open = openPathname === pathname;
   const [state, formAction, pending] = useActionState(
@@ -48,17 +56,22 @@ export function AccentColorForm({
     ACCENT_COLORS.find((option) => option.value === selectedAccent)?.label ??
     "Verde";
 
-  useEffect(() => {
-    if (!open) return;
+  useLayoutEffect(() => {
+    openRef.current = open;
+  }, [open]);
 
+  useEffect(() => {
     function handlePointerDown(event: PointerEvent) {
-      if (!containerRef.current?.contains(event.target as Node)) {
+      if (
+        openRef.current &&
+        !containerRef.current?.contains(event.target as Node)
+      ) {
         setOpenPathname(null);
       }
     }
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key !== "Escape") return;
+      if (event.key !== "Escape" || !openRef.current) return;
       event.preventDefault();
       setOpenPathname(null);
       triggerRef.current?.focus();
@@ -70,7 +83,7 @@ export function AccentColorForm({
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open]);
+  }, []);
 
   useEffect(() => {
     return () => {

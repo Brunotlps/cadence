@@ -30,6 +30,20 @@ async function chooseAccent(page: Page, label: "Preto" | "Rosa" | "Verde") {
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
 }
 
+async function expectThemeAliases(page: Page) {
+  const aliases = await page.locator("[data-accent]").evaluate((element) => {
+    const style = getComputedStyle(element);
+    return [
+      "--brand-subtle",
+      "--brand-border",
+      "--brand-detail",
+      "--surface-raised",
+    ].map((name) => style.getPropertyValue(name).trim());
+  });
+
+  for (const alias of aliases) expect(alias).not.toBe("");
+}
+
 async function expectActiveDestination(page: Page, label: string) {
   const navigation = page.getByRole("navigation", {
     name: "Navegação principal",
@@ -124,6 +138,7 @@ test.describe("fundação visual compartilhada", () => {
     try {
       await login(page, personA.email, personA.password);
       await chooseAccent(page, "Rosa");
+      await expectThemeAliases(page);
       await page.reload();
       await expect(page.locator("[data-accent]")).toHaveAttribute(
         "data-accent",
@@ -150,6 +165,7 @@ test.describe("fundação visual compartilhada", () => {
         "verde",
       );
       await chooseAccent(page, "Preto");
+      await expectThemeAliases(page);
       await page.getByRole("button", { name: "Sair" }).click();
 
       await login(page, personA.email, personA.password);
