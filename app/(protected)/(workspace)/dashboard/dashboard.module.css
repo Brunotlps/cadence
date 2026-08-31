@@ -75,7 +75,7 @@
 
 .composerPanel > button:hover,
 .composerPanel > button[aria-expanded="true"] {
-  background: var(--brand-soft);
+  background: var(--brand-subtle);
 }
 
 .composerLabel {

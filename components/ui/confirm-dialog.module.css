@@ -25,13 +25,13 @@
   border-radius: var(--radius-lg);
   background: var(--surface);
   color: var(--text);
-  box-shadow: 0 24px 70px rgb(32 30 29 / 24%);
+  box-shadow: var(--shadow-elevated);
   margin: auto;
   padding: var(--space-5);
 }
 
 .dialog::backdrop {
-  background: rgb(32 30 29 / 48%);
+  background: var(--overlay);
   backdrop-filter: blur(2px);
 }
 

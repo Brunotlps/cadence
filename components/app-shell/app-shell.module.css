@@ -11,7 +11,7 @@
   width: 15.5rem;
   flex-direction: column;
   border-right: 1px solid var(--border);
-  background: rgb(255 255 255 / 92%);
+  background: var(--surface-translucent);
   backdrop-filter: blur(18px);
   padding: var(--space-5);
   padding-bottom: calc(var(--space-5) + 3rem);
@@ -37,7 +37,7 @@
 }
 
 .brand::after {
-  background: #c2386f;
+  background: var(--brand-detail);
 }
 
 .navigation {
@@ -61,12 +61,12 @@
 }
 
 .navLink:hover {
-  background: var(--brand-soft);
+  background: var(--brand-subtle);
   color: var(--brand-strong);
 }
 
 .navLink[aria-current="page"] {
-  background: var(--brand-soft);
+  background: var(--brand-subtle);
   color: var(--text);
 }
 
@@ -119,7 +119,8 @@
 }
 
 .appearanceTrigger[aria-expanded="true"] {
-  background: var(--surface-muted);
+  border-color: var(--brand-border);
+  background: var(--brand-subtle);
   color: var(--text);
 }
 
@@ -147,7 +148,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: 0 12px 32px rgb(32 30 29 / 14%);
+  box-shadow: var(--shadow-elevated);
   padding: var(--space-3);
 }
 
@@ -257,7 +258,7 @@
 .accountLink:hover,
 .logout:hover {
   border-color: var(--brand);
-  background: var(--brand-soft);
+  background: var(--brand-subtle);
   color: var(--brand-strong);
 }
 
@@ -369,7 +370,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 0;
     border-top: 1px solid var(--border);
-    background: rgb(255 255 255 / 96%);
+    background: var(--surface-translucent);
     backdrop-filter: blur(18px);
     padding-bottom: env(safe-area-inset-bottom);
   }
