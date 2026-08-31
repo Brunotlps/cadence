@@ -13,7 +13,7 @@
   border: 1px solid var(--border);
   border-radius: calc(var(--radius-lg) + 0.45rem);
   background: var(--surface);
-  box-shadow: 0 24px 70px rgb(36 48 40 / 12%);
+  box-shadow: var(--shadow-elevated);
   grid-template-columns: minmax(19rem, 0.9fr) minmax(24rem, 1.1fr);
 }
 
@@ -54,7 +54,7 @@
   height: 7rem;
   right: 2rem;
   bottom: -4rem;
-  border-color: rgb(194 56 111 / 60%);
+  border-color: var(--brand-detail);
 }
 
 .brandLockup {
@@ -81,7 +81,7 @@
 }
 
 .brandMark span:last-child {
-  background: #e5558f;
+  background: var(--brand-detail);
 }
 
 .brandCopy {
