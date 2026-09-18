@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import postgres from "postgres";
+import { assertSupabaseProjectConsistency } from "@/lib/supabase/project-identity";
 
 const REQUIRED_SUPABASE_TEST_ENV = [
   "NEXT_PUBLIC_SUPABASE_URL",
@@ -11,8 +12,13 @@ const REQUIRED_SUPABASE_TEST_ENV = [
 // Não é importada por runtime, não usa service-role e só é aberta pelos testes de
 // compliance quando o ambiente hospedado autorizado fornece DIRECT_URL.
 export function hasDirectDatabaseTestEnv(): boolean {
-  if (process.env.DIRECT_URL) return true;
-  return false;
+  if (!process.env.DIRECT_URL) return false;
+
+  assertSupabaseProjectConsistency({
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    directUrl: process.env.DIRECT_URL,
+  });
+  return true;
 }
 
 export function createDirectComplianceClient() {
@@ -20,6 +26,11 @@ export function createDirectComplianceClient() {
   if (!directUrl) {
     throw new Error("DIRECT_URL is required for direct compliance evidence.");
   }
+
+  assertSupabaseProjectConsistency({
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    directUrl,
+  });
 
   return postgres(directUrl, { ssl: "require" });
 }

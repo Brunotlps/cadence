@@ -1,5 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { hasSupabaseTestEnv as hasComplianceSupabaseTestEnv } from "../../compliance/support";
+import {
+  hasDirectDatabaseTestEnv,
+  hasSupabaseTestEnv as hasComplianceSupabaseTestEnv,
+} from "../../compliance/support";
 import { hasSupabaseTestEnv as hasE2eSupabaseTestEnv } from "../../e2e/support";
 
 const REQUIRED_ENV = [
@@ -58,5 +61,34 @@ describe("Supabase test environment guards", () => {
 
       expect(() => hasEnv()).toThrow(missingName);
     }
+  });
+
+  it("accepts a direct compliance connection for the API project", () => {
+    const projectRef = "abcdefghijklmnopqrst";
+    vi.stubEnv(
+      "NEXT_PUBLIC_SUPABASE_URL",
+      `https://${projectRef}.supabase.co`,
+    );
+    vi.stubEnv(
+      "DIRECT_URL",
+      `postgresql://postgres.${projectRef}:secret@aws-0-sa-east-1.pooler.supabase.com:5432/postgres`,
+    );
+
+    expect(hasDirectDatabaseTestEnv()).toBe(true);
+  });
+
+  it("rejects a direct compliance connection for another project", () => {
+    vi.stubEnv(
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "https://abcdefghijklmnopqrst.supabase.co",
+    );
+    vi.stubEnv(
+      "DIRECT_URL",
+      "postgresql://postgres.zyxwvutsrqponmlkjihg:secret@aws-0-sa-east-1.pooler.supabase.com:5432/postgres",
+    );
+
+    expect(() => hasDirectDatabaseTestEnv()).toThrow(
+      "Supabase project mismatch",
+    );
   });
 });

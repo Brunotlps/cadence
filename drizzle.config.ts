@@ -1,4 +1,5 @@
 import { defineConfig } from "drizzle-kit";
+import { assertSupabaseProjectConsistency } from "./lib/supabase/project-identity";
 
 if (!process.env.DIRECT_URL) {
   throw new Error(
@@ -6,6 +7,11 @@ if (!process.env.DIRECT_URL) {
       "not the transaction pooler used by the app at runtime.",
   );
 }
+
+assertSupabaseProjectConsistency({
+  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  directUrl: process.env.DIRECT_URL,
+});
 
 export default defineConfig({
   dialect: "postgresql",

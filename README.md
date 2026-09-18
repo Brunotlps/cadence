@@ -66,13 +66,16 @@ Copie `.env.example` para `.env.local` e preencha. **Nunca** commite `.env.local
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave pública (anon) do Supabase                                        |
 | `SUPABASE_SERVICE_ROLE_KEY`     | Service role isolada, somente para apagamento de conta                  |
 | `APP_URL`                       | Origem confiável usada nos links de autenticação em produção       |
-| `DATABASE_URL`                  | Opcional; somente para o teste de conectividade, nunca para runtime     |
-| `DIRECT_URL`                    | Conexão administrativa para schema/migrations e provas de compliance hospedadas; nunca para runtime |
+| `DATABASE_URL`                  | Opcional; teste de conectividade, no mesmo projeto da URL pública       |
+| `DIRECT_URL`                    | Conexão administrativa no mesmo projeto da URL pública; nunca para runtime |
 
 Leituras e mutações de dados de usuário em runtime usam exclusivamente o cliente
 Supabase JS autenticado, mantendo as policies de RLS ativas. Drizzle e conexões
 Postgres diretas ficam restritos a schema, migrations, conectividade e provas de
 compliance hospedadas; nunca pertencem ao runtime da aplicação.
+Antes de abrir uma conexão administrativa, os comandos de migration e as provas
+hospedadas comparam o project ref com `NEXT_PUBLIC_SUPABASE_URL` e falham sem
+conectar se as variáveis apontarem para projetos diferentes.
 
 ## Comandos de teste
 
