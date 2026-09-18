@@ -77,6 +77,13 @@ Antes de abrir uma conexão administrativa, os comandos de migration e as provas
 hospedadas comparam o project ref com `NEXT_PUBLIC_SUPABASE_URL` e falham sem
 conectar se as variáveis apontarem para projetos diferentes.
 
+`npm run db:migrate` usa diretamente o migrador PostgreSQL do `drizzle-orm`,
+contornando o renderer do `drizzle-kit@0.31.10`, que oculta a causa de migrations
+rejeitadas. Falhas são escritas em `stderr` com mensagem, código PostgreSQL,
+detalhe e dica quando disponíveis, sem imprimir a connection string ou sua senha.
+O comando mantém o mesmo diretório `db/migrations`, journal e tabela de controle
+usados pelo Drizzle e sempre encerra a conexão antes de terminar.
+
 ## Comandos de teste
 
 ```bash
