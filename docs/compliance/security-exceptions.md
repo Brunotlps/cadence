@@ -10,15 +10,15 @@ exceção for aceita, resolvida ou expirar.
   — o dev server do esbuild aceita requisições e responde a qualquer origem.
 - **Caminho:** `drizzle-kit` (devDependency direta) → `@esbuild-kit/esm-loader` →
   `@esbuild-kit/core-utils` → `esbuild`.
-- **Por que aceitamos:** só afeta devDependencies. `esbuild` é usado internamente pelo
-  `drizzle-kit` para rodar `db:generate`/`db:migrate` localmente; não entra no bundle
-  de produção nem roda em ambiente exposto (Vercel). O fix automático (`npm audit fix
-  --force`) rebaixaria `drizzle-kit` de `0.31.10` para `0.18.1`, uma regressão maior
-  que o risco atual.
-- **Gatilho para reavaliar:** se `drizzle-kit db:generate`/`db:migrate` passar a rodar
-  em CI/CD ou em qualquer ambiente acessível pela rede (hoje só roda localmente), ou
-  quando uma versão do `drizzle-kit` atualizar sua dependência de `esbuild` sem exigir
-  downgrade.
+- **Por que aceitamos:** só afeta devDependencies. `drizzle-kit` permanece restrito a
+  `db:generate` local; desde a correção da issue #39, `db:migrate` usa diretamente o
+  migrador do `drizzle-orm` por um runner `tsx` próprio e não carrega o CLI do
+  `drizzle-kit`. Nenhum desses caminhos entra no bundle de produção ou roda em
+  ambiente exposto (Vercel). O fix automático (`npm audit fix --force`) rebaixaria
+  `drizzle-kit` de `0.31.10` para `0.18.1`, uma regressão maior que o risco atual.
+- **Gatilho para reavaliar:** se `drizzle-kit db:generate` passar a rodar em CI/CD ou
+  em qualquer ambiente acessível pela rede (hoje só roda localmente), ou quando uma
+  versão do `drizzle-kit` atualizar sua dependência de `esbuild` sem exigir downgrade.
 
 ## brace-expansion (via eslint / eslint-config-next) — high
 

@@ -10,7 +10,7 @@
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "tsx scripts/migrate.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
@@ -32,6 +32,7 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
+    "tsx": "^4.23.1",
     "typescript": "^5",
     "vitest": "^4.1.10"
   },
