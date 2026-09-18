@@ -60,8 +60,8 @@ const requiredTriggers = [
   ["auth", "users", "on_auth_user_created"],
   ["public", "transactions", "protect_transaction_ownership_fields"],
   ["public", "goals", "protect_goal_system_fields"],
-  ["public", "goals", "validate_contribution_goal_on_insert"],
-  ["public", "goals", "validate_contribution_goal_on_update"],
+  ["public", "transactions", "validate_contribution_goal_on_insert"],
+  ["public", "transactions", "validate_contribution_goal_on_update"],
   ["public", "fixed_bills", "protect_fixed_bill_system_fields"],
   ["public", "transactions", "validate_fixed_bill_link_on_insert"],
   ["public", "transactions", "validate_fixed_bill_link_on_update"],
@@ -138,29 +138,38 @@ function createStore(sql: Queryable) {
   };
 }
 
-const directUrl = process.env.DIRECT_URL;
-if (!directUrl) throw new Error("DIRECT_URL is not set.");
-assertSupabaseProjectConsistency({
-  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  directUrl,
-});
-
-const dryRun = !process.argv.includes("--apply");
-const sql = postgres(directUrl, { max: 1 });
-try {
-  const manifest = readMigrationManifest(migrationsFolder);
-  await sql.begin(async (transaction) => {
-    await transaction.unsafe("LOCK TABLE drizzle.__drizzle_migrations IN ACCESS EXCLUSIVE MODE");
-    const store = createStore(transaction);
-    await repairMigrationHistory({
-      manifest,
-      baselineTag,
-      dryRun,
-      store,
-      verifySchema: (baseline) => verifySchema(transaction, baseline),
-      write: (message) => process.stdout.write(message),
-    });
+async function main() {
+  const directUrl = process.env.DIRECT_URL;
+  if (!directUrl) throw new Error("DIRECT_URL is not set.");
+  assertSupabaseProjectConsistency({
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    directUrl,
   });
-} finally {
-  await sql.end();
+
+  const dryRun = !process.argv.includes("--apply");
+  const sql = postgres(directUrl, { max: 1 });
+  try {
+    const manifest = readMigrationManifest(migrationsFolder);
+    await sql.begin(async (transaction) => {
+      await transaction.unsafe(
+        "LOCK TABLE drizzle.__drizzle_migrations IN ACCESS EXCLUSIVE MODE",
+      );
+      const store = createStore(transaction);
+      await repairMigrationHistory({
+        manifest,
+        baselineTag,
+        dryRun,
+        store,
+        verifySchema: (baseline) => verifySchema(transaction, baseline),
+        write: (message) => process.stdout.write(message),
+      });
+    });
+  } finally {
+    await sql.end();
+  }
 }
+
+main().catch((error: unknown) => {
+  process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
+  process.exitCode = 1;
+});
