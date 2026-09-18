@@ -84,6 +84,21 @@ detalhe e dica quando disponíveis, sem imprimir a connection string ou sua senh
 O comando mantém o mesmo diretório `db/migrations`, journal e tabela de controle
 usados pelo Drizzle e sempre encerra a conexão antes de terminar.
 
+Se o schema hospedado já contém migrations, mas `drizzle.__drizzle_migrations`
+está incompleta, use primeiro o reparo controlado. O comando é dry-run por
+padrão e valida o schema, o project ref, os objetos de segurança e a cadeia
+contígua de hashes antes de qualquer escrita:
+
+```bash
+npm run db:migrations:repair
+npm run db:migrations:repair -- --apply
+```
+
+`--apply` registra somente as migrations ausentes até o baseline aprovado
+`0016_profiles_workspace_visibility`, usando os timestamps originais do
+journal. Ele aborta em caso de gap, hash divergente, registro desconhecido ou
+schema incompleto; nunca use timestamps atuais para preencher o histórico.
+
 ## Comandos de teste
 
 ```bash
