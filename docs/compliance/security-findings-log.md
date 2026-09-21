@@ -121,3 +121,29 @@ histórico de decisões da etapa.
   `0006_tan_scalphunter.sql` substitui a constraint e encerra a expressão com
   `is true`, rejeitando tanto `false` quanto `NULL`. O teste correspondente passou na
   repetição e a suíte completa permaneceu verde.
+
+## Issue #47 — remediação de dependências
+
+### Next/Sharp, Vitest, js-yaml e nanoid
+
+- **O que era:** o lockfile resolvia dez entradas vulneráveis: `next@16.2.12`,
+  `sharp@0.35.3`, `vitest@4.1.10`, `@vitest/mocker@4.1.10`, `js-yaml@4.3.1`,
+  `nanoid@3.3.16` e quatro nós da cadeia já aceita de Drizzle/esbuild. Os achados
+  não demonstravam exploração no Cadence, mas Next e Sharp pertenciam ao grafo de
+  produção e tinham advisories de execução remota de código sob precondições
+  específicas.
+- **Como foi corrigido:** `next` e `eslint-config-next` foram pareados em `16.3.5`;
+  o override obsoleto de Sharp foi removido e o Next passou a resolver
+  `sharp@0.35.4`; Vitest/mocker foram atualizados para `4.1.11`; `js-yaml` passou
+  a `4.3.2`; e PostCSS passou a resolver `nanoid@3.3.19`. O override existente de
+  `postcss@8.5.25` foi preservado. Nenhum override novo foi criado.
+- **Prevenção de regressão:** a CI executa `npm audit --package-lock-only
+  --audit-level=high`, e o teste `tests/unit/ci/dependency-versions.test.ts`
+  verifica as versões mínimas corrigidas e a ausência do override de Sharp.
+- **Validação (21/09/2026):** o audit de produção retornou zero vulnerabilidades;
+  o audit completo ficou somente com as quatro entradas moderate da cadeia
+  Drizzle/esbuild já documentada em `security-exceptions.md`; lint, typecheck,
+  495 testes unitários e o build de produção com Turbopack passaram. O Next
+  `16.3.5` precisou manter `experimental.useTypeScriptCli=false`: o runner CLI
+  experimental padrão perde a saída capturada de `tsc --showConfig` no Node 24,
+  enquanto a API estável do TypeScript 5.9 executa a mesma checagem com sucesso.

@@ -20,19 +20,14 @@ exceção for aceita, resolvida ou expirar.
   em qualquer ambiente acessível pela rede (hoje só roda localmente), ou quando uma
   versão do `drizzle-kit` atualizar sua dependência de `esbuild` sem exigir downgrade.
 
-## brace-expansion (via eslint / eslint-config-next) — high
+## brace-expansion (via eslint / eslint-config-next) — RESOLVIDA
 
 - **Advisory:** [GHSA-mh99-v99m-4gvg](https://github.com/advisories/GHSA-mh99-v99m-4gvg)
   — DoS por expansão de padrão sem limite, causando estouro de memória.
-- **Caminho:** `eslint` e `eslint-config-next` (devDependencies diretas) →
-  `eslint-plugin-import`/`jsx-a11y`/`react` → `minimatch` → `brace-expansion`.
-- **Por que aceitamos:** só devDependency, roda apenas durante `npm run lint` em
-  ambiente controlado (máquina de dev e CI), nunca em produção. O fix automático
-  forçaria `eslint@10.8.0`, um major bump não testado com `eslint-config-next`
-  atual.
-- **Gatilho para reavaliar:** quando `eslint-config-next` publicar uma versão
-  compatível com `eslint` 10.x, ou se o comando de lint passar a rodar sobre input
-  não confiável (não é o caso).
+- **Resolução (21/09/2026):** o lockfile resolve `brace-expansion@1.1.18` e
+  `brace-expansion@5.0.9`, acima das primeiras versões corrigidas `1.1.17` e
+  `5.0.8`. `npm audit --json` não reporta mais o advisory. A exceção deixa de ser
+  ativa e permanece aqui somente como histórico.
 
 ## Retenção indefinida de conta não confirmada (etapa 05 — autenticação) — RESOLVIDA na Etapa 16
 
@@ -67,15 +62,18 @@ exceção for aceita, resolvida ou expirar.
   relevante. Follow-up rastreado na issue do GitHub referenciada em
   `docs/planning/etapa-05-autenticacao.md`.
 
-## postcss e sharp (via next) — resolvidos via override, não são mais exceções ativas
+## postcss e sharp (via next) — RESOLVIDOS
 
 - Ambos eram dependências transitivas de `next` (`postcss@8.4.31` e `sharp@0.34.5`),
   em `dependencies` de produção — `sharp` é usado pelo otimizador de imagem do Next.
-- Fixamos via `overrides` no `package.json`: `postcss` em `8.5.25` e `sharp` em
-  `0.35.3` (primeira versão estável fora da faixa vulnerável `<0.35.0`).
-- Validado com `npm install && npm run build` — build de produção completo sem
-  erros.
+- A correção original usava overrides para `postcss@8.5.25` e `sharp@0.35.3`.
+  Um advisory posterior de `sharp` tornou vulnerável toda versão `<0.35.4`,
+  invalidando a afirmação anterior de que `0.35.3` estava resolvida.
+- **Resolução atual (21/09/2026):** `next@16.3.5` declara `sharp@^0.35.4`, o
+  lockfile resolve `sharp@0.35.4` e o override de Sharp foi removido. O override
+  de `postcss@8.5.25` permanece; sua dependência resolve `nanoid@3.3.19`, fora da
+  faixa vulnerável `<3.3.18`.
 - **Gatilho para reavaliar:** antes de implementar qualquer feature de upload/
-  processamento de imagem (hoje fora de escopo do MVP), confirmar que `sharp@0.35.3`
-  segue compatível com o uso do Next. Remover o override quando uma versão do `next`
-  atualizar essas dependências internamente para versões não vulneráveis.
+  processamento de imagem (hoje fora de escopo do MVP), confirmar que a versão de
+  Sharp resolvida segue corrigida e compatível com o uso do Next. Remover o override
+  de PostCSS quando o Next resolver diretamente uma versão igualmente validada.
