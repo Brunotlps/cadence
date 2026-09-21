@@ -8,6 +8,7 @@
     "audit:dependencies": "npm audit --package-lock-only --audit-level=high",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "vitest run",
+    "test:unit:offline": "vitest run tests/unit",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",

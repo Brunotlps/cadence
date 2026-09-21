@@ -20,7 +20,23 @@ describe("CI workflow", () => {
       "utf8",
     );
 
-    expect(workflow).toMatch(/^\s*-\s+run:\s+npm run build\s*$/m);
+    expect(workflow.match(/^\s*run:\s+npm run build\s*$/gm)).toHaveLength(2);
+  });
+
+  it("keeps Dependabot checks isolated from hosted Supabase secrets", () => {
+    const workflow = readFileSync(
+      join(process.cwd(), ".github/workflows/ci.yml"),
+      "utf8",
+    );
+
+    expect(workflow).toContain("permissions:\n  contents: read");
+    expect(workflow).not.toContain("pull_request_target");
+    expect(workflow).toContain("Run offline unit tests for Dependabot");
+    expect(workflow).toContain("run: npm run test:unit:offline");
+    expect(workflow).toContain("Build with synthetic configuration for Dependabot");
+    expect(workflow).toContain(
+      "github.event.pull_request.user.login == 'dependabot[bot]'",
+    );
   });
 
   it("checks required Supabase test secrets without printing values", () => {
