@@ -166,10 +166,18 @@ ignorados ao mexer em dados de usuário.
 
 ## CI/CD
 
-Cada pull request roda a pipeline em `.github/workflows/ci.yml` com quatro
-verificações paralelas: lint, testes unitários, build de produção e testes E2E.
-O merge só deve ocorrer com as quatro verdes. Push na `main` publica
+Cada pull request roda a pipeline em `.github/workflows/ci.yml` com cinco
+verificações paralelas: auditoria de dependências, lint, testes unitários,
+build de produção e testes E2E. O merge só deve ocorrer com as cinco verdes.
+Push na `main` publica
 automaticamente em produção via Vercel; cada PR gera um preview deploy isolado.
+
+O Dependabot verifica dependências npm às segundas e GitHub Actions às terças.
+Updates minor/patch de versão são agrupados por tipo; majors e correções de
+segurança permanecem isolados para revisão. Como workflows iniciados pelo bot não
+recebem Actions secrets, eles rodam unitários offline e build com configuração
+sintética, sem acesso ao Supabase hospedado. E2E e compliance hospedados continuam
+obrigatórios para PRs humanos e para todo push na `main`.
 
 ## Próximos passos recomendados
 
