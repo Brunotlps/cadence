@@ -17,13 +17,13 @@
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
-    "@supabase/supabase-js": "^2.111.0",
+    "@supabase/supabase-js": "^2.118.0",
     "@visx/shape": "^4.0.0",
-    "drizzle-orm": "^0.45.2",
-    "next": "16.3.5",
+    "drizzle-orm": "^0.45.4",
+    "next": "16.4.2",
     "postgres": "^3.4.9",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "server-only": "^0.0.1"
   },
   "devDependencies": {
